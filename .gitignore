@@ -1,0 +1,9 @@
+.DS_STORE
+node_modules
+build
+.module-cache
+package-lock.json
+*.log*
+_nogit
+todo.md
+
