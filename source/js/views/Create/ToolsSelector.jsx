@@ -10,9 +10,10 @@ import TextField from 'material-ui/TextField';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import Divider from 'material-ui/Divider';
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
 import Typography from 'material-ui/Typography';
 import Avatar from 'material-ui/Avatar';
+import Chip from 'material-ui/Chip';
 
 import Icon from 'material-ui/Icon';
 
@@ -23,6 +24,9 @@ import ToolSelection from 'models/ToolSelection';
 const styles = theme => ({
   avatar: {
     margin: 10,
+  },
+  chip: {
+    margin: theme.spacing.unit,
   },
   root: {
     display: 'flex',
@@ -84,83 +88,104 @@ class ToolsSelector extends Component {
     this.props.getTools();
     this.props.getToolCategories();
     this.state = {
-      age: 'foo',
-      toolSelections: List([
-        new ToolSelection({ quantity: 1 })
-      ])
+      selectedCategoryId: null,
+      selectedToolId: null,
+      specifiedQuantity: 1,
+      toolSelections: List(),
+      selectedToolIds: Set(),
     };
   }
 
   handleAddClick = () => {
-    const { toolSelections } = this.state;
+    const { selectedCategoryId, selectedToolIds, selectedToolId, specifiedQuantity, toolSelections } = this.state;
     this.setState({
-      toolSelections: toolSelections.push(new ToolSelection()),
+      selectedCategoryId: null,
+      selectedToolId: null,
+      specifiedQuantity: 1,
+      selectedToolIds: selectedToolIds.add(selectedToolId),
+      toolSelections: toolSelections.push(new ToolSelection({
+        categoryId: selectedCategoryId,
+        toolId: selectedToolId,
+        quantity: specifiedQuantity,
+      })),
     });
   }
 
-  handleCategoryChange = (event, child) => {
-    const { toolSelections } = this.state;
+  handleCategoryChange = (event) => {
     const categoryId = Number(event.target.value);
-    const index = Number(event.target.name);
-    const currentToolSelection = toolSelections.get(index);
     this.setState({
-      toolSelections: toolSelections.set(
-        index,
-        currentToolSelection
-          .set('categoryId', categoryId)
-          .set('toolId', '')
-      ),
+      selectedCategoryId: categoryId,
+      selectedToolId: null
     });
   }
 
-  handleToolChange = (event, child) => {
-    const { toolSelections } = this.state;
-    const toolId = event.target.value;
-    const index = Number(event.target.name);
-    const currentToolSelection = toolSelections.get(index);
+  handleDelete = (toolId) => {
+    const { selectedToolIds, toolSelections } = this.state;
+    const toolIndex = toolSelections.findIndex(
+      toolSelection => toolSelection.toolId === toolId
+    );
+
     this.setState({
-      toolSelections: toolSelections.set(
-        index,
-        currentToolSelection.set(
-          'toolId',
-          toolId === '' ? '' : Number(toolId)
-        )
-      ),
+      selectedToolIds: selectedToolIds.remove(toolId),
+      toolSelections: toolSelections.delete(toolIndex),
     });
+  }
+
+  handleToolChange = (event) => {
+    const toolId = event.target.value;
+    this.setState({ selectedToolId: toolId });
   }
 
   handleQuantityChange = (event) => {
-    const { toolSelections } = this.state;
     const quantity = Number(event.target.value);
-    const index = Number(event.target.name);
-    const currentToolSelection = toolSelections.get(index);
 
-    if (quantity < 1) {
-      this.setState({ toolSelections: toolSelections.remove(index) });
-    } else {
-      this.setState({
-        toolSelections: toolSelections.set(index,
-          currentToolSelection.set('quantity', quantity)
-        ),
-      });
+    if (quantity >= 1) {
+      this.setState({ specifiedQuantity: quantity });
     }
   }
 
-  renderToolSelection = (toolSelection, index) => {
-    const { categoryToToolMap, classes, tools, toolCategories } = this.props;
+  renderSelections = () => {
     const { toolSelections } = this.state;
-    const currentToolSelection = toolSelections.get(index);
+    const { classes, tools } = this.props;
+
+    return toolSelections.map(toolSelection => {
+      const { toolId, quantity } = toolSelection;
+      const tool = tools[toolId];
+      return (
+        <Chip
+          key={ toolId }
+          avatar={
+            tool == null ? null :
+            <Avatar
+              alt={ tool.name }
+              src={
+                `http://localhost:8000/assets/${tool.image_static_location}` // TODO: Dynamically get root from API
+              }
+            />
+          }
+          label={ `${ tool.name } (Quantity: ${ quantity })` }
+          data-tool-id={ toolId }
+          onDelete={ () => this.handleDelete(toolId) }
+          className={ classes.chip }
+        />
+      );
+    });
+  }
+
+  renderToolSelector = (toolSelection, index) => {
+    const { categoryToToolMap, classes, tools, toolCategories } = this.props;
+    const { selectedCategoryId, selectedToolIds, selectedToolId, specifiedQuantity } = this.state;
     return (
       <div>
         <FormControl
           className={ classes.formControl }
           key={ index }
         >
-          <InputLabel htmlFor="tool-category">
+          <InputLabel htmlFor='tool-category'>
             Tool Category
           </InputLabel>
           <Select
-            value={ toolSelection.categoryId }
+            value={ selectedCategoryId || ''}
             onChange={ this.handleCategoryChange }
             inputProps={ {
               name: index,
@@ -182,23 +207,29 @@ class ToolsSelector extends Component {
             }
           </Select>
         </FormControl>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="tool">Tool</InputLabel>
+        <FormControl className={ classes.formControl }>
+          <InputLabel htmlFor='tool'>Tool</InputLabel>
           <Select
-            disabled={ !currentToolSelection.categoryIsSet() }
-            value={currentToolSelection.toolId}
-            onChange={this.handleToolChange}
+            disabled={ selectedCategoryId == null }
+            value={ selectedToolId || ''}
+            onChange={ this.handleToolChange }
             inputProps={{
               name: index,
               id: 'tool',
             }}
           >
             {
-              (categoryToToolMap[currentToolSelection.categoryId] || []).map( toolId => {
+              (categoryToToolMap[selectedCategoryId] || []).map( toolId => {
                 const tool = tools[toolId];
                 return tool == null ? null : (
-                  <MenuItem value={ toolId }>
-                    <em>{ tool.name }</em>
+                  <MenuItem
+                    key={toolId}
+                    disabled={selectedToolIds.has(toolId)}
+                    value={toolId}
+                  >
+                    <em>
+                      {tool.name}{selectedToolIds.has(toolId) ? ' (Already added)' : ''}
+                    </em>
                   </MenuItem>
                 )
               })
@@ -208,8 +239,8 @@ class ToolsSelector extends Component {
         <FormControl className={classes.formControl}>
           <TextField
             label='Quantity'
-            disabled={ !currentToolSelection.toolIsSet() }
-            value={ currentToolSelection.quantity }
+            disabled={ selectedToolId == null }
+            value={ specifiedQuantity }
             onChange={ this.handleQuantityChange }
             type='number'
             className={ classes.textField }
@@ -217,44 +248,35 @@ class ToolsSelector extends Component {
             margin='normal'
           />
         </FormControl>
-        { currentToolSelection.toolId !== '' && (
+        { selectedToolId != null && (
           <div>
-            <Typography variant="caption" gutterBottom>
+            <Typography variant='caption' gutterBottom>
               {
-                tools[currentToolSelection.toolId].description
+                tools[selectedToolId].description
               }
             </Typography>
-            <Avatar
-              alt='Tool image'
-              src={
-                `http://localhost:8000/assets/${tools[currentToolSelection.toolId].image_static_location}`
-              }
-            />
           </div>
         )}
-        <Divider style={{marginTop: '2rem'}} />
+        <Button
+          className={classes.button}
+          disabled={ selectedToolId == null }
+          color='primary'
+          onClick={this.handleAddClick}
+          variant='raised'
+        >
+          Add tools
+          <Icon className={ classes.icon }>add_circle</Icon>
+        </Button>
       </div>
     )
   }
 
   render() {
-    const { classes } = this.props;
-    const { toolSelections } = this.state;
     return (
       <div>
-        {toolSelections.map(
-          (toolSelection, index) =>
-          this.renderToolSelection(toolSelection, index)
-        )}
-        <Button
-          className={classes.button}
-          color='primary'
-          onClick={this.handleAddClick}
-          variant='raised'
-        >
-          Add tool selection
-          <Icon className={ classes.icon }>add_circle</Icon>
-        </Button>
+        { this.renderToolSelector() }
+        { this.renderSelections() }
+        <Divider style={{marginTop: '2rem'}} />
       </div>
     );
   }
