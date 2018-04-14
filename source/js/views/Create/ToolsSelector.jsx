@@ -9,11 +9,13 @@ import { MenuItem } from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Select from 'material-ui/Select';
-import Add from '@material-ui/icons/Add';
 import Divider from 'material-ui/Divider';
 import { List } from 'immutable';
 import Typography from 'material-ui/Typography';
 import Avatar from 'material-ui/Avatar';
+
+import Icon from 'material-ui/Icon';
+
 
 import { getTools, getToolCategories } from 'actions/tools';
 import ToolSelection from 'models/ToolSelection';
@@ -42,13 +44,13 @@ const styles = theme => ({
   rightIcon: {
     marginLeft: theme.spacing.unit,
   },
-  iconSmall: {
-    fontSize: 20,
-  },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: '50px',
+  },
+  icon: {
+    marginLeft: theme.spacing.unit * 2,
   },
 });
 
@@ -251,7 +253,7 @@ class ToolsSelector extends Component {
           variant='raised'
         >
           Add tool selection
-          <Add className={ classes.rightIcon } />
+          <Icon className={ classes.icon }>add_circle</Icon>
         </Button>
       </div>
     );

@@ -1,6 +1,4 @@
-# Marvin ★★
-
-Universal React and Redux, Webpack boilerplate.
+# TrashTalk React App ★★
 
 Marvin is internal project by [Work & Co](https://work.co).
 We love React and use it a lot. So Marvin is meant to be a starting point for our React projects.
