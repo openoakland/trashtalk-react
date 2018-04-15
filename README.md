@@ -1,15 +1,6 @@
 # TrashTalk React App ★★
 
-Marvin is internal project by [Work & Co](https://work.co).
-We love React and use it a lot. So Marvin is meant to be a starting point for our React projects.
-But as we love open source too, it is publicly available for anyone interested in using it.
-
-![Marvin](/marvin.jpg)
-
-Name comes from a fictional character [Marvin](https://en.wikipedia.org/wiki/Marvin_(character)), android from the [The Hitchhiker's Guide to the Galaxy](https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy) book as a homage to it's author [Douglas Adams](https://en.wikipedia.org/wiki/Douglas_Adams).
-
-**Please note** that v1.0.0 switched to [redux-saga](https://github.com/redux-saga/redux-saga) from `redux-thunk`
-and [postcss](https://github.com/postcss/postcss) from `scss`.
+**Originally cribbed from https://github.com/workco/marvin**
 
 ## Table of contents
 
@@ -31,21 +22,12 @@ and [postcss](https://github.com/postcss/postcss) from `scss`.
 
 ## What is this?
 
-Opinionated boilerplate for kicking off React/Redux applications.
-
-It includes complete, minimal react app.
-By complete we mean it has examples for:
-
-- components (both container/views and regular ones)
-- routes
-- reducers (redux + redux-saga)
-- actions (both sync and async),
-- postcss (with autoprefixer)
-- dummy API (using awesome [Star Wars API](https://swapi.co/))
-- assets (images + inline SVGs)
+This is a SPA implementation of the [Trashtalk](http://trashtalk-oakland.org/) application
 
 ## Features
 
+- [x] [Material-UI](https://material-ui-next.com/) for React implementation of [Google's Material Guidelines](https://material.io/guidelines/#)
+- [x] [Google Map Javascript API](https://developers.google.com/maps/documentation/javascript/)
 - [x] React
 - [x] React router v4
 - [x] Redux
@@ -65,6 +47,7 @@ By complete we mean it has examples for:
 ## TODO
 
 - [ ] Internationalization
+- [ ] Tests
 - [ ] Tests
 
 
@@ -167,28 +150,6 @@ npm install --production
 
 node ./build/server.js
 ```
-
-## Removing server rendering related stuff
-
-If you are not using server rendering first run:
-
-```sh
-node remove-universal.js
-```
-
-then you have to manually remove unused code from
-`source/js/config/store.js` which is marked with:
-
-```
-// Remove if you are not using server rendering.
-```
-
-#### Remove unused tasks
-
-You should remove unused tasks from `package.json` and unused params from `source/js/config/store.js` too.
-Client app is going to work without this but it is better to remove them as they just create noise.
-
-If anyone is willing to automate this, help will be greatly appreciated.
 
 ## Browser support
 
