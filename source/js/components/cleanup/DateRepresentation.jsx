@@ -36,11 +36,6 @@ export default class DateRepresentation extends Component {
     };
   }
 
-  state = {
-    startTime: null,
-    endTime: null,
-  }
-
   handleDateChange = (date) => {
     const { cleanup, setCleanup } = this.props;
     this.setState({ endTime: date, startTime: date });
