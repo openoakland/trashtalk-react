@@ -22,7 +22,8 @@ const styles = theme => ({
   avatar: {
     margin: 10,
   },
-  bigAvatar: {
+  toolAvatar: {
+    borderRadius: 0,
     width: 60,
     height: 60,
   },
@@ -112,7 +113,7 @@ class ToolsRepresentation extends Component {
                 // TODO: Dynamically get root from API
                 `http://localhost:8000/assets/${currentTool.image_static_location}`
               }
-              className={ classNames(classes.avatar, classes.bigAvatar) }
+              className={ classNames(classes.avatar, classes.toolAvatar) }
             />
             <div style={ { margin: '0 1rem', flexGrow: 1 } }>
               <Typography className={ classes.heading }>
