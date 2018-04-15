@@ -20,7 +20,7 @@ const styles = {
 /**
  * Component for showing/selecting dates for a cleanup
  */
-export default class DateSelection extends Component {
+export default class DateRepresentation extends Component {
   static propTypes = {
     cleanup: PropTypes.instanceOf(Cleanup),
     setCleanup: PropTypes.func,

@@ -15,9 +15,9 @@ import Tool from 'models/Tool';
 const initialState = Map({
   loading: false,
   error: null,
-  tools: Map(),
-  toolCategories: Map(),
-  categoryToToolMap: Map(),
+  tools: {},
+  toolCategories: {},
+  categoryToToolMap: {},
 });
 
 const actionsMap = {

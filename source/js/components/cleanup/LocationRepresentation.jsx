@@ -38,7 +38,7 @@ const styles = () => ({
   mapCenter: state.app.get('mapCenter'),
   mapReference: state.app.get('mapReference'),
 }))
-class LocationSelection extends Component {
+class LocationRepresentation extends Component {
   static propTypes = {
     classes: PropTypes.object,
     cleanup: PropTypes.instanceOf(Cleanup),
@@ -217,4 +217,4 @@ class LocationSelection extends Component {
   }
 }
 
-export default withStyles(styles)(LocationSelection);
+export default withStyles(styles)(LocationRepresentation);

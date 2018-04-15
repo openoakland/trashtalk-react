@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Stepper, { Step, StepLabel } from 'material-ui/Stepper';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
+import { Map } from 'immutable';
 
 import Dialog, {
   DialogActions,
@@ -14,11 +15,11 @@ import Dialog, {
   DialogTitle,
   withMobileDialog,
 } from 'material-ui/Dialog';
+import DateRepresentation from 'components/cleanup/DateRepresentation';
+import LocationRepresentation from 'components/cleanup/LocationRepresentation';
+import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
 import { routeCodes } from '../constants/routes';
 
-import DateSelection from './Create/DateSelection';
-import LocationSelection from './Create/LocationSelection';
-import ToolsSelector from './Create/ToolsSelector';
 
 import Cleanup from '../models/Cleanup';
 
@@ -45,7 +46,6 @@ class Create extends React.Component {
   static propTypes = {
     fullScreen: PropTypes.bool.isRequired,
     history: PropTypes.object,
-    mapReference: PropTypes.object,
   }
 
   constructor(props) {
@@ -53,11 +53,25 @@ class Create extends React.Component {
     this.state = {
       activeStep: 0,
       cleanup: new Cleanup(),
+      toolSelections: Map(),
       open: true,
     };
   }
 
   setCleanup = cleanup => this.setState({ cleanup })
+
+  setToolSelection = (toolId, quantity) => {
+    let toolSelections = this.state.toolSelections;
+    if (quantity === 0) {
+      // delete toolSelections[toolId];
+      toolSelections = toolSelections.delete(toolId);
+    } else {
+      // toolSelections[toolId] = quantity;
+      toolSelections = toolSelections.set(toolId, quantity);
+    }
+
+    this.setState({ toolSelections });
+  }
 
   handleClose = () => {
     // The fadeout transition takes a little while, so pause temporarily to
@@ -127,13 +141,18 @@ class Create extends React.Component {
   }
 
   renderStep = () => {
-    const { activeStep, cleanup } = this.state;
-    const commonProps = { cleanup, setCleanup: this.setCleanup };
+    const { activeStep, cleanup, toolSelections } = this.state;
 
     const stepMapping = {
-      [LOCATION_SELECTION]: <LocationSelection { ...commonProps } />,
-      [DATE_SELECTION]: <DateSelection { ...commonProps } />,
-      [TOOL_SELECTION]: <ToolsSelector { ...commonProps } />,
+      [LOCATION_SELECTION]: (
+        <LocationRepresentation cleanup={ cleanup } setCleanup={ this.setCleanup } />
+      ),
+      [DATE_SELECTION]: (
+        <DateRepresentation cleanup={ cleanup } setCleanup={ this.setCleanup } />
+      ),
+      [TOOL_SELECTION]: (
+        <ToolsRepresentation setToolSelection={ this.setToolSelection } toolSelections={ toolSelections } />
+      ),
       [SUMMARY]: 'Step 4: Summary',
     };
 

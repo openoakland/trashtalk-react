@@ -27,6 +27,7 @@ This is a SPA implementation of the [Trashtalk](http://trashtalk-oakland.org/) a
 ## Features
 
 - [x] [Material-UI](https://material-ui-next.com/) for React implementation of [Google's Material Guidelines](https://material.io/guidelines/#)
+- [x] [Material-UI Icons](https://material.io/icons/) 
 - [x] [Google Map Javascript API](https://developers.google.com/maps/documentation/javascript/)
 - [x] React
 - [x] [React router v4](https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf)
