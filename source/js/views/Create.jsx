@@ -33,6 +33,10 @@ const LOCATION_SELECTION = 2;
 const DATE_SELECTION = 1;
 const TOOL_SELECTION = 0;
 const SUMMARY = 3;
+
+/**
+ * This class encompasses all the view logic required to create a new Cleanup
+ */
 @connect(
   () => ({}),
   dispatch => bindActionCreators({}, dispatch)

@@ -29,17 +29,16 @@ This is a SPA implementation of the [Trashtalk](http://trashtalk-oakland.org/) a
 - [x] [Material-UI](https://material-ui-next.com/) for React implementation of [Google's Material Guidelines](https://material.io/guidelines/#)
 - [x] [Google Map Javascript API](https://developers.google.com/maps/documentation/javascript/)
 - [x] React
-- [x] React router v4
-- [x] Redux
-- [x] Redux-Saga
+- [x] [React router v4](https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf)
+- [x] [Redux](https://redux.js.org/basics)
+- [x] [Redux-Saga](https://github.com/redux-saga/redux-saga)
 - [x] Redux DevTools (you need to have [browser extension](https://github.com/zalmoxisus/redux-devtools-extension) installed)
-- [x] Universal rendering with async server data
 - [x] Webpack 3 (development and production config)
 - [x] Hot Module Replacement
-- [x] Immutable reducer data
+- [x] [Immutable reducer data](https://facebook.github.io/immutable-js/docs/#/)
 - [x] Babel - static props, decorators
 - [x] PostCSS (with autoprefixing)
-- [x] Linting
+- [x] [Linting](https://eslint.org/)
 - [x] Git hooks - lint before push
 - [x] Tree shaking build
 - [x] Import SVGs as React components

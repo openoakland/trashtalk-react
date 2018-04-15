@@ -58,6 +58,9 @@ const styles = theme => ({
   },
 });
 
+/**
+ * Component for displaying/selecting tools required for a cleanup
+ */
 @connect(
   state => ({
     cleanups: state.cleanups.get('cleanups'),
@@ -77,7 +80,6 @@ class ToolsSelector extends Component {
     classes: PropTypes.object,
     getTools: PropTypes.func,
     getToolCategories: PropTypes.func,
-    setCleanup: PropTypes.func,
     tools: PropTypes.object,
     toolCategories: PropTypes.object,
   }

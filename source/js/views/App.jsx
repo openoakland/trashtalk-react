@@ -20,7 +20,7 @@ class App extends Component {
         <div style={ { zIndex: -1 } }> <Menu /> </div>
         <div style={ { zIndex: 1 } }>
           <Switch>
-            <Route exact path={ routeCodes.NEW_CLEANUP } component={Create} />
+            <Route exact path={ routeCodes.NEW_CLEANUP } component={ Create } />
             <Route path={ routeCodes.HOME } />
             <Route path='*' component={ NotFound } />
           </Switch>

@@ -17,7 +17,10 @@ const styles = {
   },
 };
 
-export default class ConnectedComponent extends Component {
+/**
+ * Component for showing/selecting dates for a cleanup
+ */
+export default class DateSelection extends Component {
   static propTypes = {
     cleanup: PropTypes.instanceOf(Cleanup),
     setCleanup: PropTypes.func,

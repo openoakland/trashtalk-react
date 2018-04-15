@@ -31,6 +31,9 @@ const styles = () => ({
   },
 });
 
+/**
+ * Component for displaying/selecting a cleanup location
+ */
 @connect(state => ({
   mapCenter: state.app.get('mapCenter'),
   mapReference: state.app.get('mapReference'),
