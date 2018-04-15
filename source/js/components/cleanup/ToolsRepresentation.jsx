@@ -4,26 +4,24 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
+
+import { getTools, getToolCategories } from 'actions/tools';
+
 import Avatar from 'material-ui/Avatar';
-import TextField from 'material-ui/TextField';
-import List, { ListItem } from 'material-ui/List';
-import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
-
 import Icon from 'material-ui/Icon';
-
-import { getTools, getToolCategories } from 'actions/tools';
+import List, { ListItem } from 'material-ui/List';
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
 
 const styles = theme => ({
-  avatar: {
-    margin: 10,
-  },
   toolAvatar: {
     borderRadius: 0,
+    margin: 10,
     width: 60,
     height: 60,
   },
@@ -38,14 +36,8 @@ const styles = theme => ({
   icon: {
     marginLeft: theme.spacing.unit * 2,
   },
-  leftIcon: {
-    marginRight: theme.spacing.unit,
-  },
   list: {
     width: '100%',
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit,
   },
   root: {
     display: 'flex',
@@ -67,8 +59,6 @@ const styles = theme => ({
  */
 @connect(
   state => ({
-    cleanups: state.cleanups.get('cleanups'),
-    mapCenter: state.app.get('mapCenter'),
     tools: state.tools.get('tools'),
     toolCategories: state.tools.get('toolCategories'),
     categoryToToolMap: state.tools.get('categoryToToolMap'),
@@ -96,6 +86,11 @@ class ToolsRepresentation extends Component {
     this.props.getToolCategories();
   }
 
+  /**
+   * This method gets all data necessary to render tool list items along
+   * with metadata to display about the selected tools. It can be further optimized
+   * by breaking it into its own component, but we can worry about that later as necessary.
+   */
   getToolDetails = toolId => {
     const { classes, tools, toolSelections } = this.props;
     const currentTool = tools[toolId];
