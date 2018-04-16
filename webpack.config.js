@@ -54,7 +54,8 @@ if (IS_DEVELOPMENT) {
 
 // Webpack config
 module.exports = {
-  devtool: IS_PRODUCTION ? false : 'cheap-eval-source-map',
+  // inline-source-map is the only option that seems to work for Windows
+  devtool: IS_PRODUCTION ? false : 'inline-source-map',
   mode: IS_PRODUCTION ? 'production' : 'development',
   context: paths.javascript,
   watch: !IS_PRODUCTION,
