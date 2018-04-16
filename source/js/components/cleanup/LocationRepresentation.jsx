@@ -36,14 +36,14 @@ const styles = () => ({
  */
 @connect(state => ({
   mapCenter: state.app.get('mapCenter'),
-  mapReference: state.app.get('mapReference'),
+  backgroundMapReference: state.app.get('backgroundMapReference'),
 }))
 class LocationRepresentation extends Component {
   static propTypes = {
     classes: PropTypes.object,
     cleanup: PropTypes.instanceOf(Cleanup),
     mapCenter: PropTypes.instanceOf(Location),
-    mapReference: PropTypes.object,
+    backgroundMapReference: PropTypes.object,
     setCleanup: PropTypes.func,
   }
 
@@ -58,7 +58,7 @@ class LocationRepresentation extends Component {
   getSuggestionValue = (suggestion) => {
     // Before we return the suggestion value, save the selected location
     // to the cleanup object
-    const { cleanup, mapReference } = this.props;
+    const { cleanup, backgroundMapReference } = this.props;
     const { name, vicinity, geometry } = suggestion.details;
     const newLocation = new Location({
       latitude: geometry.location.lat(),
@@ -74,7 +74,7 @@ class LocationRepresentation extends Component {
     );
 
     // Also set the background map to the same location
-    mapReference.setCenter(newLocation.getLatLngObj());
+    backgroundMapReference.setCenter(newLocation.getLatLngObj());
 
     return suggestion.label;
   }
@@ -83,11 +83,11 @@ class LocationRepresentation extends Component {
     const {
       cleanup,
       mapCenter,
-      mapReference,
+      backgroundMapReference,
       setCleanup,
     } = this.props;
 
-    const service = new window.google.maps.places.PlacesService(mapReference);
+    const service = new window.google.maps.places.PlacesService(backgroundMapReference);
     // https://developers.google.com/maps/documentation/javascript/places#place_searches
     const request = {
       location: mapCenter.getLatLngObj(),

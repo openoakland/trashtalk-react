@@ -1,16 +1,16 @@
-export const SET_USER_LOCATION = 'SET_USER_LOCATION';
-export const SET_MAP_REFERENCE = 'SET_MAP_REFERENCE';
+export const SET_BACKGROUND_MAP_LOCATION = 'SET_BACKGROUND_MAP_LOCATION ';
+export const SET_BACKGROUND_MAP_REFERENCE = 'SET_BACKGROUND_MAP_REFERENCE';
 
-export function setMapCenter(location) {
+export function setBackgroundMapReference(backgroundMapReference) {
   return {
-    type: SET_USER_LOCATION,
-    mapCenter: location,
+    type: SET_BACKGROUND_MAP_REFERENCE,
+    backgroundMapReference,
   };
 }
 
-export function setMapReference(mapReference) {
+export function setBackgroundMapLocation(backgroundMapLocation) {
   return {
-    type: SET_MAP_REFERENCE,
-    mapReference,
+    type: SET_BACKGROUND_MAP_LOCATION,
+    backgroundMapLocation,
   };
 }

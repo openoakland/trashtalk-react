@@ -43,4 +43,12 @@ export default class Location extends Record({
       lng: this.longitude,
     };
   }
+
+  /**
+   * Set the center of a map referred to by mapReference to this location
+   * @param {Google Map Reference} mapReference
+   */
+  setMapCenter(mapReference) {
+    mapReference.setCenter(this.getLatLngObj());
+  }
 }

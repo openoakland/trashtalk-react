@@ -1,20 +1,24 @@
 import { Map } from 'immutable';
 
-import { SET_MAP_REFERENCE, SET_USER_LOCATION } from 'actions/app';
-
-import Location from 'models/Location';
+import { SET_BACKGROUND_MAP_LOCATION, SET_BACKGROUND_MAP_REFERENCE } from 'actions/app';
 
 const initialState = Map({
-  mapCenter: new Location(),
-  mapReference: null,
+  backgroundMapReference: null,
+  backgroundMapLocation: null,
 });
 
 const actionsMap = {
-  [SET_USER_LOCATION]: (state, action) => {
-    return state.set('mapCenter', action.location);
+  [SET_BACKGROUND_MAP_REFERENCE]: (state, action) => {
+    return state.set(
+      'backgroundMapReference',
+      action.backgroundMapReference
+    );
   },
-  [SET_MAP_REFERENCE]: (state, action) => {
-    return state.set('mapReference', action.mapReference);
+  [SET_BACKGROUND_MAP_LOCATION]: (state, action) => {
+    return state.set(
+      'backgroundMapLocation',
+      action.backgroundMapLocation
+    );
   },
 };
 
