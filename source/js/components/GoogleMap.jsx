@@ -26,7 +26,7 @@ export default class GoogleMap extends Component {
 
   static defaultProps = {
     locations: [],
-    mapCenter: new Location(), // New Location objects default to middle of Oakland
+    mapCenter: new Location(),
     zoom: DEFAULT_ZOOM,
   }
 
@@ -48,6 +48,7 @@ export default class GoogleMap extends Component {
 
     // Initialize Google Map object using mapCenter inside mapContainer
     // https://developers.google.com/maps/documentation/javascript/adding-a-google-map
+
     const mapReference = new window.google.maps.Map(document.getElementById(id), {
       center: { lat: mapCenter.latitude, lng: mapCenter.longitude },
       zoom,
@@ -68,7 +69,9 @@ export default class GoogleMap extends Component {
   componentWillReceiveProps(nextProps) {
     // Here we should check to see if nextProps.mapCenter has changed.
     // If it has, recenter map to new location
-    if (!nextProps.mapCenter.isAt(this.props.mapCenter)) {
+    if (
+      nextProps.mapCenter && (this.props.mapCenter == null || !nextProps.mapCenter.isAt(this.props.mapCenter))
+    ) {
       const { mapReference } = this.state;
       mapReference.setCenter(nextProps.mapCenter.getLatLngObj());
     }

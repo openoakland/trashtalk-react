@@ -1,5 +1,7 @@
 import { Record } from 'immutable';
 
+import Location from 'models/Location';
+
 export default class Cleanup extends Record({
   id: undefined,
   location: null,
@@ -8,6 +10,16 @@ export default class Cleanup extends Record({
   endTime: null,
   toolSelections: [],
 }) {
+  constructor(args) {
+    super(Object.assign(
+      {},
+      {
+        location: new Location(),
+      },
+      args
+    ));
+  }
+
   timesAreValid() {
     return (
       (this.startTime != null && this.endTime != null) &&

@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import GoogleMap from 'components/GoogleMap';
 import { getCleanups } from 'actions/cleanups';
-import { setBackgroundMapLocation, setBackgroundMapReference } from 'actions/app';
+import { getUserLocation, setBackgroundMapLocation, setBackgroundMapReference } from 'actions/app';
 
 import Location from 'models/Location';
 
@@ -25,8 +25,11 @@ const styles = {
     cleanups: state.cleanups.get('cleanups'),
     backgroundMapLocation: state.app.get('backgroundMapLocation'),
     backgroundMapReference: state.app.get('backgroundMapReference'),
+    userLocation: state.app.get('userLocation'),
   }),
-  dispatch => bindActionCreators({ getCleanups, setBackgroundMapLocation, setBackgroundMapReference }, dispatch)
+  dispatch => bindActionCreators({
+    getCleanups, setBackgroundMapLocation, setBackgroundMapReference, getUserLocation,
+  }, dispatch)
 )
 /**
  * This component is the default map always shown (and shown in the background when modals are open)
@@ -38,21 +41,22 @@ export default class MapBackground extends Component {
     cleanups: PropTypes.array,
     getCleanups: PropTypes.func,
     mapCenter: PropTypes.object,
-    setBackgroundMapLocation: PropTypes.func,
     setBackgroundMapReference: PropTypes.func,
+    getUserLocation: PropTypes.func,
+    userLocation: PropTypes.instanceOf(Location),
   }
 
   static defaultProps = {
     cleanups: [],
   }
 
+  /**
+   * Tasks that need to be performed after map initialization go here
+   * @param {*} nextProps
+   */
   componentWillReceiveProps(nextProps) {
-    // Tasks that need to be performed after map initialization go here
     if (this.props.backgroundMapReference == null && nextProps.backgroundMapReference != null) {
-      // Attempt to center map to user location
-      this.initializeMapCenter();
-
-      // Get all the cleanups so we can display on the map
+      // Get all the cleanups so we can display them on the map
       this.props.getCleanups();
     }
 
@@ -67,13 +71,11 @@ export default class MapBackground extends Component {
     }
   }
 
-  initializeMapCenter = () => {
-    navigator.geolocation.getCurrentPosition((position) =>
-      this.props.setBackgroundMapLocation(new Location({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      }))
-    );
+  getUserLocation = () => {
+    const { userLocation } = this.props;
+    if (userLocation == null) {
+      this.props.getUserLocation();
+    }
   }
 
   render() {
@@ -81,7 +83,7 @@ export default class MapBackground extends Component {
     const cleanupLocations = cleanups.map(cleanup => cleanup.location);
     return (
       <div
-        onMouseEnter={ this.getLocation }
+        onMouseEnter={ this.getUserLocation }
         style={ styles.container }
       >
         <GoogleMap

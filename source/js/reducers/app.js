@@ -1,10 +1,11 @@
 import { Map } from 'immutable';
 
-import { SET_BACKGROUND_MAP_LOCATION, SET_BACKGROUND_MAP_REFERENCE } from 'actions/app';
+import { SET_BACKGROUND_MAP_LOCATION, SET_BACKGROUND_MAP_REFERENCE, GET_USER_LOCATION_SUCCESS } from 'actions/app';
 
 const initialState = Map({
   backgroundMapReference: null,
   backgroundMapLocation: null,
+  userLocation: null,
 });
 
 const actionsMap = {
@@ -18,6 +19,15 @@ const actionsMap = {
     return state.set(
       'backgroundMapLocation',
       action.backgroundMapLocation
+    );
+  },
+  [GET_USER_LOCATION_SUCCESS]: (state, action) => {
+    return state.set(
+      'userLocation',
+      action.userLocation
+    ).set(
+      'backgroundMapLocation',
+      action.userLocation
     );
   },
 };

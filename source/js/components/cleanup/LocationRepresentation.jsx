@@ -35,14 +35,12 @@ const styles = () => ({
  * Component for displaying/selecting a cleanup location
  */
 @connect(state => ({
-  mapCenter: state.app.get('mapCenter'),
   backgroundMapReference: state.app.get('backgroundMapReference'),
 }))
 class LocationRepresentation extends Component {
   static propTypes = {
     classes: PropTypes.object,
     cleanup: PropTypes.instanceOf(Cleanup),
-    mapCenter: PropTypes.instanceOf(Location),
     backgroundMapReference: PropTypes.object,
     setCleanup: PropTypes.func,
   }
@@ -67,10 +65,7 @@ class LocationRepresentation extends Component {
     });
 
     this.props.setCleanup(
-      cleanup.set(
-        'location',
-        newLocation
-      )
+      cleanup.set('location', newLocation)
     );
 
     // Also set the background map to the same location
@@ -82,7 +77,6 @@ class LocationRepresentation extends Component {
   handleSuggestionsFetchRequested = ({ value }) => {
     const {
       cleanup,
-      mapCenter,
       backgroundMapReference,
       setCleanup,
     } = this.props;
@@ -90,7 +84,7 @@ class LocationRepresentation extends Component {
     const service = new window.google.maps.places.PlacesService(backgroundMapReference);
     // https://developers.google.com/maps/documentation/javascript/places#place_searches
     const request = {
-      location: mapCenter.getLatLngObj(),
+      location: cleanup.location.getLatLngObj(),
       radius: 20000,
       keyword: value,
     };
@@ -112,15 +106,10 @@ class LocationRepresentation extends Component {
     setCleanup(cleanup.set('location', null));
   };
 
-  handleSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: [],
-    });
-  };
-
+  handleSuggestionsClearRequested = () => this.setState({ suggestions: [] })
   handleChange = (event, { newValue }) => this.setState({ value: newValue })
 
-  renderInput = (inputProps) => {
+  renderInputComponent = (inputProps) => {
     const { classes, ref, ...other } = inputProps;
 
     return (
@@ -174,11 +163,9 @@ class LocationRepresentation extends Component {
 
   render() {
     const { classes, cleanup } = this.props;
-    let mapCenter;
     let locations;
     if (cleanup.location != null) {
-      mapCenter = cleanup.location;
-      locations = [mapCenter];
+      locations = [cleanup.location];
     }
 
     return (
@@ -190,7 +177,7 @@ class LocationRepresentation extends Component {
                 suggestionsList: classes.suggestionsList,
                 suggestion: classes.suggestion,
               } }
-              renderInputComponent={ this.renderInput }
+              renderInputComponent={ this.renderInputComponent }
               suggestions={ this.state.suggestions }
               onSuggestionsFetchRequested={ this.handleSuggestionsFetchRequested }
               onSuggestionsClearRequested={ this.handleSuggestionsClearRequested }
@@ -208,7 +195,7 @@ class LocationRepresentation extends Component {
           <div style={ { height: '300px', zIndex: 0 } }>
             <GoogleMap
               locations={ locations }
-              mapCenter={ mapCenter }
+              mapCenter={ cleanup.location }
             />
           </div>
         </div>

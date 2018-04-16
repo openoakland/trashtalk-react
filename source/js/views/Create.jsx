@@ -18,10 +18,9 @@ import Dialog, {
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
+import Cleanup from 'models/Cleanup';
+import Location from 'models/Location';
 import { routeCodes } from '../constants/routes';
-
-
-import Cleanup from '../models/Cleanup';
 
 const styles = {
   stepStyle: {
@@ -39,11 +38,14 @@ const SUMMARY = 3;
  * This class encompasses all the view logic required to create a new Cleanup
  */
 @connect(
-  () => ({}),
+  (state) => ({
+    backgroundMapLocation: state.app.get('backgroundMapLocation'),
+  }),
   dispatch => bindActionCreators({}, dispatch)
 )
 class Create extends React.Component {
   static propTypes = {
+    backgroundMapLocation: PropTypes.instanceOf(Location),
     fullScreen: PropTypes.bool.isRequired,
     history: PropTypes.object,
   }
@@ -52,7 +54,7 @@ class Create extends React.Component {
     super(props);
     this.state = {
       activeStep: 0,
-      cleanup: new Cleanup(),
+      cleanup: new Cleanup({ location: props.backgroundMapLocation }),
       toolSelections: Map(),
       open: true,
     };
