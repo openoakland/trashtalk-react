@@ -22,7 +22,7 @@
 
 ## What is this?
 
-This is a SPA implementation of the [Trashtalk](http://trashtalk-oakland.org/) application
+This is a SPA implementation of the [Trashtalk](http://trashtalk-oakland.org/) application. It relies on API support from the [Django Trashtalk API](https://github.com/openoakland/TrashTalk). Please refer to the CONTRIBUTE.md document in this repository for details on setup instructions.
 
 ## Features
 
