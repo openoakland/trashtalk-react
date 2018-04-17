@@ -92,7 +92,9 @@ class ToolsRepresentation extends Component {
    * by breaking it into its own component, but we can worry about that later as necessary.
    */
   getToolDetails = toolId => {
-    const { classes, tools, toolSelections } = this.props;
+    const {
+      classes, setToolSelection, tools, toolSelections,
+    } = this.props;
     const currentTool = tools[toolId];
     const quantity = toolSelections.get(toolId, 0);
 
@@ -129,6 +131,7 @@ class ToolsRepresentation extends Component {
                 aria-label='Add'
                 className={ classes.button }
                 color='primary'
+                disabled={ setToolSelection == null }
                 data-tool-id={ toolId }
                 data-quantity={ quantity }
                 onClick={ this.handleIncrement }
@@ -143,7 +146,7 @@ class ToolsRepresentation extends Component {
                 color='secondary'
                 data-quantity={ quantity }
                 data-tool-id={ toolId }
-                disabled={ quantity === 0 }
+                disabled={ quantity === 0 || setToolSelection == null }
                 mini
                 onClick={ this.handleDecrement }
                 variant='fab'
@@ -214,7 +217,11 @@ class ToolsRepresentation extends Component {
   }
 
   render() {
-    const { categoryToToolMap } = this.props;
+    const { categoryToToolMap, toolSelections } = this.props;
+
+    if (toolSelections == null) {
+      return null;
+    }
 
     return (
       <div>

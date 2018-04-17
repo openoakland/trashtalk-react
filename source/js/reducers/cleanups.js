@@ -12,7 +12,7 @@ import Location from 'models/Location';
 const initialState = Map({
   loading: false,
   error: null,
-  cleanups: [],
+  cleanups: {},
   currentCleanup: null,
 });
 
@@ -31,11 +31,15 @@ const actionsMap = {
     }));
   },
   [GET_CLEANUPS_SUCCESS]: (state, action) => {
-    const parsedCleanups = action.data.map(
-      rawCleanupObject => new Cleanup({
-        ...rawCleanupObject,
-        ...{ location: new Location(rawCleanupObject.location) },
-      })
+    const parsedCleanups = action.data.reduce(
+      (prev, rawCleanupObject) => {
+        prev[rawCleanupObject.id] = new Cleanup({
+          ...rawCleanupObject,
+          ...{ location: new Location(rawCleanupObject.location) },
+        });
+        return prev;
+      },
+      {}
     );
 
     return state.merge(Map({

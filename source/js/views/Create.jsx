@@ -18,6 +18,7 @@ import Dialog, {
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
+import CleanupSummary, { LOCATION_SELECTION, DATE_SELECTION, TOOL_SELECTION } from 'components/cleanup/CleanupSummary';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
 import { routeCodes } from '../constants/routes';
@@ -29,10 +30,7 @@ const styles = {
   },
 };
 
-const LOCATION_SELECTION = 0;
-const DATE_SELECTION = 1;
-const TOOL_SELECTION = 2;
-const SUMMARY = 3;
+export const SUMMARY = 3;
 
 /**
  * This class encompasses all the view logic required to create a new Cleanup
@@ -54,13 +52,15 @@ class Create extends React.Component {
     super(props);
     this.state = {
       activeStep: 0,
-      cleanup: new Cleanup({ location: props.backgroundMapLocation }),
+      cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
       toolSelections: Map(),
       open: true,
     };
   }
 
-  setCleanup = cleanup => this.setState({ cleanup })
+  setCleanup = cleanup => {
+    this.setState({ cleanup });
+  }
 
   setToolSelection = (toolId, quantity) => {
     let toolSelections = this.state.toolSelections;
@@ -121,7 +121,7 @@ class Create extends React.Component {
 
     const stepMapping = {
       [LOCATION_SELECTION]: {
-        disabled: cleanup.location == null,
+        disabled: cleanup.location.query == null,
       },
       [DATE_SELECTION]: {
         disabled: !cleanup.timesAreValid(),
@@ -155,7 +155,14 @@ class Create extends React.Component {
       [TOOL_SELECTION]: (
         <ToolsRepresentation setToolSelection={ this.setToolSelection } toolSelections={ toolSelections } />
       ),
-      [SUMMARY]: 'Step 4: Summary',
+      [SUMMARY]: (
+        <CleanupSummary
+          cleanup={ cleanup }
+          setCleanup={ this.setCleanup }
+          toolSelections={ toolSelections }
+        />
+      ),
+
     };
 
     return stepMapping[activeStep];

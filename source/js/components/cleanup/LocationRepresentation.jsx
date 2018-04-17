@@ -48,7 +48,7 @@ class LocationRepresentation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.cleanup.location ? props.cleanup.location.name : '',
+      value: props.cleanup.location ? props.cleanup.location.query : '',
       suggestions: [],
     };
   }
@@ -57,16 +57,14 @@ class LocationRepresentation extends Component {
     // Before we return the suggestion value, save the selected location
     // to the cleanup object
     const { cleanup, backgroundMapReference } = this.props;
-    const { name, vicinity, geometry } = suggestion.details;
+    const { geometry } = suggestion.details;
     const newLocation = new Location({
       latitude: geometry.location.lat(),
       longitude: geometry.location.lng(),
-      name: `${ name }, ${ vicinity }`,
+      query: suggestion.label,
     });
 
-    this.props.setCleanup(
-      cleanup.set('location', newLocation)
-    );
+    this.props.setCleanup(cleanup.set('location', newLocation));
 
     // Also set the background map to the same location
     backgroundMapReference.setCenter(newLocation.getLatLngObj());
@@ -78,7 +76,6 @@ class LocationRepresentation extends Component {
     const {
       cleanup,
       backgroundMapReference,
-      setCleanup,
     } = this.props;
 
     const service = new window.google.maps.places.PlacesService(backgroundMapReference);
@@ -103,20 +100,33 @@ class LocationRepresentation extends Component {
       }
     });
 
-    setCleanup(cleanup.set('location', null));
+    // setCleanup(cleanup.set('location', null));
   };
 
   handleSuggestionsClearRequested = () => this.setState({ suggestions: [] })
-  handleChange = (event, { newValue }) => this.setState({ value: newValue })
+  handleChange = (event, { newValue }) => {
+    this.setState({ value: newValue });
+
+    // If the text has been cleared, clear out any previous location value
+    if (newValue === '') {
+      const { cleanup } = this.props;
+
+      this.props.setCleanup(
+        cleanup.set('location', cleanup.location.set('query', null))
+      );
+    }
+  }
 
   renderInputComponent = (inputProps) => {
     const { classes, ref, ...other } = inputProps;
+    const { setCleanup } = this.props;
 
     return (
       <TextField
         fullWidth
         InputProps={
           {
+            disabled: setCleanup == null,
             inputRef: ref,
             classes: {
               input: classes.input,
@@ -133,7 +143,11 @@ class LocationRepresentation extends Component {
     const parts = parse(suggestion.label, matches);
 
     return (
-      <MenuItem selected={ isHighlighted } component='div'>
+      <MenuItem
+        selected={ isHighlighted }
+        component='div'
+        data-query={ suggestion.label }
+      >
         <div>
           {parts.map((part, index) => {
             return part.highlight ? (
@@ -163,10 +177,6 @@ class LocationRepresentation extends Component {
 
   render() {
     const { classes, cleanup } = this.props;
-    let locations;
-    if (cleanup.location != null) {
-      locations = [cleanup.location];
-    }
 
     return (
       <CardContent>
@@ -187,14 +197,14 @@ class LocationRepresentation extends Component {
               inputProps={ {
                 classes,
                 placeholder: 'Enter a location',
-                value: this.state.value,
+                value: this.state.value || '',
                 onChange: this.handleChange,
                } }
             />
           </div>
           <div style={ { height: '300px', zIndex: 0 } }>
             <GoogleMap
-              locations={ locations }
+              locations={ [cleanup.location] }
               mapCenter={ cleanup.location }
             />
           </div>

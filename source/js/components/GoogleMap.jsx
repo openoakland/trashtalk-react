@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { CLEANUP_ROOT } from 'constants/routes';
 
 import Location from 'models/Location';
 
@@ -16,8 +18,10 @@ const styles = {
 
 const DEFAULT_ZOOM = 17;
 
-export default class GoogleMap extends Component {
+class GoogleMap extends Component {
   static propTypes = {
+    cleanups: PropTypes.array,
+    history: PropTypes.object,
     locations: PropTypes.array,
     mapCenter: PropTypes.object,
     setMapReference: PropTypes.func,
@@ -42,22 +46,22 @@ export default class GoogleMap extends Component {
    */
   componentDidMount() {
     const { id } = this.state;
-    const {
-      locations, mapCenter, setMapReference, zoom,
-    } = this.props;
+    const { setMapReference, zoom } = this.props;
 
     // Initialize Google Map object using mapCenter inside mapContainer
     // https://developers.google.com/maps/documentation/javascript/adding-a-google-map
-
+    const mapCenter = this.props.mapCenter || new Location();
     const mapReference = new window.google.maps.Map(document.getElementById(id), {
-      center: { lat: mapCenter.latitude, lng: mapCenter.longitude },
+      center: mapCenter.getLatLngObj(),
       zoom,
     });
 
     this.setState( // eslint-disable-line react/no-did-mount-set-state
       { mapReference },
       () => {
-        this.markLocations(locations); // After we set the map reference, mark locations
+        this.clearMarkers();
+        this.markLocations(this.props); // After we set the map reference, mark locations
+        this.markCleaups(this.props);
 
         if (setMapReference) {
           setMapReference(mapReference);
@@ -77,7 +81,34 @@ export default class GoogleMap extends Component {
     }
 
     // If the array of locations have changed, markLocations again
-    this.markLocations(nextProps.locations);
+    this.clearMarkers();
+    this.markLocations(nextProps); // After we set the map reference, mark locations
+    this.markCleaups(nextProps);
+  }
+
+  clearMarkers = () => {
+    this.state.markers.forEach(marker => marker.setMap(null));
+  }
+
+  markCleaups = (props) => {
+    const { cleanups } = props;
+    const { mapReference } = this.state;
+
+    if (mapReference != null && cleanups != null) {
+      const markers = [];
+      cleanups.forEach(cleanup => {
+        const marker = new window.google.maps.Marker({
+          position: cleanup.location.getLatLngObj(),
+          map: mapReference,
+        });
+        marker.addListener('click', () => {
+          this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`);
+        });
+        markers.push(marker);
+      });
+
+      this.setState({ markers });
+    }
   }
 
   /**
@@ -85,11 +116,9 @@ export default class GoogleMap extends Component {
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  markLocations = (locations) => {
+  markLocations = props => {
     const { mapReference } = this.state;
-
-    // Clear out any existing markers
-    this.state.markers.forEach(marker => marker.setMap(null));
+    const { locations } = props;
 
     if (mapReference != null && locations != null) {
       const markers = [];
@@ -112,4 +141,6 @@ export default class GoogleMap extends Component {
     );
   }
 }
+
+export default withRouter(GoogleMap);
 

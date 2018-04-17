@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import TimePicker from 'material-ui-pickers/TimePicker';
 import DatePicker from 'material-ui-pickers/DatePicker';
+import { CardContent } from 'material-ui/Card';
 
 import Cleanup from 'models/Cleanup';
 
@@ -16,6 +17,8 @@ const styles = {
     height: '4rem',
   },
 };
+
+const ONE_HOUR = 3600000;
 
 /**
  * Component for showing/selecting dates for a cleanup
@@ -37,29 +40,21 @@ export default class DateRepresentation extends Component {
   }
 
   handleDateChange = (date) => {
-    const { cleanup, setCleanup } = this.props;
-    this.setState({ endTime: date, startTime: date });
-
-    setCleanup(cleanup
-      .set('startTime', date)
-      .set('endTime', date));
+    const eightAm = new Date(date.getTime() + (8 * ONE_HOUR));
+    this.handleStartChange(eightAm);
   }
 
-  handleStartChange = (date) => {
+  handleStartChange = (startTime) => {
     const { cleanup, setCleanup } = this.props;
-    let { endTime } = this.state;
-
-    if (endTime < date) {
-      endTime = date;
-    }
+    const endTime = new Date(startTime.getTime() + ONE_HOUR + 1);
 
     this.setState({
       endTime,
-      startTime: date,
+      startTime,
     });
 
     setCleanup(cleanup
-      .set('startTime', date)
+      .set('startTime', startTime)
       .set('endTime', endTime)
     );
   }
@@ -71,26 +66,28 @@ export default class DateRepresentation extends Component {
   }
 
   render() {
-    const { endTime, startTime } = this.state;
+    const { endTime, setCleanup, startTime } = this.state;
+    const minEndDate = startTime == null ? null : new Date(startTime.getTime() + ONE_HOUR);
+
     return (
       <MuiPickersUtilsProvider utils={ DateFnsUtils }>
-        <div>
-          This cleanup will take place on
+        <CardContent>
+          It takes place on
           <span style={ styles.pickers }>
             <DatePicker
               autoOk={ true }
               disablePast={ true }
+              disabled={ setCleanup == null }
               minDateMessage='Choose a day after today'
               value={ startTime }
               onChange={ this.handleDateChange }
-            />.
+            />
           </span>
-          <br />
-          It starts at
+          at
           <span style={ styles.pickers }>
             <TimePicker
               autoOk={ true }
-              disabled={ startTime == null }
+              disabled={ setCleanup == null || startTime == null  }
               value={ startTime }
               onChange={ this.handleStartChange }
             />
@@ -98,14 +95,14 @@ export default class DateRepresentation extends Component {
           <span style={ styles.pickers }>
             <TimePicker
               autoOk={ true }
-              disabled={ startTime == null }
-              minDate={ startTime }
-              minDateMessage='End time must be after start time'
+              disabled={ setCleanup == null || startTime == null  }
+              minDate={ minEndDate }
+              minDateMessage='End time must be at least an hour after the start time'
               value={ endTime }
               onChange={ this.handleEndChange }
             />
           </span>
-        </div>
+        </CardContent>
       </MuiPickersUtilsProvider>
     );
   }

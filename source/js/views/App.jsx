@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
-import { routeCodes } from 'constants/routes';
+import { CLEANUP_ROOT, routeCodes } from 'constants/routes';
 import themes from 'config/themes';
 
 import Menu from 'components/global/Menu';
 import Create from 'views/Create';
+import CleanupView from 'views/CleanupView';
 import NotFound from 'views/NotFound';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
@@ -20,6 +21,7 @@ class App extends Component {
         <div style={ { zIndex: -1 } }> <Menu /> </div>
         <div style={ { zIndex: 1 } }>
           <Switch>
+            <Route path={ `${ CLEANUP_ROOT }:cleanupId` } component={ CleanupView } />
             <Route exact path={ routeCodes.NEW_CLEANUP } component={ Create } />
             <Route path={ routeCodes.HOME } />
             <Route path='*' component={ NotFound } />

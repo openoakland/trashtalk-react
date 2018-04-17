@@ -38,7 +38,7 @@ export default class MapBackground extends Component {
   static propTypes = {
     backgroundMapLocation: PropTypes.object,
     backgroundMapReference: PropTypes.object,
-    cleanups: PropTypes.array,
+    cleanups: PropTypes.object,
     getCleanups: PropTypes.func,
     mapCenter: PropTypes.object,
     setBackgroundMapReference: PropTypes.func,
@@ -80,14 +80,13 @@ export default class MapBackground extends Component {
 
   render() {
     const { cleanups, mapCenter } = this.props;
-    const cleanupLocations = cleanups.map(cleanup => cleanup.location);
     return (
       <div
         onMouseEnter={ this.getUserLocation }
         style={ styles.container }
       >
         <GoogleMap
-          locations={ cleanupLocations }
+          cleanups={ Object.values(cleanups) }
           mapCenter={ mapCenter }
           setMapReference={ this.props.setBackgroundMapReference }
         />

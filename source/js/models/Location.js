@@ -9,7 +9,7 @@ export default class Location extends Record({
   id: undefined,
   latitude: 0.0,
   longitude: 0.0,
-  name: '',
+  query: null,
 }) {
   constructor(args) {
     // Initialize using args or default to MIDDLE_OF_OAKLAND
