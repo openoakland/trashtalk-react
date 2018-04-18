@@ -31,11 +31,11 @@ export default class DateRepresentation extends Component {
 
   constructor(props) {
     super(props);
-    const { startTime, endTime } = props.cleanup;
+    const { start, end } = props.cleanup;
 
     this.state = {
-      endTime,
-      startTime,
+      end,
+      start,
     };
   }
 
@@ -44,30 +44,31 @@ export default class DateRepresentation extends Component {
     this.handleStartChange(eightAm);
   }
 
-  handleStartChange = (startTime) => {
+  handleStartChange = (start) => {
     const { cleanup, setCleanup } = this.props;
-    const endTime = new Date(startTime.getTime() + ONE_HOUR + 1);
+    const end = new Date(start.getTime() + ONE_HOUR + 1);
 
     this.setState({
-      endTime,
-      startTime,
+      end,
+      start,
     });
 
     setCleanup(cleanup
-      .set('startTime', startTime)
-      .set('endTime', endTime)
+      .set('start', start)
+      .set('end', end)
     );
   }
 
   handleEndChange = (date) => {
     const { cleanup, setCleanup } = this.props;
-    this.setState({ endTime: date });
-    setCleanup(cleanup.set('endTime', date));
+    this.setState({ end: date });
+    setCleanup(cleanup.set('end', date));
   }
 
   render() {
-    const { endTime, setCleanup, startTime } = this.state;
-    const minEndDate = startTime == null ? null : new Date(startTime.getTime() + ONE_HOUR);
+    const { end, start } = this.state;
+    const { setCleanup } = this.props;
+    const minEndDate = start == null ? null : new Date(start.getTime() + ONE_HOUR);
 
     return (
       <MuiPickersUtilsProvider utils={ DateFnsUtils }>
@@ -79,7 +80,7 @@ export default class DateRepresentation extends Component {
               disablePast={ true }
               disabled={ setCleanup == null }
               minDateMessage='Choose a day after today'
-              value={ startTime }
+              value={ start }
               onChange={ this.handleDateChange }
             />
           </span>
@@ -87,18 +88,18 @@ export default class DateRepresentation extends Component {
           <span style={ styles.pickers }>
             <TimePicker
               autoOk={ true }
-              disabled={ setCleanup == null || startTime == null  }
-              value={ startTime }
+              disabled={ setCleanup == null }
+              value={ start }
               onChange={ this.handleStartChange }
             />
           </span> and ends at
           <span style={ styles.pickers }>
             <TimePicker
               autoOk={ true }
-              disabled={ setCleanup == null || startTime == null  }
+              disabled={ setCleanup == null || start == null }
               minDate={ minEndDate }
               minDateMessage='End time must be at least an hour after the start time'
-              value={ endTime }
+              value={ end }
               onChange={ this.handleEndChange }
             />
           </span>

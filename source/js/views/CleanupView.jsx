@@ -21,10 +21,8 @@ const styles = {
   },
 };
 
-export const SUMMARY = 3;
-
 /**
- * This class encompasses all the view logic required to create a new Cleanup
+ * This component is used to display the details of a cleanup
  */
 @connect(
   (state, props) => {

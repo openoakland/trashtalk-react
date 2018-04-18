@@ -21,8 +21,8 @@ class App extends Component {
         <div style={ { zIndex: -1 } }> <Menu /> </div>
         <div style={ { zIndex: 1 } }>
           <Switch>
-            <Route path={ `${ CLEANUP_ROOT }:cleanupId` } component={ CleanupView } />
             <Route exact path={ routeCodes.NEW_CLEANUP } component={ Create } />
+            <Route path={ `${ CLEANUP_ROOT }:cleanupId` } component={ CleanupView } />
             <Route path={ routeCodes.HOME } />
             <Route path='*' component={ NotFound } />
           </Switch>
