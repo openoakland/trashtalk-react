@@ -22,14 +22,12 @@ class GoogleMap extends Component {
   static propTypes = {
     cleanups: PropTypes.array,
     history: PropTypes.object,
-    locations: PropTypes.array,
     mapCenter: PropTypes.object,
     setMapReference: PropTypes.func,
     zoom: PropTypes.number,
   }
 
   static defaultProps = {
-    locations: [],
     mapCenter: new Location(),
     zoom: DEFAULT_ZOOM,
   }
@@ -60,7 +58,6 @@ class GoogleMap extends Component {
       { mapReference },
       () => {
         this.clearMarkers();
-        this.markLocations(this.props); // After we set the map reference, mark locations
         this.markCleaups(this.props);
 
         if (setMapReference) {
@@ -82,14 +79,17 @@ class GoogleMap extends Component {
 
     // If the array of locations have changed, markLocations again
     this.clearMarkers();
-    this.markLocations(nextProps); // After we set the map reference, mark locations
     this.markCleaups(nextProps);
   }
 
   clearMarkers = () => {
     this.state.markers.forEach(marker => marker.setMap(null));
   }
-
+  /**
+   * Given an array of cleanups, mark them on the rendered map
+   * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
+   * https://developers.google.com/maps/documentation/javascript/markers
+   */
   markCleaups = (props) => {
     const { cleanups } = props;
     const { mapReference } = this.state;
@@ -103,29 +103,6 @@ class GoogleMap extends Component {
         });
         marker.addListener('click', () => {
           this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`);
-        });
-        markers.push(marker);
-      });
-
-      this.setState({ markers });
-    }
-  }
-
-  /**
-   * Given an array of locations, mark them on the rendered map
-   * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
-   * https://developers.google.com/maps/documentation/javascript/markers
-   */
-  markLocations = props => {
-    const { mapReference } = this.state;
-    const { locations } = props;
-
-    if (mapReference != null && locations != null) {
-      const markers = [];
-      locations.forEach(location => {
-        const marker = new window.google.maps.Marker({
-          position: { lat: location.latitude, lng: location.longitude },
-          map: mapReference,
         });
         markers.push(marker);
       });

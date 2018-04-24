@@ -8,20 +8,18 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import { Map } from 'immutable';
 
-import Dialog, {
+import {
   DialogActions,
-  DialogContent,
   DialogContentText,
-  DialogTitle,
   withMobileDialog,
 } from 'material-ui/Dialog';
+import DialogContainer from 'components/global/DialogContainer';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
 import CleanupSummary, { LOCATION_SELECTION, DATE_SELECTION, TOOL_SELECTION } from 'components/cleanup/CleanupSummary';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
-import { routeCodes } from '../constants/routes';
 
 const styles = {
   stepStyle: {
@@ -44,8 +42,6 @@ export const SUMMARY = 3;
 class Create extends React.Component {
   static propTypes = {
     backgroundMapLocation: PropTypes.instanceOf(Location),
-    fullScreen: PropTypes.bool.isRequired,
-    history: PropTypes.object,
   }
 
   constructor(props) {
@@ -54,16 +50,14 @@ class Create extends React.Component {
       activeStep: 0,
       cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
       toolSelections: Map(),
-      open: true,
     };
   }
 
-  setCleanup = cleanup => {
-    this.setState({ cleanup });
-  }
+  setCleanup = cleanup => this.setState({ cleanup })
 
   setToolSelection = (toolId, quantity) => {
     let toolSelections = this.state.toolSelections;
+
     if (quantity === 0) {
       // delete toolSelections[toolId];
       toolSelections = toolSelections.delete(toolId);
@@ -74,15 +68,6 @@ class Create extends React.Component {
 
     this.setState({ toolSelections });
   }
-
-  handleClose = () => {
-    // The fadeout transition takes a little while, so pause temporarily to
-    // allow animation to finish before actual browser history push
-    this.setState(
-      { open: false },
-      () => setTimeout(() => this.props.history.push(routeCodes.HOME), 225)
-    );
-  };
 
   handleNext = () => {
     const { activeStep } = this.state;
@@ -169,59 +154,43 @@ class Create extends React.Component {
   }
 
   render() {
-    const { fullScreen } = this.props;
     const { activeStep } = this.state;
 
     return (
-      <Dialog
-        fullScreen={ fullScreen }
-        open={ this.state.open }
-        onClose={ this.handleClose }
-        aria-labelledby='responsive-dialog-title'
-      >
-        <DialogTitle>Organize a New Cleanup</DialogTitle>
-        <DialogContent>
-          {this.renderContentText()}
-          <Stepper
-            activeStep={ activeStep }
-            alternativeLabel
-          >
-            {this.steps.map(label => {
-              return (
-                <Step key={ label }>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
-          {this.state.activeStep === this.steps.length ? (
-            <div>
-              <Typography >
-                All steps completed - you&quot;re finished
-              </Typography>
-              <Button onClick={ this.handleReset }>Reset</Button>
-            </div>
-          ) : (
-            <div style={ styles.stepStyle } >
-              {this.renderStep()}
-              <DialogActions>
-                <Button
-                  disabled={ activeStep === 0 }
-                  onClick={ this.handleBack }
-                >
-                  Back
-                </Button>
-                {this.renderNextButton()}
-              </DialogActions>
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={ this.handleClose } color='primary'>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DialogContainer title='Organize a New Cleanup'>
+        {this.renderContentText()}
+        <Stepper
+          activeStep={ activeStep }
+          alternativeLabel
+        >
+          {this.steps.map(label => (
+            <Step key={ label }>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        {this.state.activeStep === this.steps.length ? (
+          <div>
+            <Typography >
+              All steps completed - you&quot;re finished
+            </Typography>
+            <Button onClick={ this.handleReset }>Reset</Button>
+          </div>
+        ) : (
+          <div style={ styles.stepStyle } >
+            {this.renderStep()}
+            <DialogActions>
+              <Button
+                disabled={ activeStep === 0 }
+                onClick={ this.handleBack }
+              >
+                Back
+              </Button>
+              {this.renderNextButton()}
+            </DialogActions>
+          </div>
+        )}
+      </DialogContainer>
     );
   }
 }
