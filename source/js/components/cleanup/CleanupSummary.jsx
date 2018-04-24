@@ -10,10 +10,12 @@ import { screens } from 'constants/cleanup';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 
 const styles = theme => ({
+  BottomNavigationAction: {
+    color: theme.palette.secondary.light,
+  },
   BottomNavigation: {
-    flexGrow: 1,
     width: '100%',
-    backgroundColor: theme.palette.primary,
+    backgroundColor: theme.palette.secondary.main,
     justifyContent: 'space-around',
   },
 });
@@ -71,23 +73,25 @@ class CleanupSummary extends Component {
         <BottomNavigation
           className={ classes.BottomNavigation }
           value={ value }
-          color='primary'
           onChange={ this.handleChange }
         >
           <BottomNavigationAction
+            className={ classes.BottomNavigationAction }
             label='Where'
             value={ LOCATION_SELECTION }
             icon={ <Icon> place </Icon> }
           />
           <BottomNavigationAction
+            className={ classes.BottomNavigationAction }
             label='When'
             value={ DATE_SELECTION }
             icon={ <Icon> date_range </Icon> }
           />
           <BottomNavigationAction
+            className={ classes.BottomNavigationAction }
             label='Tools'
             value={ TOOL_SELECTION }
-            icon={ <Icon> playlist_add_check </Icon> }
+            icon={ <Icon> list </Icon> }
           />
         </BottomNavigation>
       </div>
