@@ -13,10 +13,11 @@ import DialogContainer from 'components/global/DialogContainer';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
-import CleanupSummary, { LOCATION_SELECTION, DATE_SELECTION, TOOL_SELECTION } from 'components/cleanup/CleanupSummary';
+import CleanupSummary from 'components/cleanup/CleanupSummary';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
 import Divider from 'material-ui/Divider';
+import { screens } from 'constants/cleanup';
 
 const styles = {
   stepStyle: {
@@ -25,7 +26,9 @@ const styles = {
   },
 };
 
-export const SUMMARY = 3;
+const {
+  LOCATION_SELECTION, DATE_SELECTION, SUMMARY, TOOL_SELECTION,
+} = screens;
 
 /**
  * This class encompasses all the view logic required to create a new Cleanup

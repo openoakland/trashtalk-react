@@ -1,28 +1,31 @@
 import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
-import Tabs, { Tab } from 'material-ui/Tabs';
 import Icon from 'material-ui/Icon';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
 import Cleanup from 'models/Cleanup';
-
-export const LOCATION_SELECTION = 0;
-export const DATE_SELECTION = 1;
-export const TOOL_SELECTION = 2;
+import { screens } from 'constants/cleanup';
+import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 
 const styles = theme => ({
-  root: {
+  BottomNavigation: {
     flexGrow: 1,
     width: '100%',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.primary,
+    justifyContent: 'space-around',
   },
 });
+
+const {
+  LOCATION_SELECTION, DATE_SELECTION, SUMMARY, TOOL_SELECTION,
+} = screens;
 
 /**
  * Shows summary for a cleanup
  */
+@withStyles(styles)
 class CleanupSummary extends Component {
   static propTypes = {
     classes: PropTypes.object,
@@ -33,15 +36,15 @@ class CleanupSummary extends Component {
   static defaultProps = {
   }
 
-  state = { tabIndex: 0 }
+  state = { value: LOCATION_SELECTION }
 
-  handleChange = (event, tabIndex) => {
-    this.setState({ tabIndex });
+  handleChange = (event, value) => {
+    this.setState({ value });
   }
 
   renderSummaryItem = () => {
     const { cleanup, toolSelections } = this.props;
-    const { tabIndex } = this.state;
+    const { value } = this.state;
 
     const stepMapping = {
       [LOCATION_SELECTION]: (
@@ -55,29 +58,41 @@ class CleanupSummary extends Component {
       ),
     };
 
-    return stepMapping[tabIndex];
+    return stepMapping[value];
   }
 
   render() {
+    const { value } = this.state;
     const { classes } = this.props;
-    const { tabIndex } = this.state;
 
     return (
       <div>
-        <Tabs
-          fullWidth
-          tabIndex={ tabIndex }
-          onChange={ this.handleChange }
-          centered
-        >
-          <Tab label='Where' icon={ <Icon> place </Icon> } />
-          <Tab label='When' icon={ <Icon> date_range </Icon> } />
-          <Tab label='Tools' icon={ <Icon> playlist_add_check </Icon> } />
-        </Tabs>
         { this.renderSummaryItem() }
+        <BottomNavigation
+          className={ classes.BottomNavigation }
+          value={ value }
+          color='primary'
+          onChange={ this.handleChange }
+        >
+          <BottomNavigationAction
+            label='Where'
+            value={ LOCATION_SELECTION }
+            icon={ <Icon> place </Icon> }
+          />
+          <BottomNavigationAction
+            label='When'
+            value={ DATE_SELECTION }
+            icon={ <Icon> date_range </Icon> }
+          />
+          <BottomNavigationAction
+            label='Tools'
+            value={ TOOL_SELECTION }
+            icon={ <Icon> playlist_add_check </Icon> }
+          />
+        </BottomNavigation>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(CleanupSummary);
+export default CleanupSummary;

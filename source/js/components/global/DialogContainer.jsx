@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import { routeCodes } from 'constants/routes';
-import Snackbar, { SnackbarContent } from 'material-ui/Snackbar';
+import Snackbar from 'material-ui/Snackbar';
 import Fade from 'material-ui/transitions/Fade';
 import { withStyles } from 'material-ui/styles';
 
