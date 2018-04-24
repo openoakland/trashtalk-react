@@ -3,7 +3,6 @@ import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Icon from 'material-ui/Icon';
-import Paper from 'material-ui/Paper';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
@@ -64,18 +63,19 @@ class CleanupSummary extends Component {
     const { tabIndex } = this.state;
 
     return (
-      <Paper className={ classes.root }>
+      <div>
         <Tabs
+          fullWidth
           tabIndex={ tabIndex }
           onChange={ this.handleChange }
-          fullWidth
+          centered
         >
           <Tab label='Where' icon={ <Icon> place </Icon> } />
           <Tab label='When' icon={ <Icon> date_range </Icon> } />
           <Tab label='Tools' icon={ <Icon> playlist_add_check </Icon> } />
         </Tabs>
         { this.renderSummaryItem() }
-      </Paper>
+      </div>
     );
   }
 }

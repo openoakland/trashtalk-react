@@ -5,14 +5,10 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Stepper, { Step, StepLabel } from 'material-ui/Stepper';
 import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
+import { routeCodes } from 'constants/routes';
 import { Map } from 'immutable';
 
-import {
-  DialogActions,
-  DialogContentText,
-  withMobileDialog,
-} from 'material-ui/Dialog';
+import { withMobileDialog } from 'material-ui/Dialog';
 import DialogContainer from 'components/global/DialogContainer';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
@@ -20,6 +16,7 @@ import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
 import CleanupSummary, { LOCATION_SELECTION, DATE_SELECTION, TOOL_SELECTION } from 'components/cleanup/CleanupSummary';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
+import Divider from 'material-ui/Divider';
 
 const styles = {
   stepStyle: {
@@ -42,6 +39,7 @@ export const SUMMARY = 3;
 class Create extends React.Component {
   static propTypes = {
     backgroundMapLocation: PropTypes.instanceOf(Location),
+    history: PropTypes.object,
   }
 
   constructor(props) {
@@ -49,59 +47,12 @@ class Create extends React.Component {
     this.state = {
       activeStep: 0,
       cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
+      reasonToLock: 'You have not finished creating this cleanup',
       toolSelections: Map(),
     };
   }
 
-  setCleanup = cleanup => this.setState({ cleanup })
-
-  setToolSelection = (toolId, quantity) => {
-    let toolSelections = this.state.toolSelections;
-
-    if (quantity === 0) {
-      // delete toolSelections[toolId];
-      toolSelections = toolSelections.delete(toolId);
-    } else {
-      // toolSelections[toolId] = quantity;
-      toolSelections = toolSelections.set(toolId, quantity);
-    }
-
-    this.setState({ toolSelections });
-  }
-
-  handleNext = () => {
-    const { activeStep } = this.state;
-    this.setState({
-      activeStep: activeStep + 1,
-    });
-  };
-
-  handleBack = () => {
-    const { activeStep } = this.state;
-    this.setState({
-      activeStep: activeStep - 1,
-    });
-  };
-
-  steps = ['Location', 'Date and Time', 'Tools', 'Summary']
-
-  renderContentText = () => {
-    const { activeStep } = this.state;
-    const stepMapping = {
-      [LOCATION_SELECTION]: 'Where is this cleanup located?',
-      [DATE_SELECTION]: 'When does it start and end?',
-      [TOOL_SELECTION]: 'What tools are required?',
-      [SUMMARY]: 'Summary',
-    };
-
-    return (
-      <DialogContentText>
-        { stepMapping[activeStep] }
-      </DialogContentText>
-    );
-  }
-
-  renderNextButton = () => {
+  getNextButton = () => {
     const { activeStep, cleanup } = this.state;
 
     const stepMapping = {
@@ -125,6 +76,52 @@ class Create extends React.Component {
         {activeStep === this.steps.length - 1 ? 'Finish' : 'Next'}
       </Button>
     );
+  }
+
+  setCleanup = cleanup => this.setState({ cleanup })
+
+  setToolSelection = (toolId, quantity) => {
+    let toolSelections = this.state.toolSelections;
+
+    if (quantity === 0) {
+      // delete toolSelections[toolId];
+      toolSelections = toolSelections.delete(toolId);
+    } else {
+      // toolSelections[toolId] = quantity;
+      toolSelections = toolSelections.set(toolId, quantity);
+    }
+
+    this.setState({ toolSelections });
+  }
+
+  handleNext = () => {
+    const { activeStep } = this.state;
+
+    if (activeStep === 3) {
+      // If we're done, create new cleanup, add tools, redirect back home
+      this.props.history.replace(routeCodes.HOME);
+    } else {
+      this.setState({ activeStep: activeStep + 1 });
+    }
+  };
+
+  handleBack = () => {
+    const { activeStep } = this.state;
+    this.setState({ activeStep: activeStep - 1 });
+  };
+
+  steps = ['Location', 'Date and Time', 'Tools', 'Summary']
+
+  renderContentText = () => {
+    const { activeStep } = this.state;
+    const stepMapping = {
+      [LOCATION_SELECTION]: 'Where is this cleanup located?',
+      [DATE_SELECTION]: 'When does it start and end?',
+      [TOOL_SELECTION]: 'What tools are required?',
+      [SUMMARY]: 'Summary',
+    };
+
+    return stepMapping[activeStep];
   }
 
   renderStep = () => {
@@ -154,11 +151,24 @@ class Create extends React.Component {
   }
 
   render() {
-    const { activeStep } = this.state;
+    const { activeStep, reasonToLock } = this.state;
+    const actions = [
+      <Button
+        disabled={ activeStep === 0 }
+        onClick={ this.handleBack }
+      >
+        Back
+      </Button>,
+      this.getNextButton(),
+    ];
 
     return (
-      <DialogContainer title='Organize a New Cleanup'>
-        {this.renderContentText()}
+      <DialogContainer
+        actions={ actions }
+        reasonToLock={ reasonToLock }
+        title='Organize a New Cleanup'
+        subtitle={ this.renderContentText() }
+      >
         <Stepper
           activeStep={ activeStep }
           alternativeLabel
@@ -169,27 +179,11 @@ class Create extends React.Component {
             </Step>
           ))}
         </Stepper>
-        {this.state.activeStep === this.steps.length ? (
-          <div>
-            <Typography >
-              All steps completed - you&quot;re finished
-            </Typography>
-            <Button onClick={ this.handleReset }>Reset</Button>
-          </div>
-        ) : (
-          <div style={ styles.stepStyle } >
-            {this.renderStep()}
-            <DialogActions>
-              <Button
-                disabled={ activeStep === 0 }
-                onClick={ this.handleBack }
-              >
-                Back
-              </Button>
-              {this.renderNextButton()}
-            </DialogActions>
-          </div>
-        )}
+        <Divider />
+        <br />
+        <div style={ styles.stepStyle } >
+          {this.renderStep()}
+        </div>
       </DialogContainer>
     );
   }

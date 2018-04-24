@@ -6,13 +6,6 @@ import PropTypes from 'prop-types';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 
-const styles = {
-  stepStyle: {
-    width: '100vw',
-    maxWidth: '100%',
-  },
-};
-
 /**
  * This component is used to display the details of a cleanup
  */
