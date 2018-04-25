@@ -35,9 +35,6 @@ class CleanupSummary extends Component {
     toolSelections: PropTypes.object,
   }
 
-  static defaultProps = {
-  }
-
   state = { value: LOCATION_SELECTION }
 
   handleChange = (event, value) => {

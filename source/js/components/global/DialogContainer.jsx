@@ -36,6 +36,7 @@ class DialogContainer extends React.Component {
     reasonToLock: PropTypes.string,
     subtitle: PropTypes.string,
     title: PropTypes.string,
+    triggerClose: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -47,10 +48,15 @@ class DialogContainer extends React.Component {
     showSnackbar: false,
   }
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.reasonToLock !== this.props.reasonToLock) {
       this.setState({ showSnackbar: false });
     }
+
+    if (nextProps.triggerClose) {
+      this.closeDialog();
+    }
+    console.debug(nextProps);
   }
 
   handleCloseRequest = () => {
@@ -78,7 +84,7 @@ class DialogContainer extends React.Component {
 
   render() {
     const {
-      actions, children, classes,
+      actions, children,
       reasonToLock, subtitle, title,
     } = this.props;
     const { showSnackbar } = this.state;

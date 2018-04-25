@@ -1,11 +1,9 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Stepper, { Step, StepLabel } from 'material-ui/Stepper';
 import Button from 'material-ui/Button';
-import { routeCodes } from 'constants/routes';
 import { Map } from 'immutable';
 
 import { withMobileDialog } from 'material-ui/Dialog';
@@ -42,7 +40,6 @@ const {
 class Create extends React.Component {
   static propTypes = {
     backgroundMapLocation: PropTypes.instanceOf(Location),
-    history: PropTypes.object,
   }
 
   constructor(props) {
@@ -50,7 +47,7 @@ class Create extends React.Component {
     this.state = {
       activeStep: 0,
       cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
-      reasonToLock: 'You have not finished creating this cleanup',
+      dialogCloseTriggered: false,
       toolSelections: Map(),
     };
   }
@@ -71,7 +68,7 @@ class Create extends React.Component {
 
     return (
       <Button
-        disabled={ stepMapping[activeStep].disabled }
+        disabled={ (stepMapping[activeStep] || {}).disabled }
         color='secondary'
         onClick={ this.handleNext }
         variant='raised'
@@ -100,9 +97,9 @@ class Create extends React.Component {
   handleNext = () => {
     const { activeStep } = this.state;
 
-    if (activeStep === 3) {
+    if (activeStep === this.steps.length - 1) {
       // If we're done, create new cleanup, add tools, redirect back home
-      this.props.history.replace(routeCodes.HOME);
+      this.setState({ dialogCloseTriggered: true });
     } else {
       this.setState({ activeStep: activeStep + 1 });
     }
@@ -154,7 +151,7 @@ class Create extends React.Component {
   }
 
   render() {
-    const { activeStep, reasonToLock } = this.state;
+    const { activeStep, dialogCloseTriggered } = this.state;
     const actions = [
       <Button
         disabled={ activeStep === 0 }
@@ -165,12 +162,16 @@ class Create extends React.Component {
       this.getNextButton(),
     ];
 
+    console.debug('activeStep: ', activeStep);
+    console.debug('dialogCloseTriggered: ', dialogCloseTriggered);
+
     return (
       <DialogContainer
         actions={ actions }
-        reasonToLock={ reasonToLock }
-        title='Organize a New Cleanup'
+        reasonToLock='This cleanup has not been completed.'
         subtitle={ this.renderContentText() }
+        title='Organize a New Cleanup'
+        triggerClose={ dialogCloseTriggered }
       >
         <Stepper
           activeStep={ activeStep }
@@ -192,4 +193,4 @@ class Create extends React.Component {
   }
 }
 
-export default withRouter(withMobileDialog()(Create));
+export default withMobileDialog()(Create);
