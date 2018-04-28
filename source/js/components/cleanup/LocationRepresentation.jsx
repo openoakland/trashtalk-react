@@ -64,7 +64,10 @@ class LocationRepresentation extends Component {
       query: suggestion.label,
     });
 
-    this.props.setCleanup(cleanup.set('location', newLocation));
+    this.props.setCleanup(cleanup
+      .set('title', suggestion.label)
+      .set('location', newLocation)
+    );
 
     // Also set the background map to the same location
     backgroundMapReference.setCenter(newLocation.getLatLngObj());

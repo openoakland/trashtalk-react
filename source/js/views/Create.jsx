@@ -17,6 +17,8 @@ import Location from 'models/Location';
 import Divider from 'material-ui/Divider';
 import { screens } from 'constants/cleanup';
 
+import { postCleanup } from 'actions/cleanups';
+
 const styles = {
   stepStyle: {
     width: '100vw',
@@ -35,11 +37,14 @@ const {
   (state) => ({
     backgroundMapLocation: state.app.get('backgroundMapLocation'),
   }),
-  dispatch => bindActionCreators({}, dispatch)
+  dispatch => bindActionCreators({
+    postCleanup,
+  }, dispatch)
 )
 class Create extends React.Component {
   static propTypes = {
     backgroundMapLocation: PropTypes.instanceOf(Location),
+    postCleanup: PropTypes.func,
   }
 
   constructor(props) {
@@ -48,7 +53,7 @@ class Create extends React.Component {
       activeStep: 0,
       cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
       dialogCloseTriggered: false,
-      toolSelections: Map(),
+      requiredTools: Map(),
     };
   }
 
@@ -80,35 +85,20 @@ class Create extends React.Component {
 
   setCleanup = cleanup => this.setState({ cleanup })
 
-  setToolSelection = (toolId, quantity) => {
-    let toolSelections = this.state.toolSelections;
-
-    if (quantity === 0) {
-      // delete toolSelections[toolId];
-      toolSelections = toolSelections.delete(toolId);
-    } else {
-      // toolSelections[toolId] = quantity;
-      toolSelections = toolSelections.set(toolId, quantity);
-    }
-
-    this.setState({ toolSelections });
-  }
-
   handleNext = () => {
     const { activeStep } = this.state;
 
     if (activeStep === this.steps.length - 1) {
       // If we're done, create new cleanup, add tools, redirect back home
+      const { cleanup } = this.state;
+      this.props.postCleanup(cleanup.toJSON());
       this.setState({ dialogCloseTriggered: true });
     } else {
       this.setState({ activeStep: activeStep + 1 });
     }
   };
 
-  handleBack = () => {
-    const { activeStep } = this.state;
-    this.setState({ activeStep: activeStep - 1 });
-  };
+  handleBack = () => this.setState({ activeStep: this.state.activeStep - 1 })
 
   steps = ['Location', 'Date and Time', 'Tools', 'Summary']
 
@@ -125,23 +115,18 @@ class Create extends React.Component {
   }
 
   renderStep = () => {
-    const { activeStep, cleanup, toolSelections } = this.state;
+    const { activeStep, cleanup, requiredTools } = this.state;
+    const commonProps = { cleanup, setCleanup: this.setCleanup };
 
     const stepMapping = {
-      [LOCATION_SELECTION]: (
-        <LocationRepresentation cleanup={ cleanup } setCleanup={ this.setCleanup } />
-      ),
-      [DATE_SELECTION]: (
-        <DateRepresentation cleanup={ cleanup } setCleanup={ this.setCleanup } />
-      ),
-      [TOOL_SELECTION]: (
-        <ToolsRepresentation setToolSelection={ this.setToolSelection } toolSelections={ toolSelections } />
-      ),
+      [LOCATION_SELECTION]: <LocationRepresentation { ...commonProps } />,
+      [DATE_SELECTION]: <DateRepresentation { ...commonProps } />,
+      [TOOL_SELECTION]: <ToolsRepresentation { ...commonProps } />,
       [SUMMARY]: (
         <CleanupSummary
           cleanup={ cleanup }
           setCleanup={ this.setCleanup }
-          toolSelections={ toolSelections }
+          requiredTools={ requiredTools }
         />
       ),
 
@@ -161,9 +146,6 @@ class Create extends React.Component {
       </Button>,
       this.getNextButton(),
     ];
-
-    console.debug('activeStep: ', activeStep);
-    console.debug('dialogCloseTriggered: ', dialogCloseTriggered);
 
     return (
       <DialogContainer

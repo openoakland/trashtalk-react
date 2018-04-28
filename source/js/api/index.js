@@ -13,8 +13,13 @@ function getToolCategories() {
   return fetchResource('api/v1/toolcategories/');
 }
 
+function postCleanup(options) {
+  return fetchResource('api/v1/cleanups/', options);
+}
+
 export default {
   getCleanups,
   getTools,
   getToolCategories,
+  postCleanup,
 };

@@ -14,8 +14,8 @@ export default class Location extends Record({
   constructor(args) {
     // Initialize using args or default to MIDDLE_OF_OAKLAND
     const parsedLatLong = args && args.latitude && args.longitude ? {
-      latitude: parseFloat(args.latitude),
-      longitude: parseFloat(args.longitude),
+      latitude: Number(parseFloat(args.latitude).toFixed(6)),
+      longitude: Number(parseFloat(args.longitude).toFixed(6)),
     } : {};
 
     super({

@@ -31,8 +31,7 @@ const {
 class CleanupSummary extends Component {
   static propTypes = {
     classes: PropTypes.object,
-    cleanup: PropTypes.instanceOf(Cleanup),
-    toolSelections: PropTypes.object,
+    cleanup: PropTypes.object,
   }
 
   state = { value: LOCATION_SELECTION }
@@ -42,7 +41,7 @@ class CleanupSummary extends Component {
   }
 
   renderSummaryItem = () => {
-    const { cleanup, toolSelections } = this.props;
+    const { cleanup } = this.props;
     const { value } = this.state;
 
     const stepMapping = {
@@ -53,7 +52,7 @@ class CleanupSummary extends Component {
         <DateRepresentation cleanup={ cleanup } />
       ),
       [TOOL_SELECTION]: (
-        <ToolsRepresentation toolSelections={ toolSelections } />
+        <ToolsRepresentation cleanup={ cleanup } />
       ),
     };
 
@@ -71,6 +70,7 @@ class CleanupSummary extends Component {
           className={ classes.BottomNavigation }
           value={ value }
           onChange={ this.handleChange }
+          showLabels={ true }
         >
           <BottomNavigationAction
             className={ classes.BottomNavigationAction }

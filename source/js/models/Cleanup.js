@@ -1,4 +1,4 @@
-import { Record } from 'immutable';
+import { List, Map, Record } from 'immutable';
 
 import Location from 'models/Location';
 
@@ -9,7 +9,8 @@ export default class Cleanup extends Record({
   organizer: null,
   start: null,
   end: null,
-  toolSelections: [],
+  participants: List(),
+  requiredTools: Map(),
 }) {
   constructor(args) {
     super(Object.assign(
@@ -39,5 +40,24 @@ export default class Cleanup extends Record({
       this.start > Date.now() &&
       this.end > this.start
     );
+  }
+
+  /**
+   * Function to convert a Cleanup object to an API friendly structure.
+   *
+   * Note that we're converting the requiredTools dictionary to a list of {tool: [toolId], quantity: ...}
+   */
+  toJSON() {
+    const cleanup = this.toJS();
+    const requiredTools = [];
+    Object.keys(cleanup.requiredTools).forEach(toolId => {
+      requiredTools.push({
+        tool: toolId,
+        quantity: cleanup.requiredTools[toolId],
+      });
+    });
+
+    cleanup.requiredTools = requiredTools;
+    return cleanup;
   }
 }

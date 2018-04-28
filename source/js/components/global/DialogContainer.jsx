@@ -31,7 +31,6 @@ class DialogContainer extends React.Component {
   static propTypes = {
     actions: PropTypes.arrayOf(PropTypes.element),
     children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-    classes: PropTypes.object,
     history: PropTypes.object,
     reasonToLock: PropTypes.string,
     subtitle: PropTypes.string,
@@ -56,7 +55,6 @@ class DialogContainer extends React.Component {
     if (nextProps.triggerClose) {
       this.closeDialog();
     }
-    console.debug(nextProps);
   }
 
   handleCloseRequest = () => {

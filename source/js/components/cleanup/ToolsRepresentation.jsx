@@ -18,6 +18,8 @@ import List, { ListItem } from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 
+import Cleanup from 'models/Cleanup';
+
 const styles = theme => ({
   toolAvatar: {
     borderRadius: 0,
@@ -72,12 +74,12 @@ class ToolsRepresentation extends Component {
   static propTypes = {
     categoryToToolMap: PropTypes.object,
     classes: PropTypes.object,
+    cleanup: PropTypes.instanceOf(Cleanup),
     getTools: PropTypes.func,
     getToolCategories: PropTypes.func,
-    setToolSelection: PropTypes.func,
+    setCleanup: PropTypes.func,
     tools: PropTypes.object,
     toolCategories: PropTypes.object,
-    toolSelections: PropTypes.object,
   }
 
   constructor(props) {
@@ -93,10 +95,10 @@ class ToolsRepresentation extends Component {
    */
   getToolDetails = toolId => {
     const {
-      classes, setToolSelection, tools, toolSelections,
+      classes, cleanup, setCleanup, tools,
     } = this.props;
     const currentTool = tools[toolId];
-    const quantity = toolSelections.get(toolId, 0);
+    const quantity = cleanup.requiredTools.get(toolId, 0);
 
     return {
       quantity,
@@ -131,10 +133,11 @@ class ToolsRepresentation extends Component {
                 aria-label='Add'
                 className={ classes.button }
                 color='primary'
-                disabled={ setToolSelection == null }
+                disabled={ setCleanup == null }
                 data-tool-id={ toolId }
                 data-quantity={ quantity }
                 onClick={ this.handleIncrement }
+                style={ { opacity: setCleanup ? 1 : 0 } }
                 mini
                 variant='fab'
               >
@@ -146,9 +149,10 @@ class ToolsRepresentation extends Component {
                 color='secondary'
                 data-quantity={ quantity }
                 data-tool-id={ toolId }
-                disabled={ quantity === 0 || setToolSelection == null }
+                disabled={ quantity === 0 }
                 mini
                 onClick={ this.handleDecrement }
+                style={ { opacity: setCleanup ? 1 : 0 } }
                 variant='fab'
               >
                 <Icon>remove</Icon>
@@ -168,16 +172,28 @@ class ToolsRepresentation extends Component {
     };
   }
 
+  setRequiredTool = (toolId, quantity) => {
+    const { cleanup } = this.props;
+    let requiredTools = cleanup.requiredTools;
+
+    if (quantity === 0) {
+      // delete requiredTools[toolId];
+      requiredTools = requiredTools.delete(toolId);
+    } else {
+      // requiredTools[toolId] = quantity;
+      requiredTools = requiredTools.set(toolId, quantity);
+    }
+    this.props.setCleanup(cleanup.set('requiredTools', requiredTools));
+  }
+
   handleDecrement = event => {
-    const { setToolSelection } = this.props;
     const { toolId, quantity } = event.currentTarget.dataset;
-    setToolSelection(Number(toolId), Number(quantity) - 1);
+    this.setRequiredTool(Number(toolId), Number(quantity) - 1);
   }
 
   handleIncrement = event => {
-    const { setToolSelection } = this.props;
     const { toolId, quantity } = event.currentTarget.dataset;
-    setToolSelection(Number(toolId), Number(quantity) + 1);
+    this.setRequiredTool(Number(toolId), Number(quantity) + 1);
   }
 
   renderToolCategory = categoryId => {
@@ -217,9 +233,9 @@ class ToolsRepresentation extends Component {
   }
 
   render() {
-    const { categoryToToolMap, toolSelections } = this.props;
+    const { categoryToToolMap, cleanup } = this.props;
 
-    if (toolSelections == null) {
+    if (cleanup == null) {
       return null;
     }
 

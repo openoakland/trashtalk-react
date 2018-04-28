@@ -4,6 +4,9 @@ import {
   GET_CLEANUPS_START,
   GET_CLEANUPS_ERROR,
   GET_CLEANUPS_SUCCESS,
+  POST_CLEANUPS_START,
+  POST_CLEANUPS_ERROR,
+  POST_CLEANUPS_SUCCESS,
 } from 'actions/cleanups';
 
 import Cleanup from 'models/Cleanup';
@@ -46,6 +49,11 @@ const actionsMap = {
       loading: false,
       cleanups: parsedCleanups,
     }));
+  },
+  [POST_CLEANUPS_SUCCESS]: (state, action) => {
+    const cleanups = state.get('cleanups');
+    cleanups[action.data.id] = new Cleanup(action.data);
+    return state.set('cleanups', cleanups);
   },
 };
 

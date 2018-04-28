@@ -58,7 +58,7 @@ class GoogleMap extends Component {
       { mapReference },
       () => {
         this.clearMarkers();
-        this.markCleaups(this.props);
+        this.markCleanups(this.props);
 
         if (setMapReference) {
           setMapReference(mapReference);
@@ -79,7 +79,7 @@ class GoogleMap extends Component {
 
     // If the array of locations have changed, markLocations again
     this.clearMarkers();
-    this.markCleaups(nextProps);
+    this.markCleanups(nextProps);
   }
 
   clearMarkers = () => {
@@ -90,7 +90,7 @@ class GoogleMap extends Component {
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  markCleaups = (props) => {
+  markCleanups = (props) => {
     const { cleanups } = props;
     const { mapReference } = this.state;
 
