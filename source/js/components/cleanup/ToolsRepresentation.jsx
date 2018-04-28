@@ -98,7 +98,7 @@ class ToolsRepresentation extends Component {
       classes, cleanup, setCleanup, tools,
     } = this.props;
     const currentTool = tools[toolId];
-    const quantity = cleanup.requiredTools.get(toolId, 0);
+    const quantity = cleanup.requiredTools.get(toolId) || 0;
 
     return {
       quantity,

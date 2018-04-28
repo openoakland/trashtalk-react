@@ -50,6 +50,18 @@ const actionsMap = {
       cleanups: parsedCleanups,
     }));
   },
+  [POST_CLEANUPS_START]: (state) => {
+    return state.merge(Map({
+      loading: true,
+      error: null,
+    }));
+  },
+  [POST_CLEANUPS_ERROR]: (state, action) => {
+    return state.merge(Map({
+      loading: false,
+      error: action.error.message,
+    }));
+  },
   [POST_CLEANUPS_SUCCESS]: (state, action) => {
     const cleanups = state.get('cleanups');
     cleanups[action.data.id] = new Cleanup(action.data);

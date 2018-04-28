@@ -2,6 +2,10 @@ import { Map } from 'immutable';
 
 import { SET_BACKGROUND_MAP_LOCATION, SET_BACKGROUND_MAP_REFERENCE, GET_USER_LOCATION_SUCCESS } from 'actions/app';
 
+import { POST_CLEANUPS_SUCCESS } from 'actions/cleanups';
+
+import Location from 'models/Location';
+
 const initialState = Map({
   backgroundMapReference: null,
   backgroundMapLocation: null,
@@ -29,6 +33,10 @@ const actionsMap = {
       'backgroundMapLocation',
       action.userLocation
     );
+  },
+  [POST_CLEANUPS_SUCCESS]: (state, action) => {
+    // After a successful cleanup creation, refocus map to new cleanup
+    return state.set('backgroundMapLocation', new Location(action.data.location));
   },
 };
 

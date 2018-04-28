@@ -207,7 +207,7 @@ class LocationRepresentation extends Component {
           </div>
           <div style={ { height: '300px', zIndex: 0 } }>
             <GoogleMap
-              locations={ [cleanup.location] }
+              cleanups={ [cleanup] }
               mapCenter={ cleanup.location }
             />
           </div>

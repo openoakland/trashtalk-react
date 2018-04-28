@@ -101,9 +101,14 @@ class GoogleMap extends Component {
           position: cleanup.location.getLatLngObj(),
           map: mapReference,
         });
-        marker.addListener('click', () => {
-          this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`);
-        });
+
+        // If the cleanup is an existing cleanup, make it clickable so that
+        // users can navigate to it
+        if (cleanup.has('id')) {
+          marker.addListener('click', () => {
+            this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`);
+          });
+        }
         markers.push(marker);
       });
 
