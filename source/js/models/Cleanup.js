@@ -1,4 +1,4 @@
-import { Map, Record } from 'immutable';
+import Immutable, { Map, Record } from 'immutable';
 
 import Location from 'models/Location';
 
@@ -14,10 +14,10 @@ export default class Cleanup extends Record({
   constructor(args) {
     super(Object.assign(
       {},
+      args,
       {
         location: new Location((args || {}).location),
       },
-      args,
       {
         end: args.end ? new Date(args.end) : null,
         start: args.start ? new Date(args.start) : null,
