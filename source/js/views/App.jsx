@@ -5,6 +5,7 @@ import { CLEANUP_ROOT, routeCodes } from 'constants/routes';
 import themes from 'config/themes';
 
 import Menu from 'components/global/Menu';
+import Notifications from 'components/global/Notifications';
 import Create from 'views/Create';
 import CleanupView from 'views/CleanupView';
 import Login from 'views/Login';
@@ -20,8 +21,8 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={ createMuiTheme(themes.greens2) } >
         <MapBackground />
-        <div style={ { zIndex: -1 } }> <Menu /> </div>
-        <div style={ { zIndex: 1 } }>
+        <div style={ { zIndex: 1 } }> <Menu /> </div>
+        <div style={ { zIndex: 2 } }>
           <Switch>
             <Route exact path={ routeCodes.LOGIN } component={ Login } />
             <Route exact path={ routeCodes.NEW_CLEANUP } component={ Create } />
@@ -31,6 +32,7 @@ class App extends Component {
             <Route path='*' component={ NotFound } />
           </Switch>
         </div>
+        <div style={ { zIndex: 3 } }> <Notifications /> </div>
       </MuiThemeProvider>
     );
   }

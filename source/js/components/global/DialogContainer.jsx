@@ -112,7 +112,7 @@ class DialogContainer extends React.Component {
               <div key={ index }>{ action }</div>) /* eslint-disable-line react/no-array-index-key */
             }
             <Button onClick={ this.handleCloseRequest } color='primary'>
-              Cancel
+              Close
             </Button>
           </DialogActions>
         </Dialog>
