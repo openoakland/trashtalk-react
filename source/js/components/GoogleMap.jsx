@@ -6,6 +6,8 @@ import { Map, Set } from 'immutable';
 
 import Location from 'models/Location';
 
+import { RETRO as THEME } from './GoogleMap/styles';
+
 const styles = {
   container: {
     display: 'flex',
@@ -50,10 +52,18 @@ class GoogleMap extends Component {
     // Initialize Google Map object using mapCenter inside mapContainer
     // https://developers.google.com/maps/documentation/javascript/adding-a-google-map
     const mapCenter = this.props.mapCenter || new Location();
+    const styledMapType = new window.google.maps.StyledMapType(THEME.styles, THEME.name);
     const mapReference = new window.google.maps.Map(document.getElementById(id), {
       center: mapCenter.getLatLngObj(),
       zoom,
+      mapTypeControlOptions: {
+        mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'styled_map'],
+      },
     });
+
+    // Associate the styled map with the MapTypeId and set it to display.
+    mapReference.mapTypes.set('styled_map', styledMapType);
+    mapReference.setMapTypeId('styled_map');
 
     // eslint-disable-next-line react/no-did-mount-set-state
     this.setState({ mapReference }, () => {
@@ -79,7 +89,7 @@ class GoogleMap extends Component {
 
   componentWillUnmount() {
     const { cleanupMarkers } = this.state;
-    cleanupMarkers.forEach((marker) => {
+    cleanupMarkers.forEach(marker => {
       marker.setMap(null);
     });
   }
