@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -48,7 +47,7 @@ class LocationRepresentation extends Component {
     cleanup: PropTypes.instanceOf(Cleanup),
     backgroundMapReference: PropTypes.object,
     setCleanup: PropTypes.func,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -58,35 +57,29 @@ class LocationRepresentation extends Component {
     };
   }
 
-  getSuggestionValue = (suggestion) => {
-    // Before we return the suggestion value, save the selected location
-    // to the cleanup object
+  getSuggestionValue = suggestion => {
+    this.setCleanupToSuggestion(suggestion);
+    return suggestion.label;
+  };
+
+  setCleanupToSuggestion = suggestion => {
     const { cleanup, backgroundMapReference } = this.props;
     const { geometry } = suggestion.details;
     const newLocation = new Location({
       latitude: geometry.location.lat(),
       longitude: geometry.location.lng(),
-      image: suggestion.details.photos ?
-        suggestion.details.photos[0].getUrl(MAX_PHOTO_DIMENSIONS) : null,
+      image: suggestion.details.photos ? suggestion.details.photos[0].getUrl(MAX_PHOTO_DIMENSIONS) : null,
       query: suggestion.label,
     });
 
-    this.props.setCleanup(cleanup
-      .set('title', suggestion.label)
-      .set('location', newLocation)
-    );
+    this.props.setCleanup(cleanup.set('title', suggestion.label).set('location', newLocation));
 
     // Also set the background map to the same location
     backgroundMapReference.setCenter(newLocation.getLatLngObj());
-
-    return suggestion.label;
-  }
+  };
 
   handleSuggestionsFetchRequested = ({ value }) => {
-    const {
-      cleanup,
-      backgroundMapReference,
-    } = this.props;
+    const { cleanup, backgroundMapReference } = this.props;
 
     const service = new window.google.maps.places.PlacesService(backgroundMapReference);
     // https://developers.google.com/maps/documentation/javascript/places#place_searches
@@ -111,7 +104,8 @@ class LocationRepresentation extends Component {
     });
   };
 
-  handleSuggestionsClearRequested = () => this.setState({ suggestions: [] })
+  handleSuggestionsClearRequested = () => this.setState({ suggestions: [] });
+
   handleChange = (event, { newValue }) => {
     this.setState({ value: newValue });
 
@@ -119,32 +113,41 @@ class LocationRepresentation extends Component {
     if (newValue === '') {
       const { cleanup } = this.props;
 
-      this.props.setCleanup(
-        cleanup.set('location', cleanup.location.set('query', null))
-      );
+      this.props.setCleanup(cleanup.set('location', cleanup.location.set('query', null)));
     }
-  }
+  };
 
-  renderInputComponent = (inputProps) => {
+  handleEnterKeyPress = event => {
+    const { suggestions } = this.state;
+    // If the enter key is pressed, default to first suggestion if one exists
+    if (event.key === 'Enter' && suggestions.length > 0) {
+      this.setState({
+        value: this.state.suggestions[0].label,
+      });
+
+      this.setCleanupToSuggestion(suggestions[0]);
+    }
+  };
+
+  renderInputComponent = inputProps => {
     const { classes, ref, ...other } = inputProps;
     const { setCleanup } = this.props;
 
     return (
       <TextField
         fullWidth
-        InputProps={
-          {
-            disabled: setCleanup == null,
-            inputRef: ref,
-            classes: {
-              input: classes.input,
-            },
-            ...other,
-          }
-        }
+        onKeyPress={ this.handleEnterKeyPress }
+        InputProps={ {
+          disabled: setCleanup == null,
+          inputRef: ref,
+          classes: {
+            input: classes.input,
+          },
+          ...other,
+        } }
       />
     );
-  }
+  };
 
   renderSuggestion = (suggestion, { query, isHighlighted }) => {
     const matches = match(suggestion.label, query);
@@ -159,11 +162,17 @@ class LocationRepresentation extends Component {
         <div>
           {parts.map((part, index) => {
             return part.highlight ? (
-              <span key={ String(index) } style={ { fontWeight: 300 } }>
+              <span
+                key={ String(index) }
+                style={ { fontWeight: 300 } }
+              >
                 {part.text}
               </span>
             ) : (
-              <strong key={ String(index) } style={ { fontWeight: 500 } } >
+              <strong
+                key={ String(index) }
+                style={ { fontWeight: 500 } }
+              >
                 {part.text}
               </strong>
             );
@@ -171,17 +180,20 @@ class LocationRepresentation extends Component {
         </div>
       </MenuItem>
     );
-  }
+  };
 
-  renderSuggestionsContainer = (options) => {
+  renderSuggestionsContainer = options => {
     const { containerProps, children } = options;
 
     return (
-      <Paper { ...containerProps } square>
+      <Paper
+        { ...containerProps }
+        square
+      >
         {children}
       </Paper>
     );
-  }
+  };
 
   render() {
     const { classes, cleanup } = this.props;
@@ -189,7 +201,7 @@ class LocationRepresentation extends Component {
     return (
       <CardContent>
         <div style={ { display: 'flex', flexDirection: 'column' } }>
-          <div style={ { height: '50px', zIndex: 1 } } >
+          <div style={ { height: '50px', zIndex: 1 } }>
             <Autosuggest
               theme={ {
                 suggestionsList: classes.suggestionsList,
@@ -207,7 +219,7 @@ class LocationRepresentation extends Component {
                 placeholder: 'Enter a location',
                 value: this.state.value || '',
                 onChange: this.handleChange,
-               } }
+              } }
             />
           </div>
           <div style={ { height: '300px', zIndex: 0 } }>
