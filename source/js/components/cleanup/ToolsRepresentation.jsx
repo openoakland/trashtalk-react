@@ -197,7 +197,7 @@ class ToolsRepresentation extends Component {
   }
 
   renderToolCategory = categoryId => {
-    const { classes, categoryToToolMap, toolCategories } = this.props;
+    const { classes, categoryToToolMap, setCleanup, toolCategories } = this.props;
     const currentCategory = toolCategories[categoryId] || {};
     const categoryTools = categoryToToolMap[categoryId];
     const toolSummaries = [];

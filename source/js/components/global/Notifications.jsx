@@ -63,7 +63,7 @@ export default class CleanupView extends React.Component {
     };
   }
 
-  handleButtonClick = () => {
+  handleCloseClick = () => {
     this.setState({
       open: false,
     });
@@ -81,6 +81,7 @@ export default class CleanupView extends React.Component {
         } }
         open={ open }
         aria-labelledby='responsive-dialog-title'
+        onBackdropClick={ this.handleCloseClick }
       >
         <Card raised={true} className={ classes.card }>
           <CardHeader
@@ -101,14 +102,14 @@ export default class CleanupView extends React.Component {
               {notice.description}
             </Typography>
           </CardContent>
-          <CardActions className={classes.actions} disableActionSpacing>
+          <CardActions className={ classes.actions } disableActionSpacing>
             <Button
               size='large'
               color='primary'
-              onClick={ this.handleButtonClick }
               variant='raised'
+              onClick={ this.handleCloseClick }
             >
-              Close
+              Okay!
             </Button>
           </CardActions>
         </Card>

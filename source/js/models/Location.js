@@ -6,7 +6,8 @@ export const MIDDLE_OF_OAKLAND = {
 };
 
 export default class Location extends Record({
-  id: undefined,
+  id: null,
+  image: null,
   latitude: 0.0,
   longitude: 0.0,
   query: null,

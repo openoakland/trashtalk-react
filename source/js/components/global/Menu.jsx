@@ -15,7 +15,18 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
-  Toolbar: {
+  drawerPaper: {
+    minWidth: '320px',
+  },
+  list: {
+    width: '100%',
+  },
+  searchTextField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: '100%',
+  },
+  toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
   },
@@ -28,6 +39,8 @@ class Menu extends Component {
     history: PropTypes.object,
   }
 
+  state = { drawerOpen: true }
+
   handleCreateClick = () => {
     this.props.history.push(routeCodes.NEW_CLEANUP);
   }
@@ -36,31 +49,44 @@ class Menu extends Component {
     this.props.history.push(routeCodes.LOGIN);
   }
 
+  handleDrawerToggle = () => this.setState({ drawerOpen: !this.state.drawerOpen })
+
   render() {
     const { classes } = this.props;
+    const { drawerOpen } = this.state;
     return (
-      <AppBar title='Title' position='static'>
-        <Toolbar className={ classes.Toolbar }>
-          <Typography variant='title' color='inherit'>
-            TrashTalk
-          </Typography>
-          <div>
-            <Button
-              className={ classes.button }
-              variant='raised'
-              color='secondary'
-              onClick={ this.handleCreateClick }
-            >
-              Organize a Cleanup
-            </Button>
-            <IconButton
-              onClick={ this.handleLoginClick }
-            >
-              <Icon> account_circle </Icon>
+      <div>
+        <AppBar title='Title' position='static'>
+          <Toolbar
+            className={ classes.toolbar}
+            disableGutters={ !drawerOpen }
+          >
+            <IconButton>
+              <Icon>
+                search
+              </Icon>
             </IconButton>
-          </div>
-        </Toolbar>
-      </AppBar>
+            <Typography variant='title' color='inherit'>
+              TrashTalk
+            </Typography>
+            <div>
+              <Button
+                className={classes.button}
+                variant='raised'
+                color='secondary'
+                onClick={this.handleCreateClick}
+              >
+                Organize a Cleanup
+            </Button>
+              <IconButton
+                onClick={this.handleLoginClick}
+              >
+                <Icon> account_circle </Icon>
+              </IconButton>
+            </div>
+          </Toolbar>
+        </AppBar>
+      </div>
     );
   }
 }

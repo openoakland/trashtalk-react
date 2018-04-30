@@ -34,18 +34,22 @@ const {
  * This class encompasses all the view logic required to create a new Cleanup
  */
 @connect(
-  (state) => ({
+  state => ({
     backgroundMapLocation: state.app.get('backgroundMapLocation'),
   }),
-  dispatch => bindActionCreators({
-    postCleanup,
-  }, dispatch)
+  dispatch =>
+    bindActionCreators(
+      {
+        postCleanup,
+      },
+      dispatch
+    )
 )
 class Create extends React.Component {
   static propTypes = {
     backgroundMapLocation: PropTypes.instanceOf(Location),
     postCleanup: PropTypes.func,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -61,12 +65,8 @@ class Create extends React.Component {
     const { activeStep, cleanup } = this.state;
 
     const stepMapping = {
-      [LOCATION_SELECTION]: {
-        disabled: cleanup.location.query == null,
-      },
-      [DATE_SELECTION]: {
-        disabled: !cleanup.timesAreValid(),
-      },
+      [LOCATION_SELECTION]: { disabled: cleanup.location.query == null },
+      [DATE_SELECTION]: { disabled: !cleanup.timesAreValid() },
       [TOOL_SELECTION]: {},
       [SUMMARY]: {},
     };
@@ -78,12 +78,12 @@ class Create extends React.Component {
         onClick={ this.handleNext }
         variant='raised'
       >
-        {activeStep === this.steps.length - 1 ? 'Finish' : 'Next'}
+        {activeStep === this.steps.length - 1 ? 'Create Cleanup' : 'Next'}
       </Button>
     );
-  }
+  };
 
-  setCleanup = cleanup => this.setState({ cleanup })
+  setCleanup = cleanup => this.setState({ cleanup });
 
   handleNext = () => {
     const { activeStep } = this.state;
@@ -98,9 +98,9 @@ class Create extends React.Component {
     }
   };
 
-  handleBack = () => this.setState({ activeStep: this.state.activeStep - 1 })
+  handleBack = () => this.setState({ activeStep: this.state.activeStep - 1 });
 
-  steps = ['Location', 'Date and Time', 'Tools', 'Summary']
+  steps = ['Location', 'Date and Time', 'Tools', 'Summary'];
 
   renderContentText = () => {
     const { activeStep } = this.state;
@@ -108,11 +108,11 @@ class Create extends React.Component {
       [LOCATION_SELECTION]: 'Where is this cleanup located?',
       [DATE_SELECTION]: 'When does it start and end?',
       [TOOL_SELECTION]: 'What tools are required?',
-      [SUMMARY]: 'Summary',
+      [SUMMARY]: 'Cleanup Summary',
     };
 
     return stepMapping[activeStep];
-  }
+  };
 
   renderStep = () => {
     const { activeStep, cleanup, requiredTools } = this.state;
@@ -122,26 +122,16 @@ class Create extends React.Component {
       [LOCATION_SELECTION]: <LocationRepresentation { ...commonProps } />,
       [DATE_SELECTION]: <DateRepresentation { ...commonProps } />,
       [TOOL_SELECTION]: <ToolsRepresentation { ...commonProps } />,
-      [SUMMARY]: (
-        <CleanupSummary
-          cleanup={ cleanup }
-          setCleanup={ this.setCleanup }
-          requiredTools={ requiredTools }
-        />
-      ),
-
+      [SUMMARY]: <CleanupSummary cleanup={ cleanup } setCleanup={ this.setCleanup } />,
     };
 
     return stepMapping[activeStep];
-  }
+  };
 
   render() {
     const { activeStep, dialogCloseTriggered } = this.state;
     const actions = [
-      <Button
-        disabled={ activeStep === 0 }
-        onClick={ this.handleBack }
-      >
+      <Button disabled={ activeStep === 0 } onClick={ this.handleBack }>
         Back
       </Button>,
       this.getNextButton(),
@@ -155,10 +145,7 @@ class Create extends React.Component {
         title='Organize a New Cleanup'
         triggerClose={ dialogCloseTriggered }
       >
-        <Stepper
-          activeStep={ activeStep }
-          alternativeLabel
-        >
+        <Stepper activeStep={ activeStep } alternativeLabel>
           {this.steps.map(label => (
             <Step key={ label }>
               <StepLabel>{label}</StepLabel>
@@ -167,9 +154,7 @@ class Create extends React.Component {
         </Stepper>
         <Divider />
         <br />
-        <div style={ styles.stepStyle } >
-          {this.renderStep()}
-        </div>
+        <div style={ styles.stepStyle }>{this.renderStep()}</div>
       </DialogContainer>
     );
   }

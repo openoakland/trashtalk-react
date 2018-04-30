@@ -31,6 +31,11 @@ const styles = () => ({
   },
 });
 
+const MAX_PHOTO_DIMENSIONS = {
+  maxHeight: 1024,
+  maxWidth: 1024,
+};
+
 /**
  * Component for displaying/selecting a cleanup location
  */
@@ -61,6 +66,8 @@ class LocationRepresentation extends Component {
     const newLocation = new Location({
       latitude: geometry.location.lat(),
       longitude: geometry.location.lng(),
+      image: suggestion.details.photos ?
+        suggestion.details.photos[0].getUrl(MAX_PHOTO_DIMENSIONS) : null,
       query: suggestion.label,
     });
 
@@ -102,8 +109,6 @@ class LocationRepresentation extends Component {
         this.setState({ suggestions });
       }
     });
-
-    // setCleanup(cleanup.set('location', null));
   };
 
   handleSuggestionsClearRequested = () => this.setState({ suggestions: [] })

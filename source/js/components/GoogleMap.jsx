@@ -74,7 +74,7 @@ class GoogleMap extends Component {
       nextProps.mapCenter && (this.props.mapCenter == null || !nextProps.mapCenter.isAt(this.props.mapCenter))
     ) {
       const { mapReference } = this.state;
-      mapReference.setCenter(nextProps.mapCenter.getLatLngObj());
+      mapReference.panTo(nextProps.mapCenter.getLatLngObj());
     }
 
     // If the array of locations have changed, markLocations again
