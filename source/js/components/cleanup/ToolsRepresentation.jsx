@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -9,10 +9,7 @@ import { getTools, getToolCategories } from 'actions/tools';
 
 import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
+import ExpansionPanel, { ExpansionPanelSummary, ExpansionPanelDetails } from 'material-ui/ExpansionPanel';
 import Icon from 'material-ui/Icon';
 import List, { ListItem } from 'material-ui/List';
 import TextField from 'material-ui/TextField';
@@ -65,12 +62,9 @@ const styles = theme => ({
     toolCategories: state.tools.get('toolCategories'),
     categoryToToolMap: state.tools.get('categoryToToolMap'),
   }),
-  dispatch => bindActionCreators(
-    { getTools, getToolCategories },
-    dispatch
-  )
+  dispatch => bindActionCreators({ getTools, getToolCategories }, dispatch)
 )
-class ToolsRepresentation extends Component {
+class ToolsRepresentation extends PureComponent {
   static propTypes = {
     categoryToToolMap: PropTypes.object,
     classes: PropTypes.object,
@@ -80,7 +74,7 @@ class ToolsRepresentation extends Component {
     setCleanup: PropTypes.func,
     tools: PropTypes.object,
     toolCategories: PropTypes.object,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -110,23 +104,20 @@ class ToolsRepresentation extends Component {
               alt={ currentTool.name }
               src={
                 // TODO: Dynamically get root from API
-                `http://localhost:8000/assets/${currentTool.image_static_location}`
+                `http://localhost:8000/assets/${ currentTool.image_static_location }`
               }
               className={ classNames(classes.avatar, classes.toolAvatar) }
             />
             <div style={ { margin: '0 1rem', flexGrow: 1 } }>
-              <Typography className={ classes.heading }>
-                {currentTool.name}
-              </Typography>
-              <Typography className={ classes.secondaryHeading }>
-                {currentTool.description}
-              </Typography>
+              <Typography className={ classes.heading }>{currentTool.name}</Typography>
+              <Typography className={ classes.secondaryHeading }>{currentTool.description}</Typography>
             </div>
-            <div style={ {
-              width: '178px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+            <div
+              style={ {
+                width: '178px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               } }
             >
               <Button
@@ -170,7 +161,7 @@ class ToolsRepresentation extends Component {
         </ListItem>
       ),
     };
-  }
+  };
 
   setRequiredTool = (toolId, quantity) => {
     const { cleanup } = this.props;
@@ -184,53 +175,55 @@ class ToolsRepresentation extends Component {
       requiredTools = requiredTools.set(toolId, quantity);
     }
     this.props.setCleanup(cleanup.set('requiredTools', requiredTools));
-  }
+  };
 
   handleDecrement = event => {
     const { toolId, quantity } = event.currentTarget.dataset;
     this.setRequiredTool(Number(toolId), Number(quantity) - 1);
-  }
+  };
 
   handleIncrement = event => {
     const { toolId, quantity } = event.currentTarget.dataset;
     this.setRequiredTool(Number(toolId), Number(quantity) + 1);
-  }
+  };
 
   renderToolCategory = categoryId => {
-    const { classes, categoryToToolMap, setCleanup, toolCategories } = this.props;
+    const {
+      classes, categoryToToolMap, setCleanup, toolCategories,
+    } = this.props;
     const currentCategory = toolCategories[categoryId] || {};
     const categoryTools = categoryToToolMap[categoryId];
     const toolSummaries = [];
     const toolListItems = [];
+    let hasAtLeastOneToolInCategory = false;
 
     categoryTools.forEach(toolId => {
       const { listItem, name, quantity } = this.getToolDetails(toolId);
       if (quantity > 0) {
         toolSummaries.push(`${ name } (${ quantity })`);
+        hasAtLeastOneToolInCategory = true;
       }
       toolListItems.push(listItem);
     });
 
+    // If we can't modify this cleanup and the cleanup doesn't have any tools in this category
+    // then don't display the category
+    if (setCleanup == null && !hasAtLeastOneToolInCategory) {
+      return null;
+    }
+
     return (
       <ExpansionPanel key={ categoryId }>
-        <ExpansionPanelSummary
-          expandIcon={ <Icon>arrow_drop_down</Icon> }
-        >
-          <Typography className={ classes.heading }>
-            { currentCategory.name}
-          </Typography>
-          <Typography className={ classes.secondaryHeading }>
-            { toolSummaries.join(', ') }
-          </Typography>
+        <ExpansionPanelSummary expandIcon={ <Icon>arrow_drop_down</Icon> }>
+          <Typography className={ classes.heading }>{currentCategory.name}</Typography>
+          <Typography className={ classes.secondaryHeading }>{toolSummaries.join(', ')}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <List className={ classes.list }>
-            { toolListItems.map(listItem => listItem) }
-          </List>
+          <List className={ classes.list }>{toolListItems.map(listItem => listItem)}</List>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
-  }
+  };
 
   render() {
     const { categoryToToolMap, cleanup } = this.props;
@@ -239,13 +232,7 @@ class ToolsRepresentation extends Component {
       return null;
     }
 
-    return (
-      <div>
-        {Object.keys(categoryToToolMap).map(categoryId =>
-           this.renderToolCategory(categoryId)
-        )}
-      </div>
-    );
+    return <div>{Object.keys(categoryToToolMap).map(categoryId => this.renderToolCategory(categoryId))}</div>;
   }
 }
 

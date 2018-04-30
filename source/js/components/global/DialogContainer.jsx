@@ -50,7 +50,7 @@ class DialogContainer extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.reasonToLock !== this.props.reasonToLock) {
-      this.setState({ showSnackbar: false });
+      this.handleSnackbarClose();
     }
 
     if (nextProps.triggerClose) {
@@ -64,13 +64,11 @@ class DialogContainer extends React.Component {
     if (reasonToLock == null) {
       this.closeDialog();
     } else {
-      this.setState({ showSnackbar: true }, () => {
-        setTimeout(() => {
-          this.setState({ showSnackbar: false });
-        }, AUTO_HIDE_DURATION);
-      });
+      this.setState({ showSnackbar: true });
     }
   };
+
+  handleSnackbarClose = () => this.setState({ showSnackbar: false })
 
   closeDialog = () => {
     this.setState(
@@ -118,28 +116,28 @@ class DialogContainer extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-        {
-          <Snackbar
-            anchorOrigin={ {
-              vertical: 'bottom',
-              horizontal: 'center',
-            } }
-            open={ showSnackbar }
-            SnackbarContentProps={ { 'aria-describedby': 'message-id' } }
-            message={ reasonToLock }
-            transition={ Fade }
-            action={ [
-              <Button
-                key='undo'
-                color='primary'
-                size='small'
-                onClick={ this.closeDialog }
-              >
-                Cancel Anyway
-              </Button>,
-            ] }
-          />
-        }
+        <Snackbar
+          anchorOrigin={ {
+            vertical: 'bottom',
+            horizontal: 'center',
+          } }
+          autoHideDuration={ AUTO_HIDE_DURATION }
+          onClose={ this.handleSnackbarClose }
+          open={ showSnackbar }
+          SnackbarContentProps={ { 'aria-describedby': 'message-id' } }
+          message={ reasonToLock }
+          transition={ Fade }
+          action={ [
+            <Button
+              key='undo'
+              color='primary'
+              size='small'
+              onClick={ this.closeDialog }
+            >
+              Close Anyway
+            </Button>,
+          ] }
+        />
       </div>
     );
   }

@@ -138,6 +138,7 @@ class LocationRepresentation extends Component {
         fullWidth
         onKeyPress={ this.handleEnterKeyPress }
         InputProps={ {
+          autoFocus: true,
           disabled: setCleanup == null,
           inputRef: ref,
           classes: {

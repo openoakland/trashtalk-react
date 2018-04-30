@@ -11,21 +11,30 @@ import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
 import Icon from 'material-ui/Icon';
+import Typography from 'material-ui/Typography';
 import { ListItemText } from 'material-ui/List';
 import { MenuItem, MenuList } from 'material-ui/Menu';
+import { Button } from 'material-ui';
 
 const styles = theme => ({
-  root: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
+  closeButton: {
+    marginBottom: theme.spacing.unit,
   },
-  drawerPaper: {
-    minWidth: '320px',
+  listHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: theme.spacing.unit * 2,
+  },
+  drawerPaper: {},
+  listItemHeaderText: {
+    fontSize: '2rem',
+  },
+  listItemText: {
+    maxWidth: '100%',
   },
   locationAvatar: {
     borderRadius: 0,
-    margin: 10,
     width: 60,
     height: 60,
   },
@@ -74,13 +83,29 @@ class SearchDrawer extends PureComponent {
         onClose={ handleToggle }
       >
         <MenuList>
+          <div className={ classes.listHeader }>
+            <Typography
+              variant='title'
+              gutterBottom
+            >
+              Upcoming Cleanups
+            </Typography>
+            <Button
+              color='primary'
+              mini
+              variant='fab'
+              onClick={ handleToggle }
+              className={ classes.closeButton }
+            >
+              <Icon>close</Icon>
+            </Button>
+          </div>
           {cleanups
             .toList()
-            .sort((cleanupA, cleanupB) => {
-              return cleanupA.title > cleanupB.title ? 1 : -1;
-            })
+            .sort((cleanupA, cleanupB) => cleanupA.start - cleanupB.start)
             .map(cleanup => (
               <div key={ cleanup.id }>
+                <Divider />
                 <MenuItem
                   data-cleanup-id={ cleanup.id }
                   onClick={ this.handleCleanupClick }
@@ -97,9 +122,11 @@ class SearchDrawer extends PureComponent {
                   <ListItemText
                     primary={ cleanup.title }
                     secondary={ cleanup.start.toLocaleString() }
+                    classes={ {
+                      root: classes.listItemText,
+                    } }
                   />
                 </MenuItem>
-                <Divider />
               </div>
             ))}
         </MenuList>

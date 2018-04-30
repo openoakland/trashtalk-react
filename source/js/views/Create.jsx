@@ -57,7 +57,6 @@ class Create extends React.Component {
       activeStep: 0,
       cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
       dialogCloseTriggered: false,
-      requiredTools: Map(),
     };
   }
 
@@ -91,7 +90,7 @@ class Create extends React.Component {
     if (activeStep === this.steps.length - 1) {
       // If we're done, create new cleanup, add tools, redirect back home
       const { cleanup } = this.state;
-      this.props.postCleanup(cleanup.toJSON());
+      this.props.postCleanup(cleanup.toApiJSON());
       this.setState({ dialogCloseTriggered: true });
     } else {
       this.setState({ activeStep: activeStep + 1 });
@@ -115,7 +114,7 @@ class Create extends React.Component {
   };
 
   renderStep = () => {
-    const { activeStep, cleanup, requiredTools } = this.state;
+    const { activeStep, cleanup } = this.state;
     const commonProps = { cleanup, setCleanup: this.setCleanup };
 
     const stepMapping = {
