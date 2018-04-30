@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 import AppBar from 'material-ui/AppBar';
 import Button from 'material-ui/Button';
+import Drawer from 'material-ui/Drawer';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Toolbar from 'material-ui/Toolbar';
@@ -10,21 +11,11 @@ import { withRouter } from 'react-router-dom';
 import { routeCodes } from 'constants/routes';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import SearchDrawer from './Menu/SearchDrawer';
 
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
-  },
-  drawerPaper: {
-    minWidth: '320px',
-  },
-  list: {
-    width: '100%',
-  },
-  searchTextField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: '100%',
   },
   toolbar: {
     display: 'flex',
@@ -32,55 +23,60 @@ const styles = theme => ({
   },
 });
 
+/**
+ * This is the menu bar at the top of the app window
+ */
 @withStyles(styles)
-class Menu extends Component {
+class Menu extends PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     history: PropTypes.object,
-  }
+  };
 
-  state = { drawerOpen: true }
+  state = { drawerOpen: true };
 
-  handleCreateClick = () => {
-    this.props.history.push(routeCodes.NEW_CLEANUP);
-  }
+  handleCreateClick = () => this.props.history.push(routeCodes.NEW_CLEANUP);
 
-  handleLoginClick = () => {
-    this.props.history.push(routeCodes.LOGIN);
-  }
+  handleLoginClick = () => this.props.history.push(routeCodes.LOGIN);
 
-  handleDrawerToggle = () => this.setState({ drawerOpen: !this.state.drawerOpen })
+  handleDrawerToggle = () => this.setState({ drawerOpen: !this.state.drawerOpen });
 
   render() {
     const { classes } = this.props;
     const { drawerOpen } = this.state;
     return (
       <div>
-        <AppBar title='Title' position='static'>
+        <SearchDrawer
+          open={ drawerOpen }
+          handleToggle={ this.handleDrawerToggle }
+        />
+        <AppBar title='Title'>
           <Toolbar
-            className={ classes.toolbar}
-            disableGutters={ !drawerOpen }
+            className={ classes.toolbar }
+            disableGutters={ true }
           >
-            <IconButton>
-              <Icon>
-                search
-              </Icon>
-            </IconButton>
-            <Typography variant='title' color='inherit'>
+            <Typography
+              variant='title'
+              color='inherit'
+            >
+              <IconButton
+                className={ classes.button }
+                onClick={ this.handleDrawerToggle }
+              >
+                <Icon>search</Icon>
+              </IconButton>
               TrashTalk
             </Typography>
             <div>
               <Button
-                className={classes.button}
+                className={ classes.button }
                 variant='raised'
                 color='secondary'
-                onClick={this.handleCreateClick}
+                onClick={ this.handleCreateClick }
               >
                 Organize a Cleanup
-            </Button>
-              <IconButton
-                onClick={this.handleLoginClick}
-              >
+              </Button>
+              <IconButton onClick={ this.handleLoginClick }>
                 <Icon> account_circle </Icon>
               </IconButton>
             </div>

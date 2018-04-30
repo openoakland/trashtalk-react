@@ -18,7 +18,7 @@ import CleanupSummary from 'components/cleanup/CleanupSummary';
   },
   dispatch => bindActionCreators({}, dispatch)
 )
-export default class CleanupView extends React.Component {
+export default class CleanupView extends React.PureComponent {
   static propTypes = {
     cleanups: PropTypes.object,
     cleanupId: PropTypes.number,
@@ -26,12 +26,10 @@ export default class CleanupView extends React.Component {
 
   render() {
     const { cleanups, cleanupId } = this.props;
-    const cleanup = (cleanups || {})[cleanupId];
+    const cleanup = cleanups.get(cleanupId);
 
     return (
-      <DialogContainer
-        title={ cleanup == null ? 'Loading...' : cleanup.getName() }
-      >
+      <DialogContainer>
         { cleanup && <CleanupSummary cleanup={ cleanup } /> }
       </DialogContainer>
     );

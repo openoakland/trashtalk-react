@@ -25,18 +25,18 @@ class GoogleMap extends Component {
     mapCenter: PropTypes.object,
     setMapReference: PropTypes.func,
     zoom: PropTypes.number,
-  }
+  };
 
   static defaultProps = {
     mapCenter: new Location(),
     zoom: DEFAULT_ZOOM,
-  }
+  };
 
   state = {
     id: Date.now(),
     markers: [],
     mapReference: null, // After we initialize the Google Map object, we store the reference here
-  }
+  };
 
   /**
    * After this component is mounted, initialize the Google Map object and mount to this element.
@@ -54,7 +54,8 @@ class GoogleMap extends Component {
       zoom,
     });
 
-    this.setState( // eslint-disable-line react/no-did-mount-set-state
+    // eslint-disable-next-line react/no-did-mount-set-state
+    this.setState(
       { mapReference },
       () => {
         this.clearMarkers();
@@ -70,9 +71,7 @@ class GoogleMap extends Component {
   componentWillReceiveProps(nextProps) {
     // Here we should check to see if nextProps.mapCenter has changed.
     // If it has, recenter map to new location
-    if (
-      nextProps.mapCenter && (this.props.mapCenter == null || !nextProps.mapCenter.isAt(this.props.mapCenter))
-    ) {
+    if (nextProps.mapCenter && (this.props.mapCenter == null || !nextProps.mapCenter.isAt(this.props.mapCenter))) {
       const { mapReference } = this.state;
       mapReference.panTo(nextProps.mapCenter.getLatLngObj());
     }
@@ -82,22 +81,30 @@ class GoogleMap extends Component {
     this.markCleanups(nextProps);
   }
 
+  componentWillUnmount() {
+    this.clearMarkers();
+  }
+
   clearMarkers = () => {
     this.state.markers.forEach(marker => marker.setMap(null));
-  }
+    this.setState({ markers: [] });
+  };
+
   /**
    * Given an array of cleanups, mark them on the rendered map
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  markCleanups = (props) => {
+  markCleanups = props => {
     const { cleanups } = props;
     const { mapReference } = this.state;
 
     if (mapReference != null && cleanups != null) {
       const markers = [];
+
       cleanups.forEach(cleanup => {
         const marker = new window.google.maps.Marker({
+          animation: window.google.maps.Animation.DROP,
           position: cleanup.location.getLatLngObj(),
           map: mapReference,
         });
@@ -105,24 +112,22 @@ class GoogleMap extends Component {
         // If the cleanup is an existing cleanup, make it clickable so that
         // users can navigate to it
         if (cleanup.has('id')) {
-          marker.addListener('click', () => {
-            this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`);
-          });
+          marker.addListener('click', () => this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`));
         }
         markers.push(marker);
       });
 
       this.setState({ markers });
     }
-  }
+  };
 
   render() {
     const { id } = this.state;
-    return (
-      <div id={ id } style={ styles.container } />
-    );
+    return (<div
+      id={ id }
+      style={ styles.container }
+    />);
   }
 }
 
 export default withRouter(GoogleMap);
-

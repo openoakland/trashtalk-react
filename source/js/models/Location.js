@@ -19,11 +19,14 @@ export default class Location extends Record({
       longitude: Number(parseFloat(args.longitude).toFixed(6)),
     } : {};
 
-    super({
-      ...MIDDLE_OF_OAKLAND,
-      ...args,
-      ...parsedLatLong,
-    });
+    const parsedArgs = Object.assign(
+      {},
+      MIDDLE_OF_OAKLAND,
+      args,
+      parsedLatLong
+    );
+
+    super(parsedArgs);
   }
 
   /**

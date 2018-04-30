@@ -86,7 +86,7 @@ export default class MapBackground extends Component {
         style={ styles.container }
       >
         <GoogleMap
-          cleanups={ Object.values(cleanups) }
+          cleanups={ cleanups.toArray() }
           mapCenter={ mapCenter }
           setMapReference={ this.props.setBackgroundMapReference }
         />

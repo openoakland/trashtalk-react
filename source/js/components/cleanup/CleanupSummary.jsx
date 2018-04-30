@@ -5,7 +5,6 @@ import Icon from 'material-ui/Icon';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
-import Cleanup from 'models/Cleanup';
 import { screens } from 'constants/cleanup';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 

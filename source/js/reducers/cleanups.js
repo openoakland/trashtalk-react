@@ -10,18 +10,17 @@ import {
 } from 'actions/cleanups';
 
 import Cleanup from 'models/Cleanup';
-import Location from 'models/Location';
 
 const initialState = Map({
   loading: false,
   error: null,
-  cleanups: {},
+  cleanups: Map(),
   currentCleanup: null,
 });
 
 const actionsMap = {
   // Async action
-  [GET_CLEANUPS_START]: (state) => {
+  [GET_CLEANUPS_START]: state => {
     return state.merge(Map({
       loading: true,
       error: null,
@@ -35,14 +34,12 @@ const actionsMap = {
   },
   [GET_CLEANUPS_SUCCESS]: (state, action) => {
     const parsedCleanups = action.data.reduce(
-      (prev, rawCleanupObject) => {
-        prev[rawCleanupObject.id] = new Cleanup({
-          ...rawCleanupObject,
-          ...{ location: new Location(rawCleanupObject.location) },
-        });
-        return prev;
-      },
-      {}
+      (prev, rawCleanupObject) =>
+        prev.set(
+          rawCleanupObject.id,
+          new Cleanup(rawCleanupObject)
+        ),
+      Map()
     );
 
     return state.merge(Map({
@@ -50,7 +47,7 @@ const actionsMap = {
       cleanups: parsedCleanups,
     }));
   },
-  [POST_CLEANUPS_START]: (state) => {
+  [POST_CLEANUPS_START]: state => {
     return state.merge(Map({
       loading: true,
       error: null,
@@ -63,9 +60,7 @@ const actionsMap = {
     }));
   },
   [POST_CLEANUPS_SUCCESS]: (state, action) => {
-    const cleanups = state.get('cleanups');
-    cleanups[action.data.id] = new Cleanup(action.data);
-    return state.set('cleanups', cleanups);
+    return state.setIn(['cleanups', action.data.id], new Cleanup(action.data));
   },
 };
 
