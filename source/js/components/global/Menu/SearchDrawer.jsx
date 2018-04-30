@@ -54,8 +54,6 @@ class SearchDrawer extends PureComponent {
     open: PropTypes.boolean,
   };
 
-  static defaultProps = {};
-
   handleCleanupClick = event => {
     const { history } = this.props;
     const cleanupId = event.currentTarget.dataset.cleanupId;
@@ -80,9 +78,8 @@ class SearchDrawer extends PureComponent {
               return cleanupA.title > cleanupB.title ? 1 : -1;
             })
             .map(cleanup => (
-              <div>
+              <div key={ cleanup.id }>
                 <MenuItem
-                  key={ cleanup.id }
                   data-cleanup-id={ cleanup.id }
                   onClick={ this.handleCleanupClick }
                   className={ classes.menuItem }
@@ -93,9 +90,7 @@ class SearchDrawer extends PureComponent {
                       className={ classNames(classes.avatar, classes.locationAvatar) }
                     />
                   ) : (
-                    <Icon style={{color: '#eb4335'}}>
-                      place
-                    </Icon>
+                    <Icon style={ { color: '#eb4335' } }>place</Icon>
                   )}
                   <ListItemText
                     primary={ cleanup.title }

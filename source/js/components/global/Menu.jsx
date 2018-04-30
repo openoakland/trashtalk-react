@@ -33,7 +33,7 @@ class Menu extends PureComponent {
     history: PropTypes.object,
   };
 
-  state = { drawerOpen: true };
+  state = { drawerOpen: false };
 
   handleCreateClick = () => this.props.history.push(routeCodes.NEW_CLEANUP);
 
