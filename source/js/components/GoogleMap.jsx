@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { CLEANUP_ROOT } from 'constants/routes';
+import { Map, Set } from 'immutable';
 
 import Location from 'models/Location';
 
@@ -34,7 +35,7 @@ class GoogleMap extends Component {
 
   state = {
     id: Date.now(),
-    markers: [],
+    cleanupMarkers: Map(),
     mapReference: null, // After we initialize the Google Map object, we store the reference here
   };
 
@@ -55,17 +56,13 @@ class GoogleMap extends Component {
     });
 
     // eslint-disable-next-line react/no-did-mount-set-state
-    this.setState(
-      { mapReference },
-      () => {
-        this.clearMarkers();
-        this.markCleanups(this.props);
+    this.setState({ mapReference }, () => {
+      this.syncCleanupMarkers(this.props.cleanups);
 
-        if (setMapReference) {
-          setMapReference(mapReference);
-        }
+      if (setMapReference) {
+        setMapReference(mapReference);
       }
-    );
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,32 +74,41 @@ class GoogleMap extends Component {
     }
 
     // If the array of locations have changed, markLocations again
-    this.clearMarkers();
-    this.markCleanups(nextProps);
+    this.syncCleanupMarkers(nextProps.cleanups);
   }
 
   componentWillUnmount() {
-    this.clearMarkers();
+    const { cleanupMarkers } = this.state;
+    cleanupMarkers.forEach((marker) => {
+      marker.setMap(null);
+    });
   }
-
-  clearMarkers = () => {
-    this.state.markers.forEach(marker => marker.setMap(null));
-    this.setState({ markers: [] });
-  };
 
   /**
    * Given an array of cleanups, mark them on the rendered map
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  markCleanups = props => {
-    const { cleanups } = props;
+  syncCleanupMarkers = cleanups => {
     const { mapReference } = this.state;
+    // If the map hasn't been initialized yet, just bail out
+    if (mapReference == null) {
+      return;
+    }
 
-    if (mapReference != null && cleanups != null) {
-      const markers = [];
+    let { cleanupMarkers } = this.state;
+    // First remove any existing cleanup markers that aren't the passed in cleanups param
+    const cleanupsSet = Set(cleanups);
+    cleanupMarkers.forEach((marker, cleanup) => {
+      if (!cleanupsSet.has(cleanup)) {
+        marker.setMap(null);
+        cleanupMarkers = cleanupMarkers.delete(cleanup);
+      }
+    });
 
-      cleanups.forEach(cleanup => {
+    // Now add cleanup markers that haven't already been added
+    if (cleanups != null) {
+      cleanups.filter(cleanup => !cleanupMarkers.has(cleanup)).forEach(cleanup => {
         const marker = new window.google.maps.Marker({
           animation: window.google.maps.Animation.DROP,
           position: cleanup.location.getLatLngObj(),
@@ -110,14 +116,14 @@ class GoogleMap extends Component {
         });
 
         // If the cleanup is an existing cleanup, make it clickable so that
-        // users can navigate to it
+        // users are taken to the cleanup's details view
         if (cleanup.has('id')) {
           marker.addListener('click', () => this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`));
         }
-        markers.push(marker);
+        cleanupMarkers = cleanupMarkers.set(cleanup, marker);
       });
 
-      this.setState({ markers });
+      this.setState({ cleanupMarkers });
     }
   };
 

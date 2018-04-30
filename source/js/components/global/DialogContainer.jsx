@@ -12,6 +12,12 @@ import Dialog, { DialogActions, DialogContentText, DialogContent, DialogTitle } 
 const AUTO_HIDE_DURATION = 6000;
 
 const styles = theme => ({
+  childrenContainer: {
+    flexGrow: 1,
+  },
+  dialogPaper: {
+    height: '100%',
+  },
   snackbar: {
     margin: theme.spacing.unit,
   },
@@ -77,13 +83,16 @@ class DialogContainer extends React.Component {
 
   render() {
     const {
-      actions, children, reasonToLock, subtitle, title,
+      actions, classes, children, reasonToLock, subtitle, title,
     } = this.props;
     const { showSnackbar } = this.state;
 
     return (
       <div>
         <Dialog
+          classes={ {
+            paper: classes.dialogPaper,
+          } }
           open={ this.state.open }
           onClose={ this.handleCloseRequest }
           aria-labelledby='responsive-dialog-title'
@@ -96,7 +105,7 @@ class DialogContainer extends React.Component {
               <DialogContentText>{subtitle}</DialogContentText>
             </DialogContent>
           )}
-          <DialogContent>{children}</DialogContent>
+          <DialogContent style={ { flexGrow: 1 } }>{children}</DialogContent>
           <DialogActions>
             {actions.map((action, index) => (
               <div key={ index }>{action}</div>

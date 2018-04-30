@@ -51,8 +51,10 @@ class SearchDrawer extends PureComponent {
     cleanups: PropTypes.object,
     handleToggle: PropTypes.func,
     history: PropTypes.object,
-    open: PropTypes.boolean,
+    open: PropTypes.bool,
   };
+
+  static defaultProps = {};
 
   handleCleanupClick = event => {
     const { history } = this.props;

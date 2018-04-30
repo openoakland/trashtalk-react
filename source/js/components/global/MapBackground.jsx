@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import GoogleMap from 'components/GoogleMap';
 import { getCleanups } from 'actions/cleanups';
-import { getUserLocation, setBackgroundMapLocation, setBackgroundMapReference } from 'actions/app';
+import { setBackgroundMapLocation, setBackgroundMapReference } from 'actions/app';
 
 import Location from 'models/Location';
 
@@ -28,7 +28,7 @@ const styles = {
     userLocation: state.app.get('userLocation'),
   }),
   dispatch => bindActionCreators({
-    getCleanups, setBackgroundMapLocation, setBackgroundMapReference, getUserLocation,
+    getCleanups, setBackgroundMapLocation, setBackgroundMapReference,
   }, dispatch)
 )
 /**
@@ -42,8 +42,6 @@ export default class MapBackground extends Component {
     getCleanups: PropTypes.func,
     mapCenter: PropTypes.object,
     setBackgroundMapReference: PropTypes.func,
-    getUserLocation: PropTypes.func,
-    userLocation: PropTypes.instanceOf(Location),
   }
 
   static defaultProps = {
@@ -71,18 +69,10 @@ export default class MapBackground extends Component {
     }
   }
 
-  getUserLocation = () => {
-    const { userLocation } = this.props;
-    if (userLocation == null) {
-      this.props.getUserLocation();
-    }
-  }
-
   render() {
     const { cleanups, mapCenter } = this.props;
     return (
       <div
-        onMouseEnter={ this.getUserLocation }
         style={ styles.container }
       >
         <GoogleMap
