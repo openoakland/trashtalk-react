@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Stepper, { Step, StepLabel } from 'material-ui/Stepper';
 import Button from 'material-ui/Button';
-import { Map } from 'immutable';
+import { withStyles } from 'material-ui/styles';
 
 import { withMobileDialog } from 'material-ui/Dialog';
 import DialogContainer from 'components/global/DialogContainer';
@@ -19,12 +19,12 @@ import { screens } from 'constants/cleanup';
 
 import { postCleanup } from 'actions/cleanups';
 
-const styles = {
+const styles = theme => ({
   stepStyle: {
     width: '100vw',
     maxWidth: '100%',
   },
-};
+});
 
 const {
   LOCATION_SELECTION, DATE_SELECTION, SUMMARY, TOOL_SELECTION,
@@ -45,8 +45,10 @@ const {
       dispatch
     )
 )
+@withStyles(styles)
 class Create extends React.Component {
   static propTypes = {
+    classes: PropTypes.object,
     backgroundMapLocation: PropTypes.instanceOf(Location),
     postCleanup: PropTypes.func,
   };
@@ -129,6 +131,7 @@ class Create extends React.Component {
 
   render() {
     const { activeStep, dialogCloseTriggered } = this.state;
+    const { classes } = this.props;
     const actions = [
       <Button disabled={ activeStep === 0 } onClick={ this.handleBack }>
         Back
@@ -151,9 +154,7 @@ class Create extends React.Component {
             </Step>
           ))}
         </Stepper>
-        <Divider />
-        <br />
-        <div style={ styles.stepStyle }>{this.renderStep()}</div>
+        <div className={ classes.stepStyle }>{this.renderStep()}</div>
       </DialogContainer>
     );
   }
