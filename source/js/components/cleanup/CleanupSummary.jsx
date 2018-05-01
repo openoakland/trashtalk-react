@@ -10,7 +10,7 @@ import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavi
 
 const styles = theme => ({
   BottomNavigationAction: {
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.dark,
   },
   bottomNavigation: {
     width: '100%',
