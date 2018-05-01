@@ -12,10 +12,20 @@ const styles = theme => ({
   BottomNavigationAction: {
     color: theme.palette.secondary.light,
   },
-  BottomNavigation: {
+  bottomNavigation: {
     width: '100%',
     backgroundColor: theme.palette.secondary.main,
     justifyContent: 'space-around',
+  },
+  summaryItemContainer: {
+    display: 'flex',
+    flex: 1,
+    overflow: 'auto',
+  },
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
 });
 
@@ -63,10 +73,12 @@ class CleanupSummary extends Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        { this.renderSummaryItem() }
+      <div className={ classes.root }>
+        <div className={ classes.summaryItemContainer } >
+          { this.renderSummaryItem() }
+        </div>
         <BottomNavigation
-          className={ classes.BottomNavigation }
+          className={ classes.bottomNavigation }
           value={ value }
           onChange={ this.handleChange }
           showLabels={ true }

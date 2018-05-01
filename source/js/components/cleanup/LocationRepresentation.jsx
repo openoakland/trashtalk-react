@@ -15,10 +15,13 @@ import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
 
 const styles = () => ({
-  container: {
-    flexGrow: 1,
-    position: 'relative',
-    height: 250,
+  mapContainer: {
+    flex: 1,
+  },
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
   suggestion: {
     display: 'block',
@@ -200,35 +203,33 @@ class LocationRepresentation extends Component {
     const { classes, cleanup } = this.props;
 
     return (
-      <CardContent>
-        <div style={ { display: 'flex', flexDirection: 'column' } }>
-          <div style={ { height: '50px', zIndex: 1 } }>
-            <Autosuggest
-              theme={ {
-                suggestionsList: classes.suggestionsList,
-                suggestion: classes.suggestion,
-              } }
-              renderInputComponent={ this.renderInputComponent }
-              suggestions={ this.state.suggestions }
-              onSuggestionsFetchRequested={ this.handleSuggestionsFetchRequested }
-              onSuggestionsClearRequested={ this.handleSuggestionsClearRequested }
-              renderSuggestionsContainer={ this.renderSuggestionsContainer }
-              getSuggestionValue={ this.getSuggestionValue }
-              renderSuggestion={ this.renderSuggestion }
-              inputProps={ {
-                classes,
-                placeholder: 'Enter a location',
-                value: this.state.value || '',
-                onChange: this.handleChange,
-              } }
-            />
-          </div>
-          <div style={ { height: '300px', zIndex: 0 } }>
-            <GoogleMap
-              cleanups={ [cleanup] }
-              mapCenter={ cleanup.location }
-            />
-          </div>
+      <CardContent className={ classes.root }>
+        <div style={ { height: '50px', zIndex: 1 } }>
+          <Autosuggest
+            theme={ {
+              suggestionsList: classes.suggestionsList,
+              suggestion: classes.suggestion,
+            } }
+            renderInputComponent={ this.renderInputComponent }
+            suggestions={ this.state.suggestions }
+            onSuggestionsFetchRequested={ this.handleSuggestionsFetchRequested }
+            onSuggestionsClearRequested={ this.handleSuggestionsClearRequested }
+            renderSuggestionsContainer={ this.renderSuggestionsContainer }
+            getSuggestionValue={ this.getSuggestionValue }
+            renderSuggestion={ this.renderSuggestion }
+            inputProps={ {
+              classes,
+              placeholder: 'Enter a location',
+              value: this.state.value || '',
+              onChange: this.handleChange,
+            } }
+          />
+        </div>
+        <div className={ classes.mapContainer }>
+          <GoogleMap
+            cleanups={ [cleanup] }
+            mapCenter={ cleanup.location }
+          />
         </div>
       </CardContent>
     );

@@ -39,8 +39,7 @@ const styles = theme => ({
     width: '100%',
   },
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    width: '100%',
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
@@ -226,13 +225,17 @@ class ToolsRepresentation extends PureComponent {
   };
 
   render() {
-    const { categoryToToolMap, cleanup } = this.props;
+    const { categoryToToolMap, classes, cleanup } = this.props;
 
     if (cleanup == null) {
       return null;
     }
 
-    return <div>{Object.keys(categoryToToolMap).map(categoryId => this.renderToolCategory(categoryId))}</div>;
+    return (
+      <div className={ classes.root }>
+        {Object.keys(categoryToToolMap).map(categoryId => this.renderToolCategory(categoryId))}
+      </div>
+    );
   }
 }
 

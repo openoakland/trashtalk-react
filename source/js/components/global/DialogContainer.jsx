@@ -13,13 +13,18 @@ const AUTO_HIDE_DURATION = 6000;
 
 const styles = theme => ({
   childrenContainer: {
-    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
   },
   dialogPaper: {
     height: '100%',
   },
   snackbar: {
     margin: theme.spacing.unit,
+  },
+  subtitle: {
+    maxHeight: 52,
   },
 });
 
@@ -90,6 +95,7 @@ class DialogContainer extends React.Component {
         <Dialog
           classes={ {
             paper: classes.dialogPaper,
+            root: classes.dialogRoot,
           } }
           open={ this.state.open }
           onClose={ this.handleCloseRequest }
@@ -99,11 +105,11 @@ class DialogContainer extends React.Component {
         >
           {title && <DialogTitle>{title}</DialogTitle>}
           {subtitle && (
-            <DialogContent>
+            <DialogContent className={ classes.subtitle }>
               <DialogContentText>{subtitle}</DialogContentText>
             </DialogContent>
           )}
-          <DialogContent style={ { flexGrow: 1 } }>{children}</DialogContent>
+          <DialogContent className={ classes.childrenContainer }>{children}</DialogContent>
           <DialogActions>
             {actions.map((action, index) => (
               <div key={ index }>{action}</div>

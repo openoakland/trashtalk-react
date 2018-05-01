@@ -19,10 +19,14 @@ import { screens } from 'constants/cleanup';
 import { postCleanup } from 'actions/cleanups';
 import { getTools, getToolCategories } from 'actions/tools';
 
-const styles = () => ({
+const styles = theme => ({
   stepStyle: {
+    display: 'flex',
+    flex: 1,
     width: '100vw',
     maxWidth: '100%',
+    paddingBottom: theme.spacing.unit,
+    paddingTop: theme.spacing.unit,
   },
 });
 
@@ -132,7 +136,10 @@ class Create extends React.Component {
       [LOCATION_SELECTION]: <LocationRepresentation { ...commonProps } />,
       [DATE_SELECTION]: <DateRepresentation { ...commonProps } />,
       [TOOL_SELECTION]: <ToolsRepresentation { ...commonProps } />,
-      [SUMMARY]: <CleanupSummary cleanup={ cleanup } setCleanup={ this.setCleanup } />,
+      [SUMMARY]: <CleanupSummary
+        cleanup={ cleanup }
+        setCleanup={ this.setCleanup }
+      />,
     };
 
     return stepMapping[activeStep];
@@ -142,7 +149,10 @@ class Create extends React.Component {
     const { activeStep, dialogCloseTriggered } = this.state;
     const { classes } = this.props;
     const actions = [
-      <Button disabled={ activeStep === 0 } onClick={ this.handleBack }>
+      <Button
+        disabled={ activeStep === 0 }
+        onClick={ this.handleBack }
+      >
         Back
       </Button>,
       this.getNextButton(),
@@ -156,7 +166,11 @@ class Create extends React.Component {
         title='Organize a New Cleanup'
         triggerClose={ dialogCloseTriggered }
       >
-        <Stepper activeStep={ activeStep } alternativeLabel>
+        <Stepper
+          activeStep={ activeStep }
+          alternativeLabel
+          className={ classes.stepper }
+        >
           {this.steps.map(label => (
             <Step key={ label }>
               <StepLabel>{label}</StepLabel>
