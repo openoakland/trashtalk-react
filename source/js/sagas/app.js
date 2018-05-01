@@ -1,10 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 
-import {
-  GET_USER_LOCATION,
-  GET_USER_LOCATION_SUCCESS,
-  GET_USER_LOCATION_ERROR,
-} from 'actions/app';
+import { GET_USER_LOCATION, GET_USER_LOCATION_SUCCESS, GET_USER_LOCATION_ERROR } from 'actions/app';
 
 import Location from 'models/Location';
 
@@ -16,7 +12,10 @@ function* getUserLocationStart() {
   };
 
   try {
-    const position = yield call(() => getPosition());
+    const position = yield call(() =>
+      getPosition({
+        enableHighAccuracy: true,
+      }));
     const { latitude, longitude } = position.coords;
     yield put({
       type: GET_USER_LOCATION_SUCCESS,
@@ -27,6 +26,4 @@ function* getUserLocationStart() {
   }
 }
 
-export default [
-  takeLatest(GET_USER_LOCATION, getUserLocationStart),
-];
+export default [takeLatest(GET_USER_LOCATION, getUserLocationStart)];

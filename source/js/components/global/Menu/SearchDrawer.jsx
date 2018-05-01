@@ -92,14 +92,14 @@ class SearchDrawer extends Component {
   sortByNextUp = (cleanupA, cleanupB) => cleanupA.start - cleanupB.start;
 
   sortByDistanceFromUser = (cleanupA, cleanupB) => {
-    const { userLocation } = this.props;
+    const { latitude, longitude } = this.props.userLocation;
     return (
       geolib.getDistance(
-        { latitude: userLocation.latitude, longitude: userLocation.longitude },
+        { latitude, longitude },
         { latitude: cleanupA.location.latitude, longitude: cleanupB.location.longitude }
       ) -
       geolib.getDistance(
-        { latitude: userLocation.latitude, longitude: userLocation.longitude },
+        { latitude, longitude },
         { latitude: cleanupB.location.latitude, longitude: cleanupB.location.longitude }
       )
     );
@@ -111,9 +111,7 @@ class SearchDrawer extends Component {
     history.push(`${ CLEANUP_ROOT }${ cleanupId }`);
   };
 
-  handleSortingChange = (event) => {
-    this.setState({ sortType: event.target.value });
-  }
+  handleSortingChange = (event) => this.setState({ sortType: event.target.value })
 
   render() {
     const {
