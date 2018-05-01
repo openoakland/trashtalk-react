@@ -8,8 +8,6 @@ import GoogleMap from 'components/GoogleMap';
 import { getCleanups } from 'actions/cleanups';
 import { setBackgroundMapLocation, setBackgroundMapReference } from 'actions/app';
 
-import Location from 'models/Location';
-
 const styles = {
   container: {
     position: 'absolute',
@@ -50,7 +48,6 @@ export default class MapBackground extends Component {
 
   /**
    * Tasks that need to be performed after map initialization go here
-   * @param {*} nextProps
    */
   componentWillReceiveProps(nextProps) {
     if (this.props.backgroundMapReference == null && nextProps.backgroundMapReference != null) {
@@ -78,7 +75,7 @@ export default class MapBackground extends Component {
         <GoogleMap
           cleanups={ cleanups.toArray() }
           mapCenter={ mapCenter }
-          setMapReference={ this.props.setBackgroundMapReference }
+          handleMapInitialization={ this.props.setBackgroundMapReference }
         />
       </div>
     );

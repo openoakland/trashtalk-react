@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
@@ -6,15 +6,21 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { CLEANUP_ROOT } from 'constants/routes';
+import { Map } from 'immutable';
+import geolib from 'geolib';
 
 import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
-import Icon from 'material-ui/Icon';
-import Typography from 'material-ui/Typography';
+import Input, { InputLabel } from 'material-ui/Input';
+import { FormControl } from 'material-ui/Form';
 import { ListItemText } from 'material-ui/List';
 import { MenuItem, MenuList } from 'material-ui/Menu';
 import { Button } from 'material-ui';
+import Icon from 'material-ui/Icon';
+import Select from 'material-ui/Select';
+
+import Location from 'models/Location';
 
 const styles = theme => ({
   closeButton: {
@@ -25,6 +31,7 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: theme.spacing.unit * 2,
+    outlineColor: 'white',
   },
   drawerPaper: {},
   listItemHeaderText: {
@@ -44,26 +51,59 @@ const styles = theme => ({
   },
 });
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: (ITEM_HEIGHT * 4.5) + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 /**
  * Template for creating connected components
  */
 @connect(
   state => ({
     cleanups: state.cleanups.get('cleanups'),
+    userLocation: state.app.get('userLocation'),
   }),
   dispatch => bindActionCreators({}, dispatch)
 )
 @withStyles(styles)
-class SearchDrawer extends PureComponent {
+class SearchDrawer extends Component {
   static propTypes = {
     classes: PropTypes.object,
     cleanups: PropTypes.object,
     handleToggle: PropTypes.func,
     history: PropTypes.object,
     open: PropTypes.bool,
+    userLocation: PropTypes.instanceOf(Location),
   };
 
   static defaultProps = {};
+
+  state = {
+    sortType: 'sortByNextUp',
+  };
+
+  sortByNextUp = (cleanupA, cleanupB) => cleanupA.start - cleanupB.start;
+
+  sortByDistanceFromUser = (cleanupA, cleanupB) => {
+    const { userLocation } = this.props;
+    return (
+      geolib.getDistance(
+        { latitude: userLocation.latitude, longitude: userLocation.longitude },
+        { latitude: cleanupA.location.latitude, longitude: cleanupB.location.longitude }
+      ) -
+      geolib.getDistance(
+        { latitude: userLocation.latitude, longitude: userLocation.longitude },
+        { latitude: cleanupB.location.latitude, longitude: cleanupB.location.longitude }
+      )
+    );
+  };
 
   handleCleanupClick = event => {
     const { history } = this.props;
@@ -71,10 +111,32 @@ class SearchDrawer extends PureComponent {
     history.push(`${ CLEANUP_ROOT }${ cleanupId }`);
   };
 
+  handleSortingChange = (event) => {
+    this.setState({ sortType: event.target.value });
+  }
+
   render() {
     const {
-      classes, cleanups, handleToggle, open,
+      classes, cleanups, handleToggle, open, userLocation,
     } = this.props;
+
+    const { sortType } = this.state;
+
+    let sortingFunctions = Map({
+      sortByNextUp: {
+        function: this.sortByNextUp,
+        label: 'Next Cleanup Date',
+      },
+    });
+
+    // If we know the user's location, allow sorting by distance from user
+    if (userLocation != null) {
+      sortingFunctions = sortingFunctions.set('sortByDistanceFromUser', {
+        function: this.sortByDistanceFromUser,
+        label: 'Distance From Your Location',
+      });
+    }
+
     return (
       <Drawer
         anchor='left'
@@ -84,12 +146,24 @@ class SearchDrawer extends PureComponent {
       >
         <MenuList>
           <div className={ classes.listHeader }>
-            <Typography
-              variant='title'
-              gutterBottom
-            >
-              Upcoming Cleanups
-            </Typography>
+            <FormControl className={ classes.formControl } disabled={ sortingFunctions.size === 1 }>
+              <InputLabel htmlFor='sorting-type'>Sorted By</InputLabel>
+              <Select
+                value={ sortType }
+                onChange={ this.handleSortingChange }
+                input={ <Input id='sorting-type' /> }
+                MenuProps={ MenuProps }
+              >
+                {sortingFunctions.keySeq().map(key => (
+                  <MenuItem
+                    key={ key }
+                    value={ key }
+                  >
+                    {sortingFunctions.get(key).label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Button
               color='primary'
               mini
@@ -102,7 +176,7 @@ class SearchDrawer extends PureComponent {
           </div>
           {cleanups
             .toList()
-            .sort((cleanupA, cleanupB) => cleanupA.start - cleanupB.start)
+            .sort(sortingFunctions.get(sortType).function)
             .map(cleanup => (
               <div key={ cleanup.id }>
                 <Divider />
@@ -128,7 +202,8 @@ class SearchDrawer extends PureComponent {
                   />
                 </MenuItem>
               </div>
-            ))}
+            ))
+          }
         </MenuList>
       </Drawer>
     );

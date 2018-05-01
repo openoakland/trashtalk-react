@@ -14,12 +14,12 @@ import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
-import Divider from 'material-ui/Divider';
 import { screens } from 'constants/cleanup';
 
 import { postCleanup } from 'actions/cleanups';
+import { getTools, getToolCategories } from 'actions/tools';
 
-const styles = theme => ({
+const styles = () => ({
   stepStyle: {
     width: '100vw',
     maxWidth: '100%',
@@ -40,6 +40,8 @@ const {
   dispatch =>
     bindActionCreators(
       {
+        getTools,
+        getToolCategories,
         postCleanup,
       },
       dispatch
@@ -50,6 +52,8 @@ class Create extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
     backgroundMapLocation: PropTypes.instanceOf(Location),
+    getTools: PropTypes.func,
+    getToolCategories: PropTypes.func,
     postCleanup: PropTypes.func,
   };
 
@@ -60,6 +64,11 @@ class Create extends React.Component {
       cleanup: new Cleanup({ location: props.backgroundMapLocation || new Location() }),
       dialogCloseTriggered: false,
     };
+
+    // Get tools and tool categories so that by the time the user gets to the tools step
+    // everthing is already available for rendering
+    props.getTools();
+    props.getToolCategories();
   }
 
   getNextButton = () => {

@@ -72,6 +72,7 @@
     "babel-polyfill": "^6.26.0",
     "core-js": "^2.5.5",
     "date-fns": "^2.0.0-alpha.7",
+    "geolib": "2.0.24",
     "immutable": "^3.8.2",
     "isomorphic-fetch": "^2.2.1",
     "material-ui": "1.0.0-beta.44",

@@ -26,7 +26,7 @@ class GoogleMap extends Component {
     cleanups: PropTypes.array,
     history: PropTypes.object,
     mapCenter: PropTypes.object,
-    setMapReference: PropTypes.func,
+    handleMapInitialization: PropTypes.func,
     zoom: PropTypes.number,
   };
 
@@ -47,7 +47,7 @@ class GoogleMap extends Component {
    */
   componentDidMount() {
     const { id } = this.state;
-    const { setMapReference, zoom } = this.props;
+    const { handleMapInitialization, zoom } = this.props;
 
     // Initialize Google Map object using mapCenter inside mapContainer
     // https://developers.google.com/maps/documentation/javascript/adding-a-google-map
@@ -69,8 +69,8 @@ class GoogleMap extends Component {
     this.setState({ mapReference }, () => {
       this.syncCleanupMarkers(this.props.cleanups);
 
-      if (setMapReference) {
-        setMapReference(mapReference);
+      if (handleMapInitialization) {
+        handleMapInitialization(mapReference);
       }
     });
   }
@@ -127,7 +127,7 @@ class GoogleMap extends Component {
 
         // If the cleanup is an existing cleanup, make it clickable so that
         // users are taken to the cleanup's details view
-        if (cleanup.has('id')) {
+        if (cleanup.get('id') != null) {
           marker.addListener('click', () => this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`));
         }
         cleanupMarkers = cleanupMarkers.set(cleanup, marker);

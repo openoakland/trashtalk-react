@@ -4,7 +4,6 @@ import AppBar from 'material-ui/AppBar';
 import Button from 'material-ui/Button';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Drawer from 'material-ui/Drawer';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Toolbar from 'material-ui/Toolbar';
@@ -13,9 +12,8 @@ import { withRouter } from 'react-router-dom';
 import { routeCodes } from 'constants/routes';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import SearchDrawer from './Menu/SearchDrawer';
-
 import { getUserLocation } from 'actions/app';
+import SearchDrawer from './Menu/SearchDrawer';
 
 const styles = theme => ({
   button: {
@@ -51,7 +49,10 @@ class Menu extends PureComponent {
 
   handleLoginClick = () => this.props.history.push(routeCodes.LOGIN);
 
-  handleDrawerToggle = () => this.setState({ drawerOpen: !this.state.drawerOpen });
+  handleDrawerToggle = () => {
+    this.initUserLocation();
+    this.setState({ drawerOpen: !this.state.drawerOpen });
+  }
 
   initUserLocation = () => {
     const { userLocation } = this.props;

@@ -1,3 +1,252 @@
+export const BENTLEY = {
+  name: 'Bentley',
+  styles: [
+    {
+      featureType: 'landscape',
+      stylers: [
+        {
+          hue: '#F1FF00',
+        },
+        {
+          saturation: -27.4,
+        },
+        {
+          lightness: 9.4,
+        },
+        {
+          gamma: 1,
+        },
+      ],
+    },
+    {
+      featureType: 'road.highway',
+      stylers: [
+        {
+          hue: '#0099FF',
+        },
+        {
+          saturation: -20,
+        },
+        {
+          lightness: 36.4,
+        },
+        {
+          gamma: 1,
+        },
+      ],
+    },
+    {
+      featureType: 'road.arterial',
+      stylers: [
+        {
+          hue: '#00FF4F',
+        },
+        {
+          saturation: 0,
+        },
+        {
+          lightness: 0,
+        },
+        {
+          gamma: 1,
+        },
+      ],
+    },
+    {
+      featureType: 'road.local',
+      stylers: [
+        {
+          hue: '#FFB300',
+        },
+        {
+          saturation: -38,
+        },
+        {
+          lightness: 11.2,
+        },
+        {
+          gamma: 1,
+        },
+      ],
+    },
+    {
+      featureType: 'water',
+      stylers: [
+        {
+          hue: '#00B6FF',
+        },
+        {
+          saturation: 4.2,
+        },
+        {
+          lightness: -63.4,
+        },
+        {
+          gamma: 1,
+        },
+      ],
+    },
+    {
+      featureType: 'poi',
+      stylers: [
+        {
+          hue: '#9FFF00',
+        },
+        {
+          saturation: 0,
+        },
+        {
+          lightness: 0,
+        },
+        {
+          gamma: 1,
+        },
+      ],
+    },
+  ],
+};
+
+export const UNSATURATED_BROWNS = {
+  name: 'Unsaturated Browns',
+  styles: [
+    {
+      elementType: 'geometry',
+      stylers: [
+        {
+          hue: '#ff4400',
+        },
+        {
+          saturation: -68,
+        },
+        {
+          lightness: -4,
+        },
+        {
+          gamma: 0.72,
+        },
+      ],
+    },
+    {
+      featureType: 'road',
+      elementType: 'labels.icon',
+    },
+    {
+      featureType: 'landscape.man_made',
+      elementType: 'geometry',
+      stylers: [
+        {
+          hue: '#0077ff',
+        },
+        {
+          gamma: 3.1,
+        },
+      ],
+    },
+    {
+      featureType: 'water',
+      stylers: [
+        {
+          hue: '#00ccff',
+        },
+        {
+          gamma: 0.44,
+        },
+        {
+          saturation: -33,
+        },
+      ],
+    },
+    {
+      featureType: 'poi.park',
+      stylers: [
+        {
+          hue: '#44ff00',
+        },
+        {
+          saturation: -23,
+        },
+      ],
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.fill',
+      stylers: [
+        {
+          hue: '#007fff',
+        },
+        {
+          gamma: 0.77,
+        },
+        {
+          saturation: 65,
+        },
+        {
+          lightness: 99,
+        },
+      ],
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.stroke',
+      stylers: [
+        {
+          gamma: 0.11,
+        },
+        {
+          weight: 5.6,
+        },
+        {
+          saturation: 99,
+        },
+        {
+          hue: '#0091ff',
+        },
+        {
+          lightness: -86,
+        },
+      ],
+    },
+    {
+      featureType: 'transit.line',
+      elementType: 'geometry',
+      stylers: [
+        {
+          lightness: -48,
+        },
+        {
+          hue: '#ff5e00',
+        },
+        {
+          gamma: 1.2,
+        },
+        {
+          saturation: -23,
+        },
+      ],
+    },
+    {
+      featureType: 'transit',
+      elementType: 'labels.text.stroke',
+      stylers: [
+        {
+          saturation: -64,
+        },
+        {
+          hue: '#ff9100',
+        },
+        {
+          lightness: 16,
+        },
+        {
+          gamma: 0.47,
+        },
+        {
+          weight: 2.7,
+        },
+      ],
+    },
+  ],
+};
 export const AUBERGINE = {
   name: 'Aubergine',
   styles: [
