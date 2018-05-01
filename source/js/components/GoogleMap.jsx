@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { CLEANUP_ROOT } from 'constants/routes';
-import { Map, Set } from 'immutable';
+import Immutable, { Map, Set } from 'immutable';
 
 import Location from 'models/Location';
 
@@ -36,14 +35,14 @@ class GoogleMap extends Component {
   };
 
   state = {
-    id: Date.now(),
-    cleanupMarkers: Map(),
-    mapReference: null, // After we initialize the Google Map object, we store the reference here
+    id: Date.now(), // Unique ID assigned to element that would contain the Goole Map
+    cleanupMarkers: Map(), // Collection to keep track of markers that have been created
+    mapReference: null, // After initializing the Google Map object, store the reference here
   };
 
   /**
-   * After this component is mounted, initialize the Google Map object and mount to this element.
-   * Also save a reference to the Map object so that it can be used elsewhere, e.g.: in this.markLocations()
+   * After this component is mounted, initialize the Google Map object and mount to this component.
+   * Also save a reference to the Map object so that it can be used elsewhere
    */
   componentDidMount() {
     const { id } = this.state;
@@ -76,15 +75,17 @@ class GoogleMap extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // Here we should check to see if nextProps.mapCenter has changed.
+    // Check to see if the mapCenter has changed.
     // If it has, recenter map to new location
     if (nextProps.mapCenter && (this.props.mapCenter == null || !nextProps.mapCenter.isAt(this.props.mapCenter))) {
       const { mapReference } = this.state;
       mapReference.panTo(nextProps.mapCenter.getLatLngObj());
     }
 
-    // If the array of locations have changed, markLocations again
-    this.syncCleanupMarkers(nextProps.cleanups);
+    // If the collection of cleanups gets updated, resync the cleanup markers
+    if (!Immutable.is(nextProps.cleanups, this.props.cleanups)) {
+      this.syncCleanupMarkers(nextProps.cleanups);
+    }
   }
 
   componentWillUnmount() {
@@ -125,10 +126,10 @@ class GoogleMap extends Component {
           map: mapReference,
         });
 
-        // If the cleanup is an existing cleanup, make it clickable so that
-        // users are taken to the cleanup's details view
+        // If the cleanup has been persisted (it would have an id), make it clickable so that
+        // users can click on it and view its details
         if (cleanup.get('id') != null) {
-          marker.addListener('click', () => this.props.history.push(`${ CLEANUP_ROOT }${ cleanup.id }`));
+          marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
         }
         cleanupMarkers = cleanupMarkers.set(cleanup, marker);
       });

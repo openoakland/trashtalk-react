@@ -5,9 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { CLEANUP_ROOT } from 'constants/routes';
 import { Map } from 'immutable';
-import geolib from 'geolib';
 
 import Avatar from 'material-ui/Avatar';
 import Divider from 'material-ui/Divider';
@@ -92,26 +90,18 @@ class SearchDrawer extends Component {
   sortByNextUp = (cleanupA, cleanupB) => cleanupA.start - cleanupB.start;
 
   sortByDistanceFromUser = (cleanupA, cleanupB) => {
-    const { latitude, longitude } = this.props.userLocation;
-    return (
-      geolib.getDistance(
-        { latitude, longitude },
-        { latitude: cleanupA.location.latitude, longitude: cleanupB.location.longitude }
-      ) -
-      geolib.getDistance(
-        { latitude, longitude },
-        { latitude: cleanupB.location.latitude, longitude: cleanupB.location.longitude }
-      )
-    );
+    const { userLocation } = this.props;
+    return cleanupA.location.getDistanceFrom(userLocation) - cleanupB.location.getDistanceFrom(userLocation);
   };
 
   handleCleanupClick = event => {
-    const { history } = this.props;
-    const cleanupId = event.currentTarget.dataset.cleanupId;
-    history.push(`${ CLEANUP_ROOT }${ cleanupId }`);
+    const { cleanups, history } = this.props;
+    const cleanupId = Number(event.currentTarget.dataset.cleanupId);
+    const cleanup = cleanups.get(cleanupId);
+    history.push(cleanup.getCleanupPath());
   };
 
-  handleSortingChange = (event) => this.setState({ sortType: event.target.value })
+  handleSortingChange = event => this.setState({ sortType: event.target.value });
 
   render() {
     const {
@@ -144,7 +134,10 @@ class SearchDrawer extends Component {
       >
         <MenuList>
           <div className={ classes.listHeader }>
-            <FormControl className={ classes.formControl } disabled={ sortingFunctions.size === 1 }>
+            <FormControl
+              className={ classes.formControl }
+              disabled={ sortingFunctions.size === 1 }
+            >
               <InputLabel htmlFor='sorting-type'>Sorted By</InputLabel>
               <Select
                 value={ sortType }
@@ -175,33 +168,44 @@ class SearchDrawer extends Component {
           {cleanups
             .toList()
             .sort(sortingFunctions.get(sortType).function)
-            .map(cleanup => (
-              <div key={ cleanup.id }>
-                <Divider />
-                <MenuItem
-                  data-cleanup-id={ cleanup.id }
-                  onClick={ this.handleCleanupClick }
-                  className={ classes.menuItem }
-                >
-                  {cleanup.location.image ? (
-                    <Avatar
-                      src={ cleanup.location.image }
-                      className={ classNames(classes.avatar, classes.locationAvatar) }
+            .map(cleanup => {
+              let secondary = `${ cleanup.start.toLocaleString() }`;
+
+              if (userLocation != null) {
+                const distance = cleanup.location.getDistanceFrom(userLocation, { unit: 'mile' });
+                secondary +=
+                  distance > 0
+                    ? `, about ${ distance } mile${ distance === 1 ? '' : 's' } away`
+                    : ', less than a mile away';
+              }
+
+              return (
+                <div key={ cleanup.id }>
+                  <Divider />
+                  <MenuItem
+                    data-cleanup-id={ cleanup.id }
+                    onClick={ this.handleCleanupClick }
+                    className={ classes.menuItem }
+                  >
+                    {cleanup.location.image ? (
+                      <Avatar
+                        src={ cleanup.location.image }
+                        className={ classNames(classes.avatar, classes.locationAvatar) }
+                      />
+                    ) : (
+                      <Icon style={ { color: '#eb4335' } }>place</Icon>
+                    )}
+                    <ListItemText
+                      primary={ cleanup.title }
+                      secondary={ secondary }
+                      classes={ {
+                        root: classes.listItemText,
+                      } }
                     />
-                  ) : (
-                    <Icon style={ { color: '#eb4335' } }>place</Icon>
-                  )}
-                  <ListItemText
-                    primary={ cleanup.title }
-                    secondary={ cleanup.start.toLocaleString() }
-                    classes={ {
-                      root: classes.listItemText,
-                    } }
-                  />
-                </MenuItem>
-              </div>
-            ))
-          }
+                  </MenuItem>
+                </div>
+              );
+            })}
         </MenuList>
       </Drawer>
     );

@@ -7,7 +7,8 @@ import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Avatar from 'material-ui/Avatar';
-import Card, { CardActions, CardContent, CardHeader, CardMedia } from 'material-ui/Card';
+import { getUserLocation } from 'actions/app';
+import Card, { CardActions, CardContent, CardHeader } from 'material-ui/Card';
 import Dialog from 'material-ui/Dialog';
 
 import Notice from 'models/Notice';
@@ -45,16 +46,25 @@ const styles = theme => ({
 const WELCOME_VIEWED_KEY = 'WELCOME_VIEWED_KEY';
 const initialNotice = sessionStorage.getItem(WELCOME_VIEWED_KEY) ? null : WELCOME;
 
+@connect(
+  state => ({
+    cleanups: state.cleanups.get('cleanups'),
+    userLocation: state.app.get('userLocation'),
+  }),
+  dispatch => bindActionCreators({ getUserLocation }, dispatch)
+)
 @withStyles(styles)
-export default class CleanupView extends React.Component {
+export default class Notifications extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
+    getUserLocation: PropTypes.func,
     notice: PropTypes.instanceOf(Notice),
-  }
+    userLocation: PropTypes.object,
+  };
 
   static defaultProps = {
     notice: initialNotice,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -63,12 +73,23 @@ export default class CleanupView extends React.Component {
     };
   }
 
+  initUserLocation = () => {
+    const { userLocation } = this.props;
+    if (userLocation == null) {
+      this.props.getUserLocation();
+    }
+  };
+
   handleCloseClick = () => {
     this.setState({
       open: false,
     });
     sessionStorage.setItem(WELCOME_VIEWED_KEY, true);
-  }
+
+    // The location calculation can take a while, so ask for permission early
+    // to get it here
+    this.initUserLocation();
+  };
 
   render() {
     const { open } = this.state;
@@ -83,26 +104,28 @@ export default class CleanupView extends React.Component {
         aria-labelledby='responsive-dialog-title'
         onBackdropClick={ this.handleCloseClick }
       >
-        <Card raised={true} className={ classes.card }>
+        <Card
+          raised={ true }
+          className={ classes.card }
+        >
           <CardHeader
             classes={ {
               title: classes.title,
             } }
-            avatar={
-              <Avatar
-                aria-label='Recipe'
-                src='/assets/img/trashSplash.jpg'
-                className={ classes.bigAvatar }
-              />
-            }
+            avatar={ <Avatar
+              aria-label='Recipe'
+              src='/assets/img/trashSplash.jpg'
+              className={ classes.bigAvatar }
+            /> }
             title={ notice.title }
           />
           <CardContent>
-            <Typography component='p'>
-              {notice.description}
-            </Typography>
+            <Typography component='p'>{notice.description}</Typography>
           </CardContent>
-          <CardActions className={ classes.actions } disableActionSpacing>
+          <CardActions
+            className={ classes.actions }
+            disableActionSpacing
+          >
             <Button
               size='large'
               color='primary'

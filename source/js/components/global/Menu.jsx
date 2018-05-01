@@ -84,7 +84,7 @@ class Menu extends PureComponent {
                 className={ classes.button }
                 onClick={ this.handleDrawerToggle }
               >
-                <Icon>menu</Icon>
+                <Icon>sort</Icon>
               </IconButton>
               TrashTalk
             </Typography>

@@ -1,4 +1,5 @@
 import { Record } from 'immutable';
+import geodist from 'geodist';
 
 export const MIDDLE_OF_OAKLAND = {
   latitude: 37.804,
@@ -14,17 +15,15 @@ export default class Location extends Record({
 }) {
   constructor(args) {
     // Initialize using args or default to MIDDLE_OF_OAKLAND
-    const parsedLatLong = args && 'latitude' in args && 'longitude' in args ? {
-      latitude: Number(parseFloat(args.latitude).toFixed(6)),
-      longitude: Number(parseFloat(args.longitude).toFixed(6)),
-    } : {};
+    const parsedLatLong =
+      args && 'latitude' in args && 'longitude' in args
+        ? {
+          latitude: Number(parseFloat(args.latitude).toFixed(6)),
+          longitude: Number(parseFloat(args.longitude).toFixed(6)),
+        }
+        : {};
 
-    const parsedArgs = Object.assign(
-      {},
-      MIDDLE_OF_OAKLAND,
-      args,
-      parsedLatLong
-    );
+    const parsedArgs = Object.assign({}, MIDDLE_OF_OAKLAND, args, parsedLatLong);
 
     super(parsedArgs);
   }
@@ -46,6 +45,15 @@ export default class Location extends Record({
       lat: this.latitude,
       lng: this.longitude,
     };
+  }
+
+  getDistanceFrom(otherLocation, options) {
+    const { latitude, longitude } = otherLocation;
+    return geodist(
+      { lat: latitude, lon: longitude },
+      { lat: this.latitude, lon: this.longitude },
+      options
+    );
   }
 
   /**

@@ -1,5 +1,5 @@
 import { List, Map, Record } from 'immutable';
-
+import { CLEANUP_ROOT } from 'constants/routes';
 import Location from 'models/Location';
 
 export default class Cleanup extends Record({
@@ -43,6 +43,10 @@ export default class Cleanup extends Record({
       tool,
       quantity,
     }), List());
+  }
+
+  getCleanupPath() {
+    return `${ CLEANUP_ROOT }${ this.id }`;
   }
 
   toApiJSON() {
