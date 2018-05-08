@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 import { CLEANUP_ROOT, routeCodes } from 'constants/routes';
-import themes from 'config/themes';
+import { GRAYS_GREENS as THEME } from 'config/themes';
 
 import Menu from 'components/global/Menu';
 import Notifications from 'components/global/Notifications';
@@ -19,7 +19,7 @@ import MapBackground from '../components/global/MapBackground';
 class App extends Component {
   render() {
     return (
-      <MuiThemeProvider theme={ createMuiTheme(themes.greens2) } >
+      <MuiThemeProvider theme={ createMuiTheme(THEME) } >
         <MapBackground />
         <div style={ { zIndex: 1 } }> <Menu /> </div>
         <div style={ { zIndex: 2 } }>

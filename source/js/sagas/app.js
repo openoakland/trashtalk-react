@@ -1,6 +1,16 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
+import { setJWT } from 'api/auth';
 
-import { GET_USER_LOCATION, GET_USER_LOCATION_SUCCESS, GET_USER_LOCATION_ERROR } from 'actions/app';
+import {
+  GET_USER_LOCATION,
+  GET_USER_LOCATION_SUCCESS,
+  GET_USER_LOCATION_ERROR,
+  LOGIN,
+  LOGIN_ERROR,
+  LOGIN_SUCCESS,
+} from 'actions/app';
+
+import api from 'api';
 
 import Location from 'models/Location';
 
@@ -26,4 +36,24 @@ function* getUserLocationStart() {
   }
 }
 
-export default [takeLatest(GET_USER_LOCATION, getUserLocationStart)];
+function* loginStart(action) {
+  try {
+    const { username, password } = action;
+    const data = yield call(() => api.login(username, password));
+    setJWT(data);
+    yield put({
+      type: LOGIN_SUCCESS,
+      data,
+    });
+  } catch (error) {
+    yield put({
+      type: LOGIN_ERROR,
+      error,
+    });
+  }
+}
+
+export default [
+  takeLatest(GET_USER_LOCATION, getUserLocationStart),
+  takeLatest(LOGIN, loginStart),
+];

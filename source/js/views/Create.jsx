@@ -20,6 +20,7 @@ import { postCleanup } from 'actions/cleanups';
 import { getTools, getToolCategories } from 'actions/tools';
 
 const styles = theme => ({
+  dialogPaper: { height: '100%' },
   stepStyle: {
     display: 'flex',
     flex: 1,
@@ -161,6 +162,7 @@ class Create extends React.Component {
     return (
       <DialogContainer
         actions={ actions }
+        dialogClasses={ { paper: classes.dialogPaper } }
         reasonToLock='This cleanup has not been completed.'
         subtitle={ this.renderContentText() }
         title='Organize a New Cleanup'

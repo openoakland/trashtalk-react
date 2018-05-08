@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
-import Avatar from 'material-ui/Avatar';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import { CardHeader } from 'material-ui';
@@ -13,6 +12,7 @@ import Icon from 'material-ui/Icon';
 import { setBackgroundMapLocation } from 'actions/app';
 
 const styles = theme => ({
+  dialogPaper: { height: '100%' },
   placesIcon: {
     colorPrimary: '#eb4335',
     height: 60,
@@ -64,7 +64,9 @@ export default class CleanupView extends React.PureComponent {
     const cleanup = cleanups.get(cleanupId);
 
     return (
-      <DialogContainer>
+      <DialogContainer
+        dialogClasses={{ paper: classes.dialogPaper }}
+      >
         <CardHeader
           title={ cleanup ? cleanup.title : 'Loading...' }
           avatar={ <Icon classes={ { colorPrimary: classes.placesIcon.colorPrimary } }>place</Icon> }

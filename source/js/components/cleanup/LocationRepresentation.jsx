@@ -121,14 +121,14 @@ class LocationRepresentation extends Component {
   };
 
   handleEnterKeyPress = event => {
-    const { suggestions } = this.state;
     // If the enter key is pressed, default to first suggestion if one exists
-    if (event.key === 'Enter' && suggestions.length > 0) {
+    const firstSuggestion = this.state.suggestions[0];
+    if (event.key === 'Enter' && firstSuggestion != null) {
       this.setState({
-        value: this.state.suggestions[0].label,
+        value: firstSuggestion.label,
       });
 
-      this.setCleanupToSuggestion(suggestions[0]);
+      this.setCleanupToSuggestion(firstSuggestion);
     }
   };
 

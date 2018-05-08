@@ -1,5 +1,7 @@
+import { routeCodes } from 'constants/routes';
+import { API_URL } from 'constants/app';
+
 // Simple API wrapper
-const API_URL = 'http://localhost:8000';
 
 // Custom API error to throw
 function ApiError(message, data, status) {
@@ -25,7 +27,7 @@ function ApiError(message, data, status) {
 }
 
 // API wrapper function
-export const fetchResource = (path, userOptions = {}) => {
+export const fetchResource = async (path, userOptions = {}) => {
   // Define default options
   const defaultOptions = {};
 
@@ -67,9 +69,13 @@ export const fetchResource = (path, userOptions = {}) => {
       response = responseObject;
 
       // HTTP unauthorized
-      if (response.status === 401) {
-        // Handle unauthorized requests
-        // Maybe redirect to login page?
+      if (response.status === 401 && window.location.pathname !== routeCodes.LOGIN) {
+        const {
+          pathname,
+          search,
+        } = window.location;
+        sessionStorage.setItem('PATH_ON_LOGIN', pathname + search);
+        window.location.pathname = routeCodes.LOGIN;
       }
 
       // Check for error HTTP error codes

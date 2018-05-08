@@ -17,9 +17,6 @@ const styles = theme => ({
     flexDirection: 'column',
     flex: 1,
   },
-  dialogPaper: {
-    height: '100%',
-  },
   snackbar: {
     margin: theme.spacing.unit,
   },
@@ -37,6 +34,8 @@ class DialogContainer extends React.Component {
   static propTypes = {
     actions: PropTypes.arrayOf(PropTypes.element),
     children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
+    classes: PropTypes.object,
+    dialogClasses: PropTypes.object,
     history: PropTypes.object,
     reasonToLock: PropTypes.string,
     subtitle: PropTypes.string,
@@ -86,20 +85,17 @@ class DialogContainer extends React.Component {
 
   render() {
     const {
-      actions, classes, children, reasonToLock, subtitle, title,
+      actions, classes, dialogClasses, children, reasonToLock, subtitle, title,
     } = this.props;
     const { showSnackbar } = this.state;
 
     return (
       <div>
         <Dialog
-          classes={ {
-            paper: classes.dialogPaper,
-            root: classes.dialogRoot,
-          } }
+          classes={ dialogClasses }
           open={ this.state.open }
           onClose={ this.handleCloseRequest }
-          aria-labelledby='responsive-dialog-title'
+          aria-labelledby='responsive-dialog'
           fullWidth={ true }
           maxWidth='md'
         >

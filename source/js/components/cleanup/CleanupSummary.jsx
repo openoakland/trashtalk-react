@@ -10,11 +10,9 @@ import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavi
 
 const styles = theme => ({
   BottomNavigationAction: {
-    color: theme.palette.secondary.dark,
   },
   bottomNavigation: {
     width: '100%',
-    backgroundColor: theme.palette.secondary.main,
     justifyContent: 'space-around',
   },
   summaryItemContainer: {
@@ -84,19 +82,18 @@ class CleanupSummary extends Component {
           showLabels={ true }
         >
           <BottomNavigationAction
-            className={ classes.BottomNavigationAction }
+            className={ classes.bottomNavigation }
             label='Where'
             value={ LOCATION_SELECTION }
             icon={ <Icon> place </Icon> }
           />
           <BottomNavigationAction
-            className={ classes.BottomNavigationAction }
+            className={ classes.bottomNavigation }
             label='When'
             value={ DATE_SELECTION }
             icon={ <Icon> date_range </Icon> }
           />
           <BottomNavigationAction
-            className={ classes.BottomNavigationAction }
             label='Tools'
             value={ TOOL_SELECTION }
             icon={ <Icon> list </Icon> }
