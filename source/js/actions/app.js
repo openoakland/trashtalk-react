@@ -3,7 +3,8 @@ export const SET_BACKGROUND_MAP_REFERENCE = 'SET_BACKGROUND_MAP_REFERENCE';
 export const GET_USER_LOCATION = 'GET_USER_LOCATION';
 export const GET_USER_LOCATION_ERROR = 'GET_USER_LOCATION_ERROR';
 export const GET_USER_LOCATION_SUCCESS = 'GET_USER_LOCATION_SUCCESS';
-export const LOGIN = 'LOGIN ';
+export const LOGIN_RESET = 'LOGIN_RESET ';
+export const LOGIN_START = 'LOGIN_START';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_SNACKBAR = 'SET_SNACKBAR';
@@ -39,6 +40,12 @@ export function login(username, password) {
   return {
     password,
     username,
-    type: LOGIN,
+    type: LOGIN_START,
+  };
+}
+
+export function loginReset() {
+  return {
+    type: LOGIN_RESET,
   };
 }

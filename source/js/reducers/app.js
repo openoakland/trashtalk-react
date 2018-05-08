@@ -1,15 +1,28 @@
 import { Map } from 'immutable';
 
-import { SET_BACKGROUND_MAP_LOCATION, SET_BACKGROUND_MAP_REFERENCE, GET_USER_LOCATION_SUCCESS } from 'actions/app';
+import {
+  GET_USER_LOCATION_SUCCESS,
+  LOGIN_START,
+  LOGIN_SUCCESS,
+  LOGIN_ERROR,
+  LOGIN_RESET,
+  SET_BACKGROUND_MAP_LOCATION,
+  SET_BACKGROUND_MAP_REFERENCE,
+} from 'actions/app';
+
 
 import { POST_CLEANUPS_SUCCESS } from 'actions/cleanups';
 
 import Location from 'models/Location';
+import { getUserFromJWT } from '../api/auth';
+
 
 const initialState = Map({
   backgroundMapReference: null,
   backgroundMapLocation: null,
   userLocation: null,
+  user: getUserFromJWT(),
+  loginState: null,
 });
 
 const actionsMap = {
@@ -34,8 +47,19 @@ const actionsMap = {
       action.userLocation
     );
   },
+  [LOGIN_START]: (state) => {
+    return state.set('loginState', LOGIN_START);
+  },
+  [LOGIN_ERROR]: (state) => {
+    return state.set('loginState', LOGIN_ERROR);
+  },
+  [LOGIN_SUCCESS]: (state, action) => {
+    return state.set('user', action.user).set('loginState', LOGIN_SUCCESS);
+  },
+  [LOGIN_RESET]: (state) => {
+    return state.set('loginState', null);
+  },
   [POST_CLEANUPS_SUCCESS]: (state, action) => {
-    // After a successful cleanup creation, refocus map to new cleanup
     return state.set('backgroundMapLocation', new Location(action.data.location));
   },
 };

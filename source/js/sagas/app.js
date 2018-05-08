@@ -1,11 +1,11 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { setJWT } from 'api/auth';
+import { getUserFromJWT, setJWT } from 'api/auth';
 
 import {
   GET_USER_LOCATION,
   GET_USER_LOCATION_SUCCESS,
   GET_USER_LOCATION_ERROR,
-  LOGIN,
+  LOGIN_START,
   LOGIN_ERROR,
   LOGIN_SUCCESS,
 } from 'actions/app';
@@ -43,7 +43,7 @@ function* loginStart(action) {
     setJWT(data.token);
     yield put({
       type: LOGIN_SUCCESS,
-      data,
+      user: getUserFromJWT(),
     });
   } catch (error) {
     yield put({
@@ -55,5 +55,5 @@ function* loginStart(action) {
 
 export default [
   takeLatest(GET_USER_LOCATION, getUserLocationStart),
-  takeLatest(LOGIN, loginStart),
+  takeLatest(LOGIN_START, loginStart),
 ];

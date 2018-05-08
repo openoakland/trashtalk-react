@@ -126,9 +126,7 @@ class DialogContainer extends React.Component {
           autoHideDuration={ AUTO_HIDE_DURATION }
           onClose={ this.handleSnackbarClose }
           open={ showSnackbar }
-          SnackbarContentProps={ { 'aria-describedby': 'message-id' } }
           message={ reasonToLock }
-          transition={ Fade }
           action={ [
             <Button
               key='undo'

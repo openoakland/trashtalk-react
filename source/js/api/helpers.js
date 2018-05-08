@@ -1,6 +1,5 @@
-import { routeCodes } from 'constants/routes';
 import { API_URL } from 'constants/app';
-import { getJWT } from 'api/auth';
+import { getJWTasync } from 'api/auth';
 
 // Simple API wrapper
 
@@ -28,7 +27,7 @@ function ApiError(message, data, status) {
 }
 
 // API wrapper function
-export const fetchResource = async (path, userOptions = {}) => {
+export const fetchResource = async (path, userOptions = {}, addAuthHeader = true) => {
   // Define default options
   const defaultOptions = {};
 
@@ -49,15 +48,17 @@ export const fetchResource = async (path, userOptions = {}) => {
     },
   };
 
-  const jwt = getJWT();
-  if (jwt) {
-    options.headers.Authorization = `JWT ${ jwt }`;
+  if (addAuthHeader) {
+    const jwt = await getJWTasync();
+    if (jwt) {
+      options.headers.Authorization = `JWT ${ jwt }`;
+    }
   }
 
   // Build Url
   const url = `${ API_URL }/${ path }`;
 
-  // Detect is we are uploading a file
+  // Detect if we are uploading a file
   const isFile = typeof window !== 'undefined' && options.body instanceof File;
 
   // Stringify JSON data
@@ -67,51 +68,20 @@ export const fetchResource = async (path, userOptions = {}) => {
   }
 
   // Variable which will be used for storing response
-  let response = null;
+  let response;
+  try {
+    response = await fetch(url, options);
+    if (response.status < 200 || response.status >= 400) {
+      throw response;
+    }
+    response = await response.json();
+  } catch (error) {
+    if (response) {
+      throw ApiError(`Request failed with status ${ response.status }.`, error, response.status);
+    } else {
+      throw ApiError(error.toString(), null, 'REQUEST_FAILED');
+    }
+  }
 
-  return fetch(url, options)
-    .then(responseObject => {
-      // Saving response for later use in lower scopes
-      response = responseObject;
-
-      // HTTP unauthorized
-      if (response.status === 401 && window.location.pathname !== routeCodes.LOGIN) {
-        // const {
-        //   pathname,
-        //   search,
-        // } = window.location;
-        // sessionStorage.setItem('PATH_ON_LOGIN', pathname + search);
-        // window.location.pathname = routeCodes.LOGIN;
-      }
-
-      // Check for error HTTP error codes
-      if (response.status < 200 || response.status >= 300) {
-        // Get response as text
-        return response.text();
-      }
-
-      // Get response as json
-      return response.json();
-    })
-    // "parsedResponse" will be either text or javascript object depending if
-    // "response.text()" or "response.json()" got called in the upper scope
-    .then(parsedResponse => {
-      // Check for HTTP error codes
-      if (response.status < 200 || response.status >= 300) {
-        // Throw error
-        throw parsedResponse;
-      }
-
-      // Request succeeded
-      return parsedResponse;
-    })
-    .catch(error => {
-      // Throw custom API error
-      // If response exists it means HTTP error occured
-      if (response) {
-        throw ApiError(`Request failed with status ${ response.status }.`, error, response.status);
-      } else {
-        throw ApiError(error.toString(), null, 'REQUEST_FAILED');
-      }
-    });
+  return response;
 };
