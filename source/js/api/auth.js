@@ -1,52 +1,61 @@
-import { API_URL } from 'constants/app';
 import jwt from 'jsonwebtoken';
+import { routeCodes } from 'constants/routes';
+import { fetchResource } from 'api/helpers';
 
 const JWT_KEY = 'jwtPayload';
-const TIME_UNTIL_REFRESH = 3600000; // One hour in ms
 
-export const getJWT = () => {
+export const redirectToLogin = () => {
+  const {
+    pathname,
+    search,
+  } = window.location;
+  sessionStorage.setItem('PATH_ON_LOGIN', pathname + search);
+  window.location.pathname = routeCodes.LOGIN;
+};
+
+export const setJWT = payload => {
+  localStorage.setItem(JWT_KEY, payload);
+};
+
+export const getJWT = async () => {
   // Add JWT if one is set in storage
-  const jwtPayload = localStorage.getItem(JWT_KEY);
-  if (jwtPayload) {
-    return JSON.parse(jwtPayload);
-  }
-
-  return null;
-};
-
-export const setJWT = (token) => {
-  localStorage.setItem(JWT_KEY, token);
-};
-
-/**
- * Function that adds JWT header if one is found in storage. If one is found and it's expired,
- * attempt to refresh the token and add it to the header. If no JWT is found, return the header as is.
- * @param {Object} headers
- */
-export const addJWTheader = async (headers) => {
-  const updatedHeaders = Object.assign({}, headers);
-
-  const token = getJWT();
+  let token = localStorage.getItem(JWT_KEY);
   if (token) {
     const decoded = jwt.decode(token);
-    if ((decoded.exp - TIME_UNTIL_REFRESH) > Date.now()) {
-      updatedHeaders.Authorization = `JWT ${ token }`;
-    } else {
-      // Attempt to refresh the token if it's expired
+    // If the token is expired or getting close to being expired, attempt to get a new token
+    if ((Date.now() / 1000) > decoded.exp) {
       try {
-        const url = `${ API_URL }/api/v1/token-refresh`;
-        const refreshToken = await fetch(
-          url,
-          { body: { token } }
-        );
-        updatedHeaders.Authorization = `JWT ${ refreshToken }`;
-        setJWT(refreshToken);
+        const url = 'api/v1/token-refresh/';
+        const response = await fetchResource(url, { body: { token }, method: 'POST' });
+        token = response.token;
+        setJWT(token);
       } catch (err) {
+        setJWT(null);
         console.error(err);
+        token = null;
       }
     }
   }
 
-  return updatedHeaders;
+  console.debug(token);
+
+  return token;
+};
+
+/**
+ * Class/Component decorator that redirects to login page if a valid JWT
+ * doesn't exist or if a refresh token can't be requested from an
+ * expired JWT
+ */
+export const loginRequired = (ReactComponent) => {
+  return async function (props) {
+    const token = await getJWT();
+    if (token != null) {
+      return new ReactComponent(props);
+    }
+
+    redirectToLogin();
+    return null;
+  };
 };
 

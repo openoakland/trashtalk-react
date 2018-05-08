@@ -1,5 +1,6 @@
 import { routeCodes } from 'constants/routes';
 import { API_URL } from 'constants/app';
+import { getJWT } from 'api/auth';
 
 // Simple API wrapper
 
@@ -48,6 +49,11 @@ export const fetchResource = async (path, userOptions = {}) => {
     },
   };
 
+  const jwt = getJWT();
+  if (jwt) {
+    options.headers.Authorization = `JWT ${ jwt }`;
+  }
+
   // Build Url
   const url = `${ API_URL }/${ path }`;
 
@@ -70,12 +76,12 @@ export const fetchResource = async (path, userOptions = {}) => {
 
       // HTTP unauthorized
       if (response.status === 401 && window.location.pathname !== routeCodes.LOGIN) {
-        const {
-          pathname,
-          search,
-        } = window.location;
-        sessionStorage.setItem('PATH_ON_LOGIN', pathname + search);
-        window.location.pathname = routeCodes.LOGIN;
+        // const {
+        //   pathname,
+        //   search,
+        // } = window.location;
+        // sessionStorage.setItem('PATH_ON_LOGIN', pathname + search);
+        // window.location.pathname = routeCodes.LOGIN;
       }
 
       // Check for error HTTP error codes

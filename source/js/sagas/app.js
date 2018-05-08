@@ -40,7 +40,7 @@ function* loginStart(action) {
   try {
     const { username, password } = action;
     const data = yield call(() => api.login(username, password));
-    setJWT(data);
+    setJWT(data.token);
     yield put({
       type: LOGIN_SUCCESS,
       data,

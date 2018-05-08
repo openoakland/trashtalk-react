@@ -18,6 +18,7 @@ import { screens } from 'constants/cleanup';
 
 import { postCleanup } from 'actions/cleanups';
 import { getTools, getToolCategories } from 'actions/tools';
+import { loginRequired } from 'api/auth';
 
 const styles = theme => ({
   dialogPaper: { height: '100%' },
@@ -53,6 +54,7 @@ const {
     )
 )
 @withStyles(styles)
+@loginRequired
 class Create extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
