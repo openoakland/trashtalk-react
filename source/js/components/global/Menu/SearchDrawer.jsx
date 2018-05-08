@@ -24,6 +24,9 @@ const styles = theme => ({
   closeButton: {
     marginBottom: theme.spacing.unit,
   },
+  formControl: {
+
+  },
   listHeader: {
     display: 'flex',
     alignItems: 'center',
@@ -67,6 +70,7 @@ const MenuProps = {
   state => ({
     cleanups: state.cleanups.get('cleanups'),
     userLocation: state.app.get('userLocation'),
+    user: state.app.get('user'),
   }),
   dispatch => bindActionCreators({}, dispatch)
 )
@@ -79,13 +83,20 @@ class SearchDrawer extends Component {
     history: PropTypes.object,
     open: PropTypes.bool,
     userLocation: PropTypes.instanceOf(Location),
+    user: PropTypes.object,
   };
 
   static defaultProps = {};
 
   state = {
     sortType: 'sortByNextUp',
+    filterType: 'showAll',
   };
+
+  filterByUser = cleanup => {
+    const { user } = this.props;
+    return cleanup.hasHost(user) || cleanup.hasParticipant(user);
+  }
 
   sortByNextUp = (cleanupA, cleanupB) => cleanupA.start - cleanupB.start;
 
@@ -101,14 +112,15 @@ class SearchDrawer extends Component {
     history.push(cleanup.getCleanupPath());
   };
 
+  handleFilteringChange = event => this.setState({ filterType: event.target.value });
   handleSortingChange = event => this.setState({ sortType: event.target.value });
 
   render() {
     const {
-      classes, cleanups, handleToggle, open, userLocation,
+      classes, cleanups, handleToggle, open, user, userLocation,
     } = this.props;
 
-    const { sortType } = this.state;
+    const { filterType, sortType } = this.state;
 
     let sortingFunctions = Map({
       sortByNextUp: {
@@ -125,6 +137,20 @@ class SearchDrawer extends Component {
       });
     }
 
+    let filterFunctions = Map({
+      showAll: {
+        function: () => true,
+        label: 'All Cleanups',
+      },
+    });
+
+    if (user != null) {
+      filterFunctions = filterFunctions.set('filterByUser', {
+        function: this.filterByUser,
+        label: 'Your Cleanups',
+      });
+    }
+
     return (
       <Drawer
         anchor='left'
@@ -136,9 +162,30 @@ class SearchDrawer extends Component {
           <div className={ classes.listHeader }>
             <FormControl
               className={ classes.formControl }
+              disabled={ filterFunctions.size === 1 }
+            >
+              <InputLabel htmlFor='filter-type'> Showing </InputLabel>
+              <Select
+                value={ filterType }
+                onChange={ this.handleFilteringChange }
+                input={ <Input id='filter-type' /> }
+                MenuProps={ MenuProps }
+              >
+                {filterFunctions.keySeq().map(key => (
+                  <MenuItem
+                    key={ key }
+                    value={ key }
+                  >
+                    {filterFunctions.get(key).label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl
+              className={ classes.formControl }
               disabled={ sortingFunctions.size === 1 }
             >
-              <InputLabel htmlFor='sorting-type'>Sorted By</InputLabel>
+              <InputLabel htmlFor='sorting-type'> Sorted By </InputLabel>
               <Select
                 value={ sortType }
                 onChange={ this.handleSortingChange }
@@ -166,6 +213,7 @@ class SearchDrawer extends Component {
             </Button>
           </div>
           {cleanups
+            .filter(filterFunctions.get(filterType).function)
             .toList()
             .sort(sortingFunctions.get(sortType).function)
             .map(cleanup => {

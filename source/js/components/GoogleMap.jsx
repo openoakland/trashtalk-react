@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Immutable, { Map, Set } from 'immutable';
 
@@ -19,13 +21,21 @@ const styles = {
 };
 
 const DEFAULT_ZOOM = 17;
-
+@connect(
+  (state, props) => {
+    return {
+      user: state.app.get('user'),
+    };
+  },
+  dispatch => bindActionCreators({}, dispatch)
+)
 class GoogleMap extends Component {
   static propTypes = {
     cleanups: PropTypes.array,
     history: PropTypes.object,
     mapCenter: PropTypes.object,
     handleMapInitialization: PropTypes.func,
+    user: PropTypes.object,
     zoom: PropTypes.number,
   };
 
@@ -82,10 +92,19 @@ class GoogleMap extends Component {
       mapReference.panTo(nextProps.mapCenter.getLatLngObj());
     }
 
+    if (!Immutable.is(nextProps.user, this.props.user)) {
+      const { cleanupMarkers } = this.state;
+      cleanupMarkers.forEach(marker => {
+        marker.setMap(null);
+      });
+      this.syncCleanupMarkers(nextProps.cleanups);
+    }
+
     // If the collection of cleanups gets updated, resync the cleanup markers
     if (!Immutable.is(nextProps.cleanups, this.props.cleanups)) {
       this.syncCleanupMarkers(nextProps.cleanups);
     }
+
   }
 
   componentWillUnmount() {
@@ -102,6 +121,7 @@ class GoogleMap extends Component {
    */
   syncCleanupMarkers = cleanups => {
     const { mapReference } = this.state;
+    const { user } = this.props;
     // If the map hasn't been initialized yet, just bail out
     if (mapReference == null) {
       return;
@@ -120,8 +140,18 @@ class GoogleMap extends Component {
     // Now add cleanup markers that haven't already been added
     if (cleanups != null) {
       cleanups.filter(cleanup => !cleanupMarkers.has(cleanup)).forEach(cleanup => {
+        let label;
+        if (user != null) {
+          if (cleanup.hasHost(user)) {
+            label = 'H';
+          } else if (cleanup.hasParticipant(user)) {
+            label = 'P';
+          }
+        }
+
         const marker = new window.google.maps.Marker({
           animation: window.google.maps.Animation.DROP,
+          label,
           position: cleanup.location.getLatLngObj(),
           map: mapReference,
         });

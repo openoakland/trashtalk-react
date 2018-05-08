@@ -30,6 +30,7 @@ const styles = theme => ({
     return {
       cleanups: state.cleanups.get('cleanups'),
       cleanupId: Number(props.match.params.cleanupId),
+      user: state.app.get('user'),
     };
   },
   dispatch => bindActionCreators({ setBackgroundMapLocation }, dispatch)

@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import { routeCodes } from 'constants/routes';
+import { withStyles } from 'material-ui/styles';
 
 import Logo from 'components/global/Logo';
 import DialogContainer from 'components/global/DialogContainer';
@@ -14,6 +15,8 @@ import { login, loginReset } from 'actions/app';
 import queryString from 'query-string';
 import { LOGIN_ERROR, LOGIN_SUCCESS } from '../actions/app';
 
+const styles = theme => ({
+});
 
 /**
  * This component is used to display the details of a cleanup
@@ -24,16 +27,20 @@ import { LOGIN_ERROR, LOGIN_SUCCESS } from '../actions/app';
       cleanups: state.cleanups.get('cleanups'),
       cleanupId: Number(props.match.params.cleanupId),
       loginState: state.app.get('loginState'),
+      user: state.app.get('user'),
     };
   },
   dispatch => bindActionCreators({ login, loginReset }, dispatch)
 )
+@withStyles(styles)
 class Login extends React.Component {
   static propTypes = {
+    classes: PropTypes.object,
     history: PropTypes.object,
     login: PropTypes.func,
     loginReset: PropTypes.func,
     loginState: PropTypes.string,
+    user: PropTypes.object,
   };
 
   state = { username: '', password: '' }
@@ -74,17 +81,25 @@ class Login extends React.Component {
 
   render() {
     const { password, username } = this.state;
-    const { loginState } = this.props;
+    const { classes, loginState, user } = this.props;
     return (
       <DialogContainer
-        actions={ [
+        actions={[
           <Button
             variant='raised'
             color='primary'
+            disabled={ password === '' || username === '' }
             onClick={ this.handleLoginRequest }
           >
             Login
           </Button>,
+          <Button
+            className={classes.registerButton}
+            onClick={this.gotoRegistration}
+            variant='flat'
+          >
+            Register a new account
+            </Button>,
         ] }
       >
         <DialogContent>
@@ -92,13 +107,16 @@ class Login extends React.Component {
           { loginState === LOGIN_ERROR ? (
             <DialogContentText>The username/password combination could not be found. Please try again.</DialogContentText>
           ) : (
-            <DialogContentText>Enter your username and password to login</DialogContentText>
+            <DialogContentText>
+              { user ? `You are currently logged in as "${ user.username }".` : ''}
+              Enter your username and password to login.
+            </DialogContentText>
           )}
           <form autoComplete='off'>
             <TextField
               autoFocus
               margin='dense'
-              label='username'
+              label='Username'
               onChange={ this.onUsernameChange }
               value={ username }
               fullWidth
@@ -111,7 +129,6 @@ class Login extends React.Component {
               value={ password }
               fullWidth
             />
-            <Button onClick={ this.gotoRegistration }> Register a new account </Button>
           </form>
         </DialogContent>
       </DialogContainer>

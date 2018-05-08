@@ -1,4 +1,4 @@
-import { List, Map, Record } from 'immutable';
+import { List, Map, Record, Set } from 'immutable';
 import { CLEANUP_ROOT } from 'constants/routes';
 import Location from 'models/Location';
 
@@ -6,7 +6,8 @@ export default class Cleanup extends Record({
   id: undefined,
   location: null,
   title: null,
-  organizer: null,
+  host: null,
+  participants: Set(),
   start: null,
   end: null,
   requiredTools: Map(),
@@ -27,6 +28,9 @@ export default class Cleanup extends Record({
         end: args.end ? new Date(args.end) : null,
         start: args.start ? new Date(args.start) : null,
       },
+      {
+        participants: Set(args.participants),
+      }
     ));
   }
 
@@ -49,12 +53,23 @@ export default class Cleanup extends Record({
     return `${ CLEANUP_ROOT }${ this.id }`;
   }
 
+  hasHost(user) {
+    return user.id === this.host;
+  }
+
+  hasParticipant(user) {
+    return this.participants.has(user.id);
+  }
+
   toApiJSON() {
     const cleanupJSON = this.toJSON();
 
     // Convert requiredTools from JS preferred camel-case to Python snake case
     delete cleanupJSON.requiredTools;
     cleanupJSON.required_tools = this.getRequiredToolsAsList().toJSON();
+
+    // We'll leave it up to the API to set the user
+    delete cleanupJSON.host;
 
     return cleanupJSON;
   }

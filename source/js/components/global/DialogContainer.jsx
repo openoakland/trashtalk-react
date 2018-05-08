@@ -12,6 +12,17 @@ import Dialog, { DialogActions, DialogContentText, DialogContent, DialogTitle } 
 const AUTO_HIDE_DURATION = 6000;
 
 const styles = theme => ({
+  additionalActions: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  additionalActionContainer: {
+    margin: theme.spacing.unit,
+  },
+  dialogActions: {
+    justifyContent: 'space-between',
+  },
   childrenContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -106,10 +117,12 @@ class DialogContainer extends React.Component {
             </DialogContent>
           )}
           <DialogContent className={ classes.childrenContainer }>{children}</DialogContent>
-          <DialogActions>
-            {actions.map((action, index) => (
-              <div key={ index }>{action}</div>
-            )) /* eslint-disable-line react/no-array-index-key */}
+          <DialogActions className={ classes.dialogActions }>
+            <div className={ classes.additionalActions }>
+              {actions.map((action, index) => (/* eslint-disable-line react/no-array-index-key */
+                <div key={ index } className={ classes.additionalActionContainer }>{action}</div>
+              ))}
+            </div>
             <Button
               onClick={ this.handleCloseRequest }
               color='primary'

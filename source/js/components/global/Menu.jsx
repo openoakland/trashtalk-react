@@ -4,18 +4,25 @@ import AppBar from 'material-ui/AppBar';
 import Button from 'material-ui/Button';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
+import { withStyles } from 'material-ui/styles';
+import { withRouter } from 'react-router-dom';
+import { routeCodes } from 'constants/routes';
+
+import Avatar from 'material-ui/Avatar';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import { withRouter } from 'react-router-dom';
-import { routeCodes } from 'constants/routes';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import { getUserLocation } from 'actions/app';
 import SearchDrawer from './Menu/SearchDrawer';
 
 const styles = theme => ({
+  avatar: {
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.dark,
+  },
   button: {
     margin: theme.spacing.unit,
   },
@@ -31,6 +38,7 @@ const styles = theme => ({
 @connect(
   state => ({
     userLocation: state.app.get('userLocation'),
+    user: state.app.get('user'),
   }),
   dispatch => bindActionCreators({ getUserLocation }, dispatch)
 )
@@ -41,6 +49,7 @@ class Menu extends PureComponent {
     history: PropTypes.object,
     getUserLocation: PropTypes.func,
     userLocation: PropTypes.object,
+    user: PropTypes.object,
   };
 
   state = { drawerOpen: false };
@@ -62,7 +71,7 @@ class Menu extends PureComponent {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
     const { drawerOpen } = this.state;
     return (
       <div>
@@ -97,8 +106,17 @@ class Menu extends PureComponent {
               >
                 Organize a Cleanup
               </Button>
-              <IconButton onClick={ this.handleLoginClick }>
-                <Icon> account_circle </Icon>
+              <IconButton
+                className={classes.button}
+                onClick={this.handleLoginClick}
+              >
+                {user == null ? (
+                  <Icon> account_circle </Icon>
+                ) : (
+                  <Avatar className={classes.avatar}>
+                    {user.username[0].toUpperCase()}
+                  </Avatar>
+                )}
               </IconButton>
             </div>
           </Toolbar>
