@@ -63,6 +63,9 @@ const MenuProps = {
   },
 };
 
+const DEFAULT_SORTING = 'sortByDistance';
+const DEFAULT_FILTERING = 'DEFAULT_FILTERING';
+
 /**
  * Template for creating connected components
  */
@@ -89,8 +92,8 @@ class SearchDrawer extends Component {
   static defaultProps = {};
 
   state = {
-    sortType: 'sortByNextUp',
-    filterType: 'showAll',
+    sortType: DEFAULT_SORTING,
+    filterType: DEFAULT_FILTERING,
   };
 
   filterByUser = cleanup => {
@@ -123,7 +126,7 @@ class SearchDrawer extends Component {
     const { filterType, sortType } = this.state;
 
     let sortingFunctions = Map({
-      sortByNextUp: {
+      [DEFAULT_SORTING]: {
         function: this.sortByNextUp,
         label: 'Next Cleanup Date',
       },
@@ -138,16 +141,17 @@ class SearchDrawer extends Component {
     }
 
     let filterFunctions = Map({
-      showAll: {
+      [DEFAULT_FILTERING]: {
         function: () => true,
         label: 'All Cleanups',
       },
     });
 
+    // If we know who the user is, allow filtering by the user's cleanups
     if (user != null) {
       filterFunctions = filterFunctions.set('filterByUser', {
         function: this.filterByUser,
-        label: 'Your Cleanups',
+        label: 'My Cleanups',
       });
     }
 

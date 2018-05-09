@@ -36,7 +36,7 @@ export default class ConnectedComponent extends Component {
           transform: `scale(${ scale || 1 })`,
         } }
       >
-        <Icon classes={ classes.icon }> delete </Icon>
+        <Icon className={ classes.icon }> delete </Icon>
         <Typography variant='title'> TrashTalk </Typography>
       </div>
     );

@@ -42,10 +42,6 @@ export default class MapBackground extends Component {
     setBackgroundMapReference: PropTypes.func,
   }
 
-  static defaultProps = {
-    cleanups: [],
-  }
-
   /**
    * Tasks that need to be performed after map initialization go here
    */

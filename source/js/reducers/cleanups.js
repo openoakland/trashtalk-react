@@ -4,6 +4,7 @@ import {
   GET_CLEANUPS_START,
   GET_CLEANUPS_ERROR,
   GET_CLEANUPS_SUCCESS,
+  PATCH_CLEANUPS_SUCCESS,
   POST_CLEANUPS_START,
   POST_CLEANUPS_ERROR,
   POST_CLEANUPS_SUCCESS,
@@ -46,6 +47,9 @@ const actionsMap = {
       loading: false,
       cleanups: parsedCleanups,
     }));
+  },
+  [PATCH_CLEANUPS_SUCCESS]: (state, action) => {
+    return state.setIn(['cleanups', action.data.id], new Cleanup(action.data));
   },
   [POST_CLEANUPS_START]: state => {
     return state.merge(Map({

@@ -42,9 +42,6 @@ const actionsMap = {
     return state.set(
       'userLocation',
       action.userLocation
-    ).set(
-      'backgroundMapLocation',
-      action.userLocation
     );
   },
   [LOGIN_START]: (state) => {

@@ -54,11 +54,23 @@ export default class Cleanup extends Record({
   }
 
   hasHost(user) {
+    if (user == null) {
+      return false;
+    }
     return user.id === this.host;
   }
 
   hasParticipant(user) {
+    if (user == null) {
+      return false;
+    }
     return this.participants.has(user.id);
+  }
+
+  toggleParticipant(user) {
+    let participants = this.participants;
+    participants = this.hasParticipant(user) ? participants.delete(user.id) : participants.add(user.id);
+    return this.set('participants', participants);
   }
 
   toApiJSON() {

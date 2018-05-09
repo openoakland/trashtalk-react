@@ -13,8 +13,25 @@ function getToolCategories() {
   return fetchResource('api/v1/toolcategories/');
 }
 
+function patchCleanup(options) {
+  const cleanupId = options.body.id;
+  return fetchResource(
+    `api/v1/cleanups/${ cleanupId }/`,
+    {
+      ...options,
+      ...{ method: 'PATCH' },
+    }
+  );
+}
+
 function postCleanup(options) {
-  return fetchResource('api/v1/cleanups/', options);
+  return fetchResource(
+    'api/v1/cleanups/',
+    {
+      ...options,
+      ...{ method: 'POST' },
+    }
+  );
 }
 
 function login(username, password) {
@@ -35,5 +52,6 @@ export default {
   getTools,
   getToolCategories,
   login,
+  patchCleanup,
   postCleanup,
 };

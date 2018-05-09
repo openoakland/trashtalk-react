@@ -4,10 +4,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
+import Button from 'material-ui/Button';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import { CardHeader } from 'material-ui';
 import Icon from 'material-ui/Icon';
+
+import { redirectToLogin } from 'api/auth';
+import { patchCleanup } from 'actions/cleanups';
+import * as Immutable from 'immutable';
 
 import { setBackgroundMapLocation } from 'actions/app';
 
@@ -28,48 +33,89 @@ const styles = theme => ({
 @connect(
   (state, props) => {
     return {
-      cleanups: state.cleanups.get('cleanups'),
-      cleanupId: Number(props.match.params.cleanupId),
+      cleanup: state.cleanups.getIn([
+        'cleanups',
+        Number(props.match.params.cleanupId)
+      ]),
       user: state.app.get('user'),
     };
   },
-  dispatch => bindActionCreators({ setBackgroundMapLocation }, dispatch)
+  dispatch => bindActionCreators({ patchCleanup, setBackgroundMapLocation }, dispatch)
 )
 @withStyles(styles)
 export default class CleanupView extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
-    cleanups: PropTypes.object,
-    cleanupId: PropTypes.number,
+    cleanup: PropTypes.object,
+    patchCleanup: PropTypes.func,
     setBackgroundMapLocation: PropTypes.func,
+    user: PropTypes.object,
   };
 
   constructor(props) {
     super(props);
 
-    const { cleanupId } = props;
-    if (props.cleanups.has(cleanupId)) {
-      this.props.setBackgroundMapLocation(props.cleanups.get(cleanupId).location);
+    const { cleanup } = props;
+    if (cleanup != null) {
+      this.props.setBackgroundMapLocation(cleanup.location);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { cleanupId } = this.props;
-    if (!this.props.cleanups.has(cleanupId) && nextProps.cleanups.has(cleanupId)) {
-      this.props.setBackgroundMapLocation(nextProps.cleanups.get(cleanupId).location);
+    if (!Immutable.is(this.props.cleanup, nextProps.cleanup) && nextProps.cleanup != null) {
+      this.props.setBackgroundMapLocation(nextProps.cleanup.location);
     }
   }
 
+  getSubheader = () => {
+    const { cleanup, user } = this.props;
+    if (cleanup == null) {
+      return null;
+    }
+
+    let subheader = null;
+    if (cleanup.hasHost(user)) {
+      subheader = 'You are the host of this cleanup';
+    } else if (cleanup.hasParticipant(user)) {
+      subheader = 'You are participating in this cleanup';
+    }
+
+    return subheader;
+  }
+
+  toggleUserAsParticipant = () => {
+    const { cleanup, user } = this.props;
+    if (user == null) {
+      redirectToLogin();
+    }
+
+    this.props.patchCleanup(cleanup.toggleParticipant(user).toApiJSON());
+  }
+
   render() {
-    const { classes, cleanups, cleanupId } = this.props;
-    const cleanup = cleanups.get(cleanupId);
+    const { classes, cleanup, user } = this.props;
+
+    const actions = [];
+    if (cleanup && !cleanup.hasHost(user)) {
+      actions.push(
+        <Button
+          variant='raised'
+          color='primary'
+          onClick={ this.toggleUserAsParticipant }
+        >
+          Participate in this cleanup
+        </Button>
+      );
+    }
 
     return (
       <DialogContainer
         dialogClasses={{ paper: classes.dialogPaper }}
+        actions={ actions }
       >
         <CardHeader
           title={ cleanup ? cleanup.title : 'Loading...' }
+          subheader={ this.getSubheader() }
           avatar={ <Icon classes={ { colorPrimary: classes.placesIcon.colorPrimary } }>place</Icon> }
           classes={ { title: classes.title } }
         />

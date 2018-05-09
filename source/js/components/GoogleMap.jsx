@@ -22,7 +22,7 @@ const styles = {
 
 const DEFAULT_ZOOM = 17;
 @connect(
-  (state, props) => {
+  (state) => {
     return {
       user: state.app.get('user'),
     };
@@ -92,25 +92,36 @@ class GoogleMap extends Component {
       mapReference.panTo(nextProps.mapCenter.getLatLngObj());
     }
 
-    if (!Immutable.is(nextProps.user, this.props.user)) {
-      const { cleanupMarkers } = this.state;
-      cleanupMarkers.forEach(marker => {
-        marker.setMap(null);
-      });
-      this.syncCleanupMarkers(nextProps.cleanups);
-    }
-
     // If the collection of cleanups gets updated, resync the cleanup markers
     if (!Immutable.is(nextProps.cleanups, this.props.cleanups)) {
       this.syncCleanupMarkers(nextProps.cleanups);
     }
 
+    // If the user has changed, clear the markers. They will be recreated in componentDidUpdate with user info
+    if (!Immutable.is(nextProps.user, this.props.user)) {
+      this.clearMarkers();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    // If the user has changed, re-render the markers so that they're properly marked with user info
+    if (!Immutable.is(prevProps.user, this.props.user)) {
+      const animate = false;
+      this.syncCleanupMarkers(this.props.cleanups, animate);
+    }
   }
 
   componentWillUnmount() {
+    this.clearMarkers();
+  }
+
+  clearMarkers = () => {
     const { cleanupMarkers } = this.state;
     cleanupMarkers.forEach(marker => {
       marker.setMap(null);
+    });
+    this.setState({
+      cleanupMarkers: Map(),
     });
   }
 
@@ -119,7 +130,7 @@ class GoogleMap extends Component {
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  syncCleanupMarkers = cleanups => {
+  syncCleanupMarkers = (cleanups, animate = true) => {
     const { mapReference } = this.state;
     const { user } = this.props;
     // If the map hasn't been initialized yet, just bail out
@@ -128,7 +139,7 @@ class GoogleMap extends Component {
     }
 
     let { cleanupMarkers } = this.state;
-    // First remove any existing cleanup markers that aren't the passed in cleanups param
+    // First remove any existing cleanup markers that aren't in the cleanups param
     const cleanupsSet = Set(cleanups);
     cleanupMarkers.forEach((marker, cleanup) => {
       if (!cleanupsSet.has(cleanup)) {
@@ -137,32 +148,37 @@ class GoogleMap extends Component {
       }
     });
 
-    // Now add cleanup markers that haven't already been added
+    // Now loop through the cleanups and add markers to each
     if (cleanups != null) {
-      cleanups.filter(cleanup => !cleanupMarkers.has(cleanup)).forEach(cleanup => {
-        let label;
-        if (user != null) {
-          if (cleanup.hasHost(user)) {
-            label = 'H';
-          } else if (cleanup.hasParticipant(user)) {
-            label = 'P';
+      cleanups
+        .filter(cleanup => !cleanupMarkers.has(cleanup)) // Filter out cleanups that have already been added
+        .forEach(cleanup => {
+          let label;
+          if (user != null) {
+            if (cleanup.hasHost(user)) {
+              label = 'H';
+            } else if (cleanup.hasParticipant(user)) {
+              label = 'P';
+            }
           }
-        }
 
-        const marker = new window.google.maps.Marker({
-          animation: window.google.maps.Animation.DROP,
-          label,
-          position: cleanup.location.getLatLngObj(),
-          map: mapReference,
+          const marker = new window.google.maps.Marker({
+            animation: animate ? window.google.maps.Animation.DROP : null,
+            label,
+            position: cleanup.location.getLatLngObj(),
+            map: mapReference,
+          });
+
+          // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
+          // users can click on it and view its details
+          if (cleanup.get('id') != null) {
+            marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
+          }
+
+          // Persist a reference to the cleanup marker so that we can manipulate it later
+          // e.g.: in this.clearMarkers()
+          cleanupMarkers = cleanupMarkers.set(cleanup, marker);
         });
-
-        // If the cleanup has been persisted (it would have an id), make it clickable so that
-        // users can click on it and view its details
-        if (cleanup.get('id') != null) {
-          marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
-        }
-        cleanupMarkers = cleanupMarkers.set(cleanup, marker);
-      });
 
       this.setState({ cleanupMarkers });
     }

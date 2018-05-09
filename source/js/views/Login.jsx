@@ -70,6 +70,21 @@ class Login extends React.Component {
     this.setState({ password });
   }
 
+  getHeader = () => {
+    const { loginState, user } = this.props;
+    const queryParams = queryString.parse(window.location.search);
+    let header = 'Enter your username and password.';
+    if (queryParams.redirectTo != null) {
+      header = 'You need to be logged in to perform this action. ';
+    } else if (user != null) {
+      header = `You are logged in as "${ user.username }". Did you want to log in as someone else?`;
+    } else if (loginState === LOGIN_ERROR) {
+      header = 'The username password combination could not be found.';
+    }
+
+    return header;
+  }
+
   gotoRegistration = () => {
     this.props.history.push(routeCodes.REGISTER);
   };
@@ -81,10 +96,11 @@ class Login extends React.Component {
 
   render() {
     const { password, username } = this.state;
-    const { classes, loginState, user } = this.props;
+    const { classes } = this.props;
+
     return (
       <DialogContainer
-        actions={[
+        actions={ [
           <Button
             variant='raised'
             color='primary'
@@ -94,24 +110,19 @@ class Login extends React.Component {
             Login
           </Button>,
           <Button
-            className={classes.registerButton}
-            onClick={this.gotoRegistration}
+            className={ classes.registerButton }
+            onClick={ this.gotoRegistration }
             variant='flat'
           >
             Register a new account
-            </Button>,
+          </Button>,
         ] }
       >
         <DialogContent>
           <Logo />
-          { loginState === LOGIN_ERROR ? (
-            <DialogContentText>The username/password combination could not be found. Please try again.</DialogContentText>
-          ) : (
-            <DialogContentText>
-              { user ? `You are currently logged in as "${ user.username }".` : ''}
-              Enter your username and password to login.
-            </DialogContentText>
-          )}
+          <DialogContentText>
+            { this.getHeader() }
+          </DialogContentText>
           <form autoComplete='off'>
             <TextField
               autoFocus
