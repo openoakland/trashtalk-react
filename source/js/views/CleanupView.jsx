@@ -127,7 +127,7 @@ export default class CleanupView extends React.PureComponent {
           subheader={ subheader }
           classes={ { title: classes.title } }
         />
-        { cleanup.description && cleanup.description !== '' && (
+        { cleanup && cleanup.description && cleanup.description !== '' && (
           <CardContent>
             { cleanup.description }
           </CardContent>
