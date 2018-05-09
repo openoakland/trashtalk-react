@@ -11,11 +11,12 @@ import { withRouter } from 'react-router-dom';
 import { routeCodes } from 'constants/routes';
 
 import Avatar from 'material-ui/Avatar';
+import Menu, { MenuItem } from 'material-ui/Menu';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import { getUserLocation } from 'actions/app';
+import { getUserLocation, logout } from 'actions/app';
 import SearchDrawer from './Menu/SearchDrawer';
 
 const styles = theme => ({
@@ -25,6 +26,10 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
+  },
+  menuIcon: {
+    color: theme.palette.primary.light,
+    marginRight: theme.spacing.unit,
   },
   toolbar: {
     display: 'flex',
@@ -37,17 +42,19 @@ const styles = theme => ({
  */
 @connect(
   state => ({
+    anchorEl: null,
     userLocation: state.app.get('userLocation'),
     user: state.app.get('user'),
   }),
-  dispatch => bindActionCreators({ getUserLocation }, dispatch)
+  dispatch => bindActionCreators({ getUserLocation, logout }, dispatch)
 )
 @withStyles(styles)
-class Menu extends PureComponent {
+class MenuComponent extends PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     history: PropTypes.object,
     getUserLocation: PropTypes.func,
+    logout: PropTypes.func,
     userLocation: PropTypes.object,
     user: PropTypes.object,
   };
@@ -56,12 +63,26 @@ class Menu extends PureComponent {
 
   handleCreateClick = () => this.props.history.push(routeCodes.NEW_CLEANUP);
 
-  handleLoginClick = () => this.props.history.push(routeCodes.LOGIN);
+  handleLoginClick = () => {
+    this.props.history.push(routeCodes.LOGIN)
+    this.handleMenuClose();
+  };
+
+  handleLogoutClick = () => {
+    this.props.logout();
+    this.handleMenuClose();
+  }
 
   handleDrawerToggle = () => {
     this.initUserLocation();
     this.setState({ drawerOpen: !this.state.drawerOpen });
   }
+
+  handleMenuClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleMenuClose = () => this.setState({ anchorEl: null })
 
   initUserLocation = () => {
     const { userLocation } = this.props;
@@ -72,7 +93,7 @@ class Menu extends PureComponent {
 
   render() {
     const { classes, user } = this.props;
-    const { drawerOpen } = this.state;
+    const { anchorEl, drawerOpen } = this.state;
     return (
       <div>
         <SearchDrawer
@@ -107,17 +128,31 @@ class Menu extends PureComponent {
                 Organize a Cleanup
               </Button>
               <IconButton
-                className={classes.button}
-                onClick={this.handleLoginClick}
+                className={ classes.button }
+                onClick={ this.handleMenuClick }
               >
                 {user == null ? (
                   <Icon> account_circle </Icon>
                 ) : (
-                  <Avatar className={classes.avatar}>
+                  <Avatar className={ classes.avatar }>
                     {user.username[0].toUpperCase()}
                   </Avatar>
                 )}
               </IconButton>
+              <Menu
+                anchorEl={ anchorEl }
+                open={ Boolean(anchorEl) }
+                onClose={ this.handleMenuClose }
+              >
+                <MenuItem onClick={this.handleLoginClick}>
+                  <Icon className={classes.menuIcon}>account_box</Icon> Login
+                </MenuItem>
+                { user && (
+                  <MenuItem onClick={this.handleLogoutClick}>
+                    <Icon className={classes.menuIcon}>exit_to_app</Icon> Logout
+                  </MenuItem>
+                )}
+              </Menu>
             </div>
           </Toolbar>
         </AppBar>
@@ -126,4 +161,4 @@ class Menu extends PureComponent {
   }
 }
 
-export default withRouter(Menu);
+export default withRouter(MenuComponent);

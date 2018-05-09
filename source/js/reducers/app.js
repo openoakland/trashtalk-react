@@ -6,6 +6,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_ERROR,
   LOGIN_RESET,
+  LOGOUT,
   SET_BACKGROUND_MAP_LOCATION,
   SET_BACKGROUND_MAP_REFERENCE,
 } from 'actions/app';
@@ -55,6 +56,9 @@ const actionsMap = {
   },
   [LOGIN_RESET]: (state) => {
     return state.set('loginState', null);
+  },
+  [LOGOUT]: (state) => {
+    return state.set('user', null);
   },
   [POST_CLEANUPS_SUCCESS]: (state, action) => {
     return state.set('backgroundMapLocation', new Location(action.data.location));

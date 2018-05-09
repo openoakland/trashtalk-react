@@ -97,7 +97,7 @@ export default class CleanupView extends React.PureComponent {
 
     const actions = [];
     if (cleanup && !cleanup.hasHost(user)) {
-      actions.push(
+      actions.push((
         <Button
           variant='raised'
           color='primary'
@@ -105,7 +105,8 @@ export default class CleanupView extends React.PureComponent {
         >
           { cleanup.hasParticipant(user) ? 'Remove me as a participant' : 'Add me as a participant' }
         </Button>
-      );
+
+      ));
     }
 
     return (

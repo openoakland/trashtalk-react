@@ -16,6 +16,11 @@ import queryString from 'query-string';
 import { LOGIN_ERROR, LOGIN_SUCCESS } from '../actions/app';
 
 const styles = theme => ({
+  header: {
+    size: '2rem',
+    marginTop: theme.spacing.unit * 5,
+    marginBottom: theme.spacing.unit * 4,
+  },
 });
 
 /**
@@ -75,7 +80,7 @@ class Login extends React.Component {
     const queryParams = queryString.parse(window.location.search);
     let header = 'Enter your username and password.';
     if (queryParams.redirectTo != null) {
-      header = 'You need to be logged in to perform this action. ';
+      header = 'Please login to continue.';
     } else if (user != null) {
       header = `You are logged in as "${ user.username }". Did you want to log in as someone else?`;
     } else if (loginState === LOGIN_ERROR) {
@@ -120,7 +125,7 @@ class Login extends React.Component {
       >
         <DialogContent>
           <Logo />
-          <DialogContentText>
+          <DialogContentText className={ classes.header }>
             { this.getHeader() }
           </DialogContentText>
           <form autoComplete='off'>
