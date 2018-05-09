@@ -9,6 +9,7 @@ import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import { CardHeader } from 'material-ui';
 import Icon from 'material-ui/Icon';
+import DateRepresentation from 'components/cleanup/DateRepresentation';
 
 import { redirectToLogin } from 'api/auth';
 import { patchCleanup } from 'actions/cleanups';
@@ -17,7 +18,7 @@ import * as Immutable from 'immutable';
 import { setBackgroundMapLocation } from 'actions/app';
 
 const styles = theme => ({
-  dialogPaper: { height: '100%' },
+  dialogPaper: { height: '100%', padding: 0 },
   placesIcon: {
     colorPrimary: '#eb4335',
     height: 60,
@@ -80,7 +81,12 @@ export default class CleanupView extends React.PureComponent {
       subheader = 'You are participating in this cleanup';
     }
 
-    return subheader;
+    return (
+      <div>
+        <DateRepresentation cleanup={ cleanup } />
+        <div> { subheader } </div>
+      </div>
+    );
   }
 
   toggleUserAsParticipant = () => {
@@ -97,16 +103,15 @@ export default class CleanupView extends React.PureComponent {
 
     const actions = [];
     if (cleanup && !cleanup.hasHost(user)) {
-      actions.push((
+      actions.push(
         <Button
           variant='raised'
           color='primary'
           onClick={ this.toggleUserAsParticipant }
         >
-          { cleanup.hasParticipant(user) ? 'Remove me as a participant' : 'Add me as a participant' }
+          Participate in this cleanup
         </Button>
-
-      ));
+      );
     }
 
     return (

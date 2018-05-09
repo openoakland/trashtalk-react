@@ -28,7 +28,7 @@ const styles = theme => ({
 });
 
 const {
-  LOCATION_SELECTION, DATE_SELECTION, SUMMARY, TOOL_SELECTION,
+  LOCATION_SELECTION, DATE_SELECTION, TOOL_SELECTION,
 } = screens;
 
 /**

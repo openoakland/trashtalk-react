@@ -8,13 +8,11 @@ import { withStyles } from 'material-ui/styles';
 
 import { withMobileDialog } from 'material-ui/Dialog';
 import DialogContainer from 'components/global/DialogContainer';
-import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
-import CleanupSummary from 'components/cleanup/CleanupSummary';
+import Metadata from 'components/cleanup/Metadata';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
-import { screens } from 'constants/cleanup';
 
 import { postCleanup } from 'actions/cleanups';
 import { getTools, getToolCategories } from 'actions/tools';
@@ -32,9 +30,10 @@ const styles = theme => ({
   },
 });
 
-const {
-  LOCATION_SELECTION, DATE_SELECTION, SUMMARY, TOOL_SELECTION,
-} = screens;
+// Step order
+const LOCATION_SELECTION = 0;
+const TOOL_SELECTION = 1;
+const METADATA = 2;
 
 /**
  * This class encompasses all the view logic required to create a new Cleanup
@@ -81,16 +80,15 @@ class Create extends React.Component {
   getNextButton = () => {
     const { activeStep, cleanup } = this.state;
 
-    const stepMapping = {
-      [LOCATION_SELECTION]: { disabled: cleanup.location.query == null },
-      [DATE_SELECTION]: { disabled: !cleanup.timesAreValid() },
-      [TOOL_SELECTION]: {},
-      [SUMMARY]: {},
+    const disabledCriteria = {
+      [LOCATION_SELECTION]: cleanup.location.query == null,
+      [TOOL_SELECTION]: null,
+      [METADATA]: !cleanup.timesAreValid(),
     };
 
     return (
       <Button
-        disabled={ (stepMapping[activeStep] || {}).disabled }
+        disabled={ disabledCriteria[activeStep] }
         color='secondary'
         onClick={ this.handleNext }
         variant='raised'
@@ -117,15 +115,14 @@ class Create extends React.Component {
 
   handleBack = () => this.setState({ activeStep: this.state.activeStep - 1 });
 
-  steps = ['Location', 'Date and Time', 'Tools', 'Summary'];
+  steps = ['Location', 'Tools', 'Summary'];
 
   renderContentText = () => {
     const { activeStep } = this.state;
     const stepMapping = {
       [LOCATION_SELECTION]: 'Where is this cleanup located?',
-      [DATE_SELECTION]: 'When does it start and end?',
       [TOOL_SELECTION]: 'What tools are required?',
-      [SUMMARY]: 'Cleanup Summary',
+      [METADATA]: 'Remaining Details',
     };
 
     return stepMapping[activeStep];
@@ -137,12 +134,8 @@ class Create extends React.Component {
 
     const stepMapping = {
       [LOCATION_SELECTION]: <LocationRepresentation { ...commonProps } />,
-      [DATE_SELECTION]: <DateRepresentation { ...commonProps } />,
       [TOOL_SELECTION]: <ToolsRepresentation { ...commonProps } />,
-      [SUMMARY]: <CleanupSummary
-        cleanup={ cleanup }
-        setCleanup={ this.setCleanup }
-      />,
+      [METADATA]: <Metadata { ...commonProps } />,
     };
 
     return stepMapping[activeStep];

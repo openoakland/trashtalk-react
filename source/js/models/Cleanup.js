@@ -4,6 +4,7 @@ import Location from 'models/Location';
 
 export default class Cleanup extends Record({
   id: undefined,
+  description: null,
   location: null,
   title: null,
   host: null,
