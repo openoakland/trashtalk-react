@@ -96,11 +96,6 @@ class SearchDrawer extends Component {
     filterType: DEFAULT_FILTERING,
   };
 
-  filterByUser = cleanup => {
-    const { user } = this.props;
-    return cleanup.hasHost(user) || cleanup.hasParticipant(user);
-  }
-
   sortByNextUp = (cleanupA, cleanupB) => cleanupA.start - cleanupB.start;
 
   sortByDistanceFromUser = (cleanupA, cleanupB) => {
@@ -136,7 +131,7 @@ class SearchDrawer extends Component {
     if (userLocation != null) {
       sortingFunctions = sortingFunctions.set('sortByDistanceFromUser', {
         function: this.sortByDistanceFromUser,
-        label: 'Distance From Your Location',
+        label: 'Distance From My Location',
       });
     }
 
@@ -149,9 +144,13 @@ class SearchDrawer extends Component {
 
     // If we know who the user is, allow filtering by the user's cleanups
     if (user != null) {
-      filterFunctions = filterFunctions.set('filterByUser', {
-        function: this.filterByUser,
-        label: 'My Cleanups',
+      filterFunctions = filterFunctions.set('filterByHosting', {
+        function: cleanup => cleanup.hasHost(user),
+        label: "Cleanups I'm Hosting",
+      });
+      filterFunctions = filterFunctions.set('filterByParticipation', {
+        function: cleanup => cleanup.hasParticipant(user),
+        label: "Cleanups I'm Participating In",
       });
     }
 

@@ -108,7 +108,7 @@ export default class CleanupView extends React.PureComponent {
       }
 
       if (cleanup.hasHost(user)) {
-        subheader = ' You are the host of this cleanup';
+        subheader = 'You are the host of this cleanup';
       } else if (cleanup.hasParticipant(user)) {
         subheader = 'You are a participant in this cleanup';
       }
