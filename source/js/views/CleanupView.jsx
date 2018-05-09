@@ -103,7 +103,7 @@ export default class CleanupView extends React.PureComponent {
           color='primary'
           onClick={ this.toggleUserAsParticipant }
         >
-          Participate in this cleanup
+          { cleanup.hasParticipant(user) ? 'Remove me as a participant' : 'Add me as a participant' }
         </Button>
       );
     }
