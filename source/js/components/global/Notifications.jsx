@@ -48,7 +48,6 @@ const initialNotice = sessionStorage.getItem(WELCOME_VIEWED_KEY) ? null : WELCOM
 
 @connect(
   state => ({
-    cleanups: state.cleanups.get('cleanups'),
     userLocation: state.app.get('userLocation'),
   }),
   dispatch => bindActionCreators({ getUserLocation }, dispatch)

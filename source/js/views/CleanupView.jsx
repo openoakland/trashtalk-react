@@ -7,8 +7,7 @@ import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
-import { CardHeader } from 'material-ui';
-import Icon from 'material-ui/Icon';
+import { CardContent, CardHeader } from 'material-ui';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 
 import { redirectToLogin } from 'api/auth';
@@ -60,37 +59,28 @@ export default class CleanupView extends React.PureComponent {
     if (cleanup != null) {
       this.props.setBackgroundMapLocation(cleanup.location);
     }
+
+    this.state = { cleanup };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!Immutable.is(this.props.cleanup, nextProps.cleanup) && nextProps.cleanup != null) {
+    if (!Immutable.is(this.props.cleanup, nextProps.cleanup)) {
+      this.setState({ cleanup: nextProps.cleanup });
       this.props.setBackgroundMapLocation(nextProps.cleanup.location);
     }
   }
 
-  getSubheader = () => {
-    const { cleanup, user } = this.props;
-    if (cleanup == null) {
-      return null;
+  componentWillUnmount() {
+    if (!Immutable.is(this.props.cleanup, this.state.cleanup)) {
+      this.props.patchCleanup(this.state.cleanup.toApiJSON());
     }
-
-    let subheader = null;
-    if (cleanup.hasHost(user)) {
-      subheader = 'You are the host of this cleanup';
-    } else if (cleanup.hasParticipant(user)) {
-      subheader = 'You are participating in this cleanup';
-    }
-
-    return (
-      <div>
-        <DateRepresentation cleanup={ cleanup } />
-        <div> { subheader } </div>
-      </div>
-    );
   }
 
+  setCleanup = cleanup => this.setState({ cleanup })
+
   toggleUserAsParticipant = () => {
-    const { cleanup, user } = this.props;
+    const { user } = this.props;
+    const { cleanup } = this.state;
     if (user == null) {
       redirectToLogin();
     }
@@ -99,20 +89,33 @@ export default class CleanupView extends React.PureComponent {
   }
 
   render() {
-    const { classes, cleanup, user } = this.props;
+    const { classes, user } = this.props;
+    const { cleanup } = this.state;
 
     const actions = [];
-    if (cleanup && !cleanup.hasHost(user)) {
-      actions.push(
-        <Button
-          variant='raised'
-          color='primary'
-          onClick={ this.toggleUserAsParticipant }
-        >
-          Participate in this cleanup
-        </Button>
-      );
+    let subheader;
+    if (cleanup != null) {
+      if (!cleanup.hasHost(user)) {
+        actions.push(
+          <Button
+            variant='raised'
+            color='primary'
+            onClick={ this.toggleUserAsParticipant }
+          >
+            { cleanup.hasParticipant(user) ? 'Remove me from this cleanup' : 'Add me to this cleanup' }
+          </Button>
+        );
+      }
+
+      if (cleanup.hasHost(user)) {
+        subheader = ' You are the host of this cleanup';
+      } else if (cleanup.hasParticipant(user)) {
+        subheader = 'You are a participant in this cleanup';
+      }
     }
+
+    // If the user is the host, allow him/her to modify the cleanup by passing the setCleanup method
+    const setCleanup = cleanup != null && cleanup.hasHost(user) ? this.setCleanup : null;
 
     return (
       <DialogContainer
@@ -120,13 +123,26 @@ export default class CleanupView extends React.PureComponent {
         actions={ actions }
       >
         <CardHeader
-          title={ cleanup ? cleanup.title : 'Loading...' }
-          subheader={ this.getSubheader() }
-          avatar={ <Icon classes={ { colorPrimary: classes.placesIcon.colorPrimary } }>place</Icon> }
+          title={ cleanup == null ? 'Loading...' : (cleanup.title || cleanup.query) }
+          subheader={ subheader }
           classes={ { title: classes.title } }
         />
-
-        {cleanup && <CleanupSummary cleanup={ cleanup } />}
+        { cleanup.description && cleanup.description !== '' && (
+          <CardContent>
+            { cleanup.description }
+          </CardContent>
+        )}
+        <CardContent>
+          <DateRepresentation
+            cleanup={ cleanup }
+            setCleanup={ setCleanup }
+          />
+        </CardContent>
+        <CleanupSummary
+          cleanup={ cleanup }
+          user={ user }
+          setCleanup={ setCleanup }
+        />
       </DialogContainer>
     );
   }

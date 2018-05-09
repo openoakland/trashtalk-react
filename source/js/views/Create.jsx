@@ -115,14 +115,14 @@ class Create extends React.Component {
 
   handleBack = () => this.setState({ activeStep: this.state.activeStep - 1 });
 
-  steps = ['Location', 'Tools', 'Summary'];
+  steps = ['Location', 'Tools', 'Wrap-up'];
 
   renderContentText = () => {
     const { activeStep } = this.state;
     const stepMapping = {
       [LOCATION_SELECTION]: 'Where is this cleanup located?',
       [TOOL_SELECTION]: 'What tools are required?',
-      [METADATA]: 'Remaining Details',
+      [METADATA]: 'Remaining details',
     };
 
     return stepMapping[activeStep];

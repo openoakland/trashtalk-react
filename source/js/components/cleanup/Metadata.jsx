@@ -11,13 +11,18 @@ import DateRepresentation from 'components/cleanup/DateRepresentation';
 import Cleanup from 'models/Cleanup';
 
 const styles = theme => ({
-  titleField: {
+  contentRoot: {
     width: '100%',
-    minWidth: 320,
   },
   descriptionField: {
-    width: '100%',
+    marginBottom: theme.spacing.unit * 8,
     marginTop: theme.spacing.unit * 5,
+  },
+  timeContainer: {
+    marginTop: theme.spacing.unit * 5,
+  },
+  titleField: {
+    width: '100%',
   },
   spacer: {
     display: 'inline-block',
@@ -75,7 +80,7 @@ export default class Metadata extends Component {
     const { classes, cleanup, setCleanup } = this.props;
 
     return (
-      <CardContent>
+      <CardContent classes={{root: classes.contentRoot }}>
         <FormControl fullWidth>
           <InputLabel>Title</InputLabel>
           <Input
@@ -83,20 +88,24 @@ export default class Metadata extends Component {
             onChange={ this.handleTitleChange }
           />
         </FormControl>
-        <TextField
-          label='Description'
-          multiline
-          rows='4'
-          onChange={ this.handleDescriptionChange }
-          className={ classes.descriptionField }
-          value={ cleanup.description }
-          margin='normal'
-          placeholder='Enter any additional information useful to know about this cleanup.'
-        />
-        <DateRepresentation
-          cleanup={ cleanup }
-          setCleanup={ setCleanup }
-        />
+        <div className={ classes.descriptionField } >
+          <TextField
+            label='Description'
+            fullWidth={ true }
+            multiline
+            rows='4'
+            onChange={ this.handleDescriptionChange }
+            value={ cleanup.description }
+            margin='normal'
+            placeholder='Enter any additional details here'
+          />
+        </div>
+        <div className={ classes.timeContainer }>
+          <DateRepresentation
+            cleanup={ cleanup }
+            setCleanup={ setCleanup }
+          />
+        </div>
       </CardContent>
     );
   }

@@ -32,16 +32,6 @@ export default class DateRepresentation extends Component {
     setCleanup: PropTypes.func,
   }
 
-  constructor(props) {
-    super(props);
-    const { start, end } = props.cleanup;
-
-    this.state = {
-      end,
-      start,
-    };
-  }
-
   handleDateChange = (date) => {
     const eightAm = new Date(date.getTime() + (8 * ONE_HOUR));
     this.handleStartChange(eightAm);
@@ -51,11 +41,6 @@ export default class DateRepresentation extends Component {
     const { cleanup, setCleanup } = this.props;
     const end = new Date(start.getTime() + ONE_HOUR + 1);
 
-    this.setState({
-      end,
-      start,
-    });
-
     setCleanup(cleanup
       .set('start', start)
       .set('end', end));
@@ -63,13 +48,16 @@ export default class DateRepresentation extends Component {
 
   handleEndChange = (date) => {
     const { cleanup, setCleanup } = this.props;
-    this.setState({ end: date });
     setCleanup(cleanup.set('end', date));
   }
 
   render() {
-    const { end, start } = this.state;
-    const { classes, setCleanup } = this.props;
+    const { classes, cleanup, setCleanup } = this.props;
+    if (cleanup == null) {
+      return null;
+    }
+
+    const { end, start } = cleanup;
     const minEndDate = start == null ? null : new Date(start.getTime() + ONE_HOUR);
 
     return (

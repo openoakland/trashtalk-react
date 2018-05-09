@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 import Icon from 'material-ui/Icon';
-import DateRepresentation from 'components/cleanup/DateRepresentation';
 import LocationRepresentation from 'components/cleanup/LocationRepresentation';
 import ToolsRepresentation from 'components/cleanup/ToolsRepresentation';
 import { screens } from 'constants/cleanup';
@@ -28,7 +27,7 @@ const styles = theme => ({
 });
 
 const {
-  LOCATION_SELECTION, DATE_SELECTION, TOOL_SELECTION,
+  LOCATION_SELECTION, TOOL_SELECTION,
 } = screens;
 
 /**
@@ -39,6 +38,8 @@ class CleanupSummary extends Component {
   static propTypes = {
     classes: PropTypes.object,
     cleanup: PropTypes.object,
+    setCleanup: PropTypes.func,
+    user: PropTypes.object,
   }
 
   state = { value: LOCATION_SELECTION }
@@ -48,18 +49,20 @@ class CleanupSummary extends Component {
   }
 
   renderSummaryItem = () => {
-    const { cleanup } = this.props;
     const { value } = this.state;
+    const { cleanup } = this.props;
+
+    const props = {
+      cleanup,
+      setCleanup: this.props.setCleanup,
+    };
 
     const stepMapping = {
       [LOCATION_SELECTION]: (
-        <LocationRepresentation cleanup={ cleanup } />
-      ),
-      [DATE_SELECTION]: (
-        <DateRepresentation cleanup={ cleanup } />
+        <LocationRepresentation { ...props } />
       ),
       [TOOL_SELECTION]: (
-        <ToolsRepresentation cleanup={ cleanup } />
+        <ToolsRepresentation { ...props } />
       ),
     };
 
@@ -68,37 +71,33 @@ class CleanupSummary extends Component {
 
   render() {
     const { value } = this.state;
-    const { classes } = this.props;
+    const { classes, cleanup, user } = this.props;
 
     return (
       <div className={ classes.root }>
         <div className={ classes.summaryItemContainer } >
           { this.renderSummaryItem() }
         </div>
-        <BottomNavigation
-          className={ classes.bottomNavigation }
-          value={ value }
-          onChange={ this.handleChange }
-          showLabels={ true }
-        >
-          <BottomNavigationAction
+        { cleanup && cleanup.hasHost(user) && (
+          <BottomNavigation
             className={ classes.bottomNavigation }
-            label='Where'
-            value={ LOCATION_SELECTION }
-            icon={ <Icon> place </Icon> }
-          />
-          <BottomNavigationAction
-            className={ classes.bottomNavigation }
-            label='When'
-            value={ DATE_SELECTION }
-            icon={ <Icon> date_range </Icon> }
-          />
-          <BottomNavigationAction
-            label='Tools'
-            value={ TOOL_SELECTION }
-            icon={ <Icon> list </Icon> }
-          />
-        </BottomNavigation>
+            value={ value }
+            onChange={ this.handleChange }
+            showLabels={ true }
+          >
+            <BottomNavigationAction
+              className={ classes.bottomNavigation }
+              label='Where'
+              value={ LOCATION_SELECTION }
+              icon={ <Icon> place </Icon> }
+            />
+            <BottomNavigationAction
+              label='Tools'
+              value={ TOOL_SELECTION }
+              icon={ <Icon> list </Icon> }
+            />
+          </BottomNavigation>
+        )}
       </div>
     );
   }

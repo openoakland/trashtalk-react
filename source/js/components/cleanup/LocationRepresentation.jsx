@@ -55,7 +55,7 @@ class LocationRepresentation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.cleanup.location ? props.cleanup.location.query : '',
+      value: props.cleanup && props.cleanup.location ? props.cleanup.location.query : '',
       suggestions: [],
     };
   }
@@ -134,15 +134,12 @@ class LocationRepresentation extends Component {
 
   renderInputComponent = inputProps => {
     const { classes, ref, ...other } = inputProps;
-    const { setCleanup } = this.props;
 
     return (
       <TextField
         fullWidth
         onKeyPress={ this.handleEnterKeyPress }
         InputProps={ {
-          autoFocus: true,
-          disabled: setCleanup == null,
           inputRef: ref,
           classes: {
             input: classes.input,
@@ -200,31 +197,36 @@ class LocationRepresentation extends Component {
   };
 
   render() {
-    const { classes, cleanup } = this.props;
+    const { classes, cleanup, setCleanup } = this.props;
+    if (cleanup == null) {
+      return null;
+    }
 
     return (
       <CardContent className={ classes.root }>
-        <div style={ { height: '50px', zIndex: 1 } }>
-          <Autosuggest
-            theme={ {
-              suggestionsList: classes.suggestionsList,
-              suggestion: classes.suggestion,
-            } }
-            renderInputComponent={ this.renderInputComponent }
-            suggestions={ this.state.suggestions }
-            onSuggestionsFetchRequested={ this.handleSuggestionsFetchRequested }
-            onSuggestionsClearRequested={ this.handleSuggestionsClearRequested }
-            renderSuggestionsContainer={ this.renderSuggestionsContainer }
-            getSuggestionValue={ this.getSuggestionValue }
-            renderSuggestion={ this.renderSuggestion }
-            inputProps={ {
-              classes,
-              placeholder: 'Enter a location',
-              value: this.state.value || '',
-              onChange: this.handleChange,
-            } }
-          />
-        </div>
+        { setCleanup && (
+          <div style={ { height: '50px', zIndex: 1 } }>
+            <Autosuggest
+              theme={ {
+                suggestionsList: classes.suggestionsList,
+                suggestion: classes.suggestion,
+              } }
+              renderInputComponent={ this.renderInputComponent }
+              suggestions={ this.state.suggestions }
+              onSuggestionsFetchRequested={ this.handleSuggestionsFetchRequested }
+              onSuggestionsClearRequested={ this.handleSuggestionsClearRequested }
+              renderSuggestionsContainer={ this.renderSuggestionsContainer }
+              getSuggestionValue={ this.getSuggestionValue }
+              renderSuggestion={ this.renderSuggestion }
+              inputProps={ {
+                classes,
+                placeholder: 'Cleanup location',
+                value: this.state.value || '',
+                onChange: this.handleChange,
+              } }
+            />
+          </div>
+        )}
         <div className={ classes.mapContainer }>
           <GoogleMap
             cleanups={ [cleanup] }
