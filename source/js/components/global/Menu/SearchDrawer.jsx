@@ -64,7 +64,7 @@ const MenuProps = {
 };
 
 const DEFAULT_SORTING = 'sortByDistance';
-const DEFAULT_FILTERING = 'DEFAULT_FILTERING';
+const DEFAULT_FILTERING = 'allCleanup';
 
 /**
  * Template for creating connected components
@@ -96,12 +96,54 @@ class SearchDrawer extends Component {
     filterType: DEFAULT_FILTERING,
   };
 
-  sortByNextUp = (cleanupA, cleanupB) => cleanupA.start - cleanupB.start;
+  getFilteringOptions = () => {
+    let filteringOptions = Map({
+      [DEFAULT_FILTERING]: {
+        function: () => true,
+        label: 'All Cleanups',
+      },
+    });
 
-  sortByDistanceFromUser = (cleanupA, cleanupB) => {
+    // If we know who the user is, allow filtering by the user's cleanups
+    const { user } = this.props;
+    if (user != null) {
+      filteringOptions = filteringOptions.merge(Map({
+        'filterByHosting': {
+          function: cleanup => cleanup.hasHost(user),
+          label: "Cleanups I'm Hosting",
+        },
+        'filterByParticipation': {
+          function: cleanup => cleanup.hasParticipant(user),
+          label: "Cleanups I'm Participating In",
+        },
+      }));
+    }
+
+    return filteringOptions;
+  }
+
+  getSortingOptions = () => {
+    let sortingOptions = Map({
+      [DEFAULT_SORTING]: {
+        function: (a, b) => a.start - b.start,
+        label: 'Next Cleanup Date',
+      },
+    });
+
+    // If we know the user's location, allow sorting by distance from user
     const { userLocation } = this.props;
-    return cleanupA.location.getDistanceFrom(userLocation) - cleanupB.location.getDistanceFrom(userLocation);
-  };
+    if (userLocation != null) {
+      sortingOptions = sortingOptions.merge(Map({
+        'sortByDistanceFromUser':
+          {
+            function: (a, b) => a.location.getDistanceFrom(userLocation) - b.location.getDistanceFrom(userLocation),
+            label: 'Distance',
+          },
+      }));
+    }
+
+    return sortingOptions;
+  }
 
   handleCleanupClick = event => {
     const { cleanups, history } = this.props;
@@ -115,44 +157,11 @@ class SearchDrawer extends Component {
 
   render() {
     const {
-      classes, cleanups, handleToggle, open, user, userLocation,
+      classes, cleanups, handleToggle, open, userLocation,
     } = this.props;
-
     const { filterType, sortType } = this.state;
-
-    let sortingFunctions = Map({
-      [DEFAULT_SORTING]: {
-        function: this.sortByNextUp,
-        label: 'Next Cleanup Date',
-      },
-    });
-
-    // If we know the user's location, allow sorting by distance from user
-    if (userLocation != null) {
-      sortingFunctions = sortingFunctions.set('sortByDistanceFromUser', {
-        function: this.sortByDistanceFromUser,
-        label: 'Distance From My Location',
-      });
-    }
-
-    let filterFunctions = Map({
-      [DEFAULT_FILTERING]: {
-        function: () => true,
-        label: 'All Cleanups',
-      },
-    });
-
-    // If we know who the user is, allow filtering by the user's cleanups
-    if (user != null) {
-      filterFunctions = filterFunctions.set('filterByHosting', {
-        function: cleanup => cleanup.hasHost(user),
-        label: "Cleanups I'm Hosting",
-      });
-      filterFunctions = filterFunctions.set('filterByParticipation', {
-        function: cleanup => cleanup.hasParticipant(user),
-        label: "Cleanups I'm Participating In",
-      });
-    }
+    const sortingOptions = this.getSortingOptions();
+    const filteringOptions = this.getFilteringOptions();
 
     return (
       <Drawer
@@ -165,7 +174,7 @@ class SearchDrawer extends Component {
           <div className={ classes.listHeader }>
             <FormControl
               className={ classes.formControl }
-              disabled={ filterFunctions.size === 1 }
+              disabled={ filteringOptions.size === 1 }
             >
               <InputLabel htmlFor='filter-type'> Showing </InputLabel>
               <Select
@@ -174,19 +183,19 @@ class SearchDrawer extends Component {
                 input={ <Input id='filter-type' /> }
                 MenuProps={ MenuProps }
               >
-                {filterFunctions.keySeq().map(key => (
+                {filteringOptions.keySeq().map(key => (
                   <MenuItem
                     key={ key }
                     value={ key }
                   >
-                    {filterFunctions.get(key).label}
+                    {filteringOptions.get(key).label}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
             <FormControl
               className={ classes.formControl }
-              disabled={ sortingFunctions.size === 1 }
+              disabled={ sortingOptions.size === 1 }
             >
               <InputLabel htmlFor='sorting-type'> Sorted By </InputLabel>
               <Select
@@ -195,12 +204,12 @@ class SearchDrawer extends Component {
                 input={ <Input id='sorting-type' /> }
                 MenuProps={ MenuProps }
               >
-                {sortingFunctions.keySeq().map(key => (
+                {sortingOptions.keySeq().map(key => (
                   <MenuItem
                     key={ key }
                     value={ key }
                   >
-                    {sortingFunctions.get(key).label}
+                    {sortingOptions.get(key).label}
                   </MenuItem>
                 ))}
               </Select>
@@ -216,9 +225,9 @@ class SearchDrawer extends Component {
             </Button>
           </div>
           {cleanups
-            .filter(filterFunctions.get(filterType).function)
+            .filter(filteringOptions.get(filterType).function)
             .toList()
-            .sort(sortingFunctions.get(sortType).function)
+            .sort(sortingOptions.get(sortType).function)
             .map(cleanup => {
               let secondary = `${ cleanup.start.toLocaleString() }`;
 
