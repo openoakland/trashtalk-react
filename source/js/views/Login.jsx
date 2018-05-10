@@ -13,6 +13,7 @@ import DialogContainer from 'components/global/DialogContainer';
 import { DialogContentText, DialogContent } from 'material-ui/Dialog';
 import { login, loginReset } from 'actions/app';
 import queryString from 'query-string';
+import { API_URL } from 'constants/app';
 import { LOGIN_ERROR, LOGIN_SUCCESS } from '../actions/app';
 
 const styles = theme => ({
@@ -91,7 +92,9 @@ class Login extends React.Component {
   }
 
   gotoRegistration = () => {
-    this.props.history.push(routeCodes.REGISTER);
+    // this.props.history.push(routeCodes.REGISTER);
+    const win = window.open(`${ API_URL }/signup`);
+    win.focus();
   };
 
   handleLoginRequest = () => {
