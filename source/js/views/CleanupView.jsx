@@ -114,7 +114,7 @@ export default class CleanupView extends React.PureComponent {
     let participantStatus;
     if (cleanup != null) {
       if (!cleanup.hasHost(user)) {
-        actions.push(
+        actions.push((
           <Button
             variant='raised'
             color='primary'
@@ -122,7 +122,7 @@ export default class CleanupView extends React.PureComponent {
           >
             { cleanup.hasParticipant(user) ? 'Remove me from this cleanup' : 'Add me to this cleanup' }
           </Button>
-        );
+        ));
       }
 
       if (cleanup.hasHost(user)) {
@@ -141,12 +141,19 @@ export default class CleanupView extends React.PureComponent {
         actions={ actions }
       >
         {participantStatus && (
-          <Typography color='primary' variant='subheading' className={ classes.subheading }>
+          <Typography
+            color='primary'
+            variant='subheading'
+            className={ classes.subheading }
+          >
             <Icon className={ classes.icon }>person</Icon>
             { participantStatus }
           </Typography>
         )}
-        <Metadata cleanup={ cleanup } setCleanup={ setCleanup } />
+        <Metadata
+          cleanup={ cleanup }
+          setCleanup={ setCleanup }
+        />
         <br />
         <CleanupSummary
           cleanup={ cleanup }

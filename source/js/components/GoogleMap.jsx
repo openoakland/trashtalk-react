@@ -190,7 +190,7 @@ class GoogleMap extends Component {
       markersToAdd.forEach(marker => {
         setTimeout(
           () => marker.setMap(mapReference),
-          waitTime
+          animate ? waitTime : 0 // If there's no animation, just render all the pin drops at the same time
         );
         waitTime += TIME_BETWEEN_PIN_DROPS;
       });
