@@ -17,6 +17,11 @@ const styles = theme => ({
   timePicker: {
     width: 100,
   },
+  root: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%'
+  }
 });
 
 const ONE_HOUR = 3600000;
@@ -62,41 +67,47 @@ export default class DateRepresentation extends Component {
 
     return (
       <MuiPickersUtilsProvider utils={ DateFnsUtils }>
-        <span>
-          <span className={ classes.spacer }>Date: </span>
-          <span className={ classes.spacer }>
-            <DatePicker
-              autoOk={ true }
-              disablePast={ true }
-              disabled={ setCleanup == null }
-              minDateMessage='Choose a day after today'
-              value={ start }
-              onChange={ this.handleDateChange }
-            />
+        <div className={ classes.root }>
+          <span>
+            <span className={ classes.spacer }>Date: </span>
+            <span className={ classes.spacer }>
+              <DatePicker
+                autoOk={ true }
+                disablePast={ true }
+                disabled={ setCleanup == null }
+                minDateMessage='Choose a day after today'
+                value={ start }
+                onChange={ this.handleDateChange }
+              />
+            </span>
           </span>
-          <span className={ classes.spacer }>Start time: </span>
-          <span className={ classes.spacer }>
-            <TimePicker
-              autoOk={ true }
-              className={ classes.timePicker }
-              disabled={ setCleanup == null }
-              value={ start }
-              onChange={ this.handleStartChange }
-            />
+          <span>
+            <span className={ classes.spacer }>Start time: </span>
+            <span className={ classes.spacer }>
+              <TimePicker
+                autoOk={ true }
+                className={ classes.timePicker }
+                disabled={ setCleanup == null }
+                value={ start }
+                onChange={ this.handleStartChange }
+              />
+            </span>
           </span>
-          <span className={ classes.spacer }>End time: </span>
-          <span className={ classes.spacer }>
-            <TimePicker
-              autoOk={ true }
-              className={ classes.timePicker }
-              disabled={ setCleanup == null || start == null }
-              minDate={ minEndDate }
-              minDateMessage='End time must be at least an hour after the start time'
-              value={ end }
-              onChange={ this.handleEndChange }
-            />
+          <span>
+            <span className={ classes.spacer }>End time: </span>
+            <span className={ classes.spacer }>
+              <TimePicker
+                autoOk={ true }
+                className={ classes.timePicker }
+                disabled={ setCleanup == null || start == null }
+                minDate={ minEndDate }
+                minDateMessage='End time must be at least an hour after the start time'
+                value={ end }
+                onChange={ this.handleEndChange }
+              />
+            </span>
           </span>
-        </span>
+        </div>
       </MuiPickersUtilsProvider>
     );
   }
