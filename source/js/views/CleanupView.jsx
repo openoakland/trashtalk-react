@@ -5,10 +5,12 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button';
+import Icon from 'material-ui/Icon';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import Metadata from 'components/cleanup/Metadata';
-import { CardContent, CardHeader } from 'material-ui';
+import Typography from 'material-ui/Typography';
+import { CardContent } from 'material-ui/Card';
 
 import { redirectToLogin } from 'api/auth';
 import { patchCleanup } from 'actions/cleanups';
@@ -18,12 +20,17 @@ import { setBackgroundMapLocation } from 'actions/app';
 
 const styles = theme => ({
   dialogPaper: { height: '100%', padding: 0 },
+  icon: {
+    marginRight: theme.spacing.unit,
+  },
   placesIcon: {
     colorPrimary: '#eb4335',
     height: 60,
   },
-  title: {
-    fontSize: '1.5rem',
+  subheading: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: theme.spacing.unit * 2,
   },
 });
 
@@ -122,11 +129,16 @@ export default class CleanupView extends React.PureComponent {
         dialogClasses={{ paper: classes.dialogPaper }}
         actions={ actions }
       >
-        <CardHeader
-          title={ cleanup == null ? 'Loading...' : subheader }
-          classes={ { title: classes.title } }
-        />
         <Metadata cleanup={ cleanup } setCleanup={ setCleanup } />
+        {subheader && (
+          <CardContent>
+            <Typography color='primary' variant='subheading' className={ classes.subheading }>
+              <Icon className={ classes.icon }>person</Icon>
+              { cleanup == null ? 'Loading...' : subheader }
+            </Typography>
+          </CardContent>
+        )}
+        <br />
         <CleanupSummary
           cleanup={ cleanup }
           user={ user }

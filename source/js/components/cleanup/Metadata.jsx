@@ -94,7 +94,9 @@ export default class Metadata extends Component {
               onChange={ this.handleTitleChange }
             />
           </FormControl>
-        ) : <Typography variant='subheading' > { cleanup.title } </Typography>
+        ) : (
+          <Typography variant='display1' > { cleanup.title } </Typography>
+        )
         }
         <div className={ classes.descriptionField } >
           {(setCleanup != null || (cleanup.description !== '' && cleanup.description != null)) && (
