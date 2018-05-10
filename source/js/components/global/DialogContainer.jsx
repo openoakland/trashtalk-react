@@ -38,7 +38,7 @@ const styles = theme => ({
  * and standardize stylistic decisions
  */
 @connect(
-  state => ({}),
+  () => ({}),
   dispatch => bindActionCreators({ setSnackbarProps }, dispatch)
 )
 @withStyles(styles)
@@ -127,7 +127,7 @@ class DialogContainer extends React.Component {
           <DialogActions className={ classes.dialogActions }>
             <div className={ classes.additionalActions }>
               {actions.map((action, index) => (/* eslint-disable-line react/no-array-index-key */
-                <div key={ index } className={ classes.additionalActionContainer }>{action}</div>
+                <div key={ index } className={ classes.additionalActionContainer }>{action}</div> // eslint-disable-line
               ))}
             </div>
             <Button

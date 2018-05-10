@@ -16,9 +16,8 @@ import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import { getUserLocation, logout } from 'actions/app';
+import { getUserLocation, logout, setSnackbarProps } from 'actions/app';
 import SearchDrawer from './Menu/SearchDrawer';
-import { setSnackbarProps } from 'actions/app';
 
 const styles = theme => ({
   avatar: {
@@ -150,12 +149,12 @@ class MenuComponent extends PureComponent {
                 open={ Boolean(anchorEl) }
                 onClose={ this.handleMenuClose }
               >
-                <MenuItem onClick={this.handleLoginClick}>
-                  <Icon className={classes.menuIcon}>account_box</Icon> Login
+                <MenuItem onClick={ this.handleLoginClick }>
+                  <Icon className={ classes.menuIcon }>account_box</Icon> Login
                 </MenuItem>
                 { user && (
-                  <MenuItem onClick={this.handleLogoutClick}>
-                    <Icon className={classes.menuIcon}>exit_to_app</Icon> Logout
+                  <MenuItem onClick={ this.handleLogoutClick }>
+                    <Icon className={ classes.menuIcon }>exit_to_app</Icon> Logout
                   </MenuItem>
                 )}
               </Menu>

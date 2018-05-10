@@ -41,7 +41,7 @@ const styles = theme => ({
     return {
       cleanup: state.cleanups.getIn([
         'cleanups',
-        Number(props.match.params.cleanupId)
+        Number(props.match.params.cleanupId),
       ]),
       user: state.app.get('user'),
     };
@@ -137,7 +137,7 @@ export default class CleanupView extends React.PureComponent {
 
     return (
       <DialogContainer
-        dialogClasses={{ paper: classes.dialogPaper }}
+        dialogClasses={ { paper: classes.dialogPaper } }
         actions={ actions }
       >
         {participantStatus && (
