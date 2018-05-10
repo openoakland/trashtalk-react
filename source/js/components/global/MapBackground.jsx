@@ -42,15 +42,15 @@ export default class MapBackground extends Component {
     setBackgroundMapReference: PropTypes.func,
   }
 
+  constructor(props) {
+    super(props);
+    this.props.getCleanups();
+  }
+
   /**
    * Tasks that need to be performed after map initialization go here
    */
   componentWillReceiveProps(nextProps) {
-    if (this.props.backgroundMapReference == null && nextProps.backgroundMapReference != null) {
-      // Get all the cleanups so we can display them on the map
-      this.props.getCleanups();
-    }
-
     // If the background map location is changed, update map center
     if (
       nextProps.backgroundMapLocation != null && (

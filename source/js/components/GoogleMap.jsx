@@ -20,6 +20,7 @@ const styles = {
   },
 };
 
+const TIME_BETWEEN_PIN_DROPS = 25;
 const DEFAULT_ZOOM = 17;
 @connect(
   (state) => {
@@ -149,6 +150,7 @@ class GoogleMap extends Component {
     });
 
     // Now loop through the cleanups and add markers to each
+    let markersToAdd = Immutable.List(); // We'll use this to separately animate the dropping of new markers
     if (cleanups != null) {
       cleanups
         .filter(cleanup => !cleanupMarkers.has(cleanup)) // Filter out cleanups that have already been added
@@ -166,7 +168,6 @@ class GoogleMap extends Component {
             animation: animate ? window.google.maps.Animation.DROP : null,
             label,
             position: cleanup.location.getLatLngObj(),
-            map: mapReference,
           });
 
           // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
@@ -178,9 +179,21 @@ class GoogleMap extends Component {
           // Persist a reference to the cleanup marker so that we can manipulate it later
           // e.g.: in this.clearMarkers()
           cleanupMarkers = cleanupMarkers.set(cleanup, marker);
+          markersToAdd = markersToAdd.push(marker);
         });
 
       this.setState({ cleanupMarkers });
+
+      // Add pins to map after setting state so that we can control the time between pin drops
+      // without running into timing issues with setting the component state
+      let waitTime = 0;
+      markersToAdd.forEach(marker => {
+        setTimeout(
+          () => marker.setMap(mapReference),
+          waitTime
+        );
+        waitTime += TIME_BETWEEN_PIN_DROPS;
+      });
     }
   };
 
