@@ -55,11 +55,7 @@ class Login extends React.Component {
   componentWillReceiveProps(nextProps) { // eslint-disable-line react/sort-comp
     if (nextProps.loginState === LOGIN_SUCCESS) {
       const queryParams = queryString.parse(window.location.search);
-      if (queryParams.redirectTo == null) {
-        this.props.history.replace('/');
-      } else {
-        this.props.history.replace(queryParams.redirectTo);
-      }
+      this.props.history.replace(queryParams.redirectTo || '/');
     }
   }
 

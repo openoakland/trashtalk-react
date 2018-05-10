@@ -90,7 +90,7 @@ export default class Metadata extends Component {
             <InputLabel>Title</InputLabel>
             <Input
               disabled={ setCleanup == null }
-              value={ cleanup.title }
+              value={ cleanup.title || '' }
               onChange={ this.handleTitleChange }
             />
           </FormControl>
@@ -105,7 +105,7 @@ export default class Metadata extends Component {
               fullWidth={ true }
               disabled={ setCleanup == null }
               onChange={ this.handleDescriptionChange }
-              value={ cleanup.description }
+              value={ cleanup.description || '' }
               margin='normal'
               placeholder='Enter any additional details here'
             />
