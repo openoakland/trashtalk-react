@@ -10,7 +10,7 @@ export const LOGIN_START = 'LOGIN_START';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT = 'LOGOUT';
-export const SET_SNACKBAR = 'SET_SNACKBAR';
+export const SET_SNACKBAR_PROPS = 'SET_SNACKBAR_PROPS';
 
 export function setBackgroundMapReference(backgroundMapReference) {
   return {
@@ -32,10 +32,10 @@ export function getUserLocation() {
   };
 }
 
-export function setSnackbar(props) {
+export function setSnackbarProps(snackbarProps) {
   return {
-    props,
-    type: SET_SNACKBAR,
+    snackbarProps,
+    type: SET_SNACKBAR_PROPS,
   };
 }
 

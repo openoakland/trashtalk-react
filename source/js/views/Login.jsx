@@ -11,7 +11,7 @@ import { withStyles } from 'material-ui/styles';
 import Logo from 'components/global/Logo';
 import DialogContainer from 'components/global/DialogContainer';
 import { DialogContentText, DialogContent } from 'material-ui/Dialog';
-import { login, loginReset } from 'actions/app';
+import { login, loginReset, setSnackbarProps } from 'actions/app';
 import queryString from 'query-string';
 import { API_URL } from 'constants/app';
 import { LOGIN_ERROR, LOGIN_SUCCESS } from '../actions/app';
@@ -36,7 +36,7 @@ const styles = theme => ({
       user: state.app.get('user'),
     };
   },
-  dispatch => bindActionCreators({ login, loginReset }, dispatch)
+  dispatch => bindActionCreators({ login, loginReset, setSnackbarProps }, dispatch)
 )
 @withStyles(styles)
 class Login extends React.Component {
@@ -46,6 +46,7 @@ class Login extends React.Component {
     login: PropTypes.func,
     loginReset: PropTypes.func,
     loginState: PropTypes.string,
+    setSnackbarProps: PropTypes.func,
     user: PropTypes.object,
   };
 
@@ -99,6 +100,10 @@ class Login extends React.Component {
 
   handleLoginRequest = () => {
     const { username, password } = this.state;
+    this.props.setSnackbarProps({
+      message: 'You have been logged in',
+      open: true,
+    });
     this.props.login(username, password);
   }
 

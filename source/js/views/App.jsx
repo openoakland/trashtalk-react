@@ -12,6 +12,7 @@ import Login from 'views/Login';
 import NotFound from 'views/NotFound';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Register from 'views/Register';
+import GlobalSnackbar from 'components/global/GlobalSnackbar';
 
 import { createMuiTheme } from 'material-ui/styles';
 import MapBackground from '../components/global/MapBackground';
@@ -33,6 +34,7 @@ class App extends Component {
           </Switch>
         </div>
         <div style={ { zIndex: 3 } }> <Notifications /> </div>
+        <div style={ { zIndex: 4 } }> <GlobalSnackbar /> </div>
       </MuiThemeProvider>
     );
   }

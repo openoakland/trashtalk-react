@@ -1,15 +1,15 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { withStyles } from 'material-ui/styles';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import { routeCodes } from 'constants/routes';
-import Snackbar from 'material-ui/Snackbar';
-import Fade from 'material-ui/transitions/Fade';
-import { withStyles } from 'material-ui/styles';
 
 import Dialog, { DialogActions, DialogContentText, DialogContent, DialogTitle } from 'material-ui/Dialog';
 
-const AUTO_HIDE_DURATION = 6000;
+import { setSnackbarProps } from 'actions/app';
 
 const styles = theme => ({
   additionalActions: {
@@ -28,9 +28,6 @@ const styles = theme => ({
     flexDirection: 'column',
     flex: 1,
   },
-  snackbar: {
-    margin: theme.spacing.unit,
-  },
   subtitle: {
     maxHeight: 52,
   },
@@ -40,6 +37,10 @@ const styles = theme => ({
  * This is a generic container for dialogs. It exists to reduce boilerplate code
  * and standardize stylistic decisions
  */
+@connect(
+  state => ({}),
+  dispatch => bindActionCreators({ setSnackbarProps }, dispatch)
+)
 @withStyles(styles)
 class DialogContainer extends React.Component {
   static propTypes = {
@@ -49,6 +50,7 @@ class DialogContainer extends React.Component {
     dialogClasses: PropTypes.object,
     history: PropTypes.object,
     reasonToLock: PropTypes.string,
+    setSnackbarProps: PropTypes.func,
     subtitle: PropTypes.string,
     title: PropTypes.string,
     triggerClose: PropTypes.bool,
@@ -58,16 +60,9 @@ class DialogContainer extends React.Component {
     actions: [],
   };
 
-  state = {
-    open: true,
-    showSnackbar: false,
-  };
+  state = { open: true };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.reasonToLock !== this.props.reasonToLock) {
-      this.handleSnackbarClose();
-    }
-
     if (nextProps.triggerClose) {
       this.closeDialog();
     }
@@ -79,11 +74,24 @@ class DialogContainer extends React.Component {
     if (reasonToLock == null) {
       this.closeDialog();
     } else {
-      this.setState({ showSnackbar: true });
+      this.props.setSnackbarProps({
+        action: [
+          <Button
+            key='undo'
+            color='primary'
+            size='small'
+            onClick={ this.closeDialog }
+          >
+            Close Anyway
+          </Button>,
+        ],
+        message: reasonToLock,
+        open: true,
+      });
     }
   };
 
-  handleSnackbarClose = () => this.setState({ showSnackbar: false })
+  handleSnackbarClose = () => this.props.setSnackbarProps(null)
 
   closeDialog = () => {
     this.setState(
@@ -96,9 +104,8 @@ class DialogContainer extends React.Component {
 
   render() {
     const {
-      actions, classes, dialogClasses, children, reasonToLock, subtitle, title,
+      actions, classes, dialogClasses, children, subtitle, title,
     } = this.props;
-    const { showSnackbar } = this.state;
 
     return (
       <div>
@@ -131,26 +138,6 @@ class DialogContainer extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-        <Snackbar
-          anchorOrigin={ {
-            vertical: 'bottom',
-            horizontal: 'center',
-          } }
-          autoHideDuration={ AUTO_HIDE_DURATION }
-          onClose={ this.handleSnackbarClose }
-          open={ showSnackbar }
-          message={ reasonToLock }
-          action={ [
-            <Button
-              key='undo'
-              color='primary'
-              size='small'
-              onClick={ this.closeDialog }
-            >
-              Close Anyway
-            </Button>,
-          ] }
-        />
       </div>
     );
   }
