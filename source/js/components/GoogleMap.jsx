@@ -20,7 +20,6 @@ const styles = {
   },
 };
 
-const TIME_BETWEEN_PIN_DROPS = 25;
 const DEFAULT_ZOOM = 17;
 @connect(
   (state) => {
@@ -186,13 +185,13 @@ class GoogleMap extends Component {
 
       // Add pins to map after setting state so that we can control the time between pin drops
       // without running into timing issues with setting the component state
-      let waitTime = 0;
+      const MAX_DROP_TIME = 500; // The time it takes for all pins to drop
       markersToAdd.forEach(marker => {
         setTimeout(
           () => marker.setMap(mapReference),
-          animate ? waitTime : 0 // If there's no animation, just render all the pin drops at the same time
+          // If there's no animation, just render all the pin drops at the same time
+          animate ? MAX_DROP_TIME * Math.random() : 0
         );
-        waitTime += TIME_BETWEEN_PIN_DROPS;
       });
     }
   };
