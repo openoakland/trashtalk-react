@@ -18,6 +18,7 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import { getUserLocation, logout } from 'actions/app';
 import SearchDrawer from './Menu/SearchDrawer';
+import { setSnackbarProps } from 'actions/app';
 
 const styles = theme => ({
   avatar: {
@@ -46,7 +47,7 @@ const styles = theme => ({
     userLocation: state.app.get('userLocation'),
     user: state.app.get('user'),
   }),
-  dispatch => bindActionCreators({ getUserLocation, logout }, dispatch)
+  dispatch => bindActionCreators({ getUserLocation, logout, setSnackbarProps }, dispatch)
 )
 @withStyles(styles)
 class MenuComponent extends PureComponent {
@@ -55,6 +56,7 @@ class MenuComponent extends PureComponent {
     history: PropTypes.object,
     getUserLocation: PropTypes.func,
     logout: PropTypes.func,
+    setSnackbarProps: PropTypes.func,
     userLocation: PropTypes.object,
     user: PropTypes.object,
   };
@@ -64,13 +66,17 @@ class MenuComponent extends PureComponent {
   handleCreateClick = () => this.props.history.push(routeCodes.NEW_CLEANUP);
 
   handleLoginClick = () => {
-    this.props.history.push(routeCodes.LOGIN)
+    this.props.history.push(routeCodes.LOGIN);
     this.handleMenuClose();
   };
 
   handleLogoutClick = () => {
     this.props.logout();
     this.handleMenuClose();
+    this.props.setSnackbarProps({
+      message: 'You have been logged out',
+      open: true,
+    });
   }
 
   handleDrawerToggle = () => {

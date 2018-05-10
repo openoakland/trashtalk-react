@@ -9,6 +9,7 @@ import {
   LOGOUT,
   SET_BACKGROUND_MAP_LOCATION,
   SET_BACKGROUND_MAP_REFERENCE,
+  SET_SNACKBAR_PROPS,
 } from 'actions/app';
 
 
@@ -21,6 +22,7 @@ import { getUserFromJWT } from '../api/auth';
 const initialState = Map({
   backgroundMapReference: null,
   backgroundMapLocation: null,
+  snackbarProps: null,
   userLocation: null,
   user: getUserFromJWT(),
   loginState: null,
@@ -37,6 +39,12 @@ const actionsMap = {
     return state.set(
       'backgroundMapLocation',
       action.backgroundMapLocation
+    );
+  },
+  [SET_SNACKBAR_PROPS]: (state, action) => {
+    return state.set(
+      'snackbarProps',
+      action.snackbarProps
     );
   },
   [GET_USER_LOCATION_SUCCESS]: (state, action) => {

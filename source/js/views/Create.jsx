@@ -14,6 +14,7 @@ import Metadata from 'components/cleanup/Metadata';
 import Cleanup from 'models/Cleanup';
 import Location from 'models/Location';
 
+import { setSnackbarProps } from 'actions/app';
 import { postCleanup } from 'actions/cleanups';
 import { getTools, getToolCategories } from 'actions/tools';
 import { loginRequired } from 'api/auth';
@@ -48,6 +49,7 @@ const METADATA = 2;
         getTools,
         getToolCategories,
         postCleanup,
+        setSnackbarProps,
       },
       dispatch
     )
@@ -61,6 +63,7 @@ class Create extends React.Component {
     getTools: PropTypes.func,
     getToolCategories: PropTypes.func,
     postCleanup: PropTypes.func,
+    setSnackbarProps: PropTypes.func,
   };
 
   constructor(props) {
@@ -107,6 +110,10 @@ class Create extends React.Component {
       // If we're done, create new cleanup, add tools, redirect back home
       const { cleanup } = this.state;
       this.props.postCleanup(cleanup.toApiJSON());
+      this.props.setSnackbarProps({
+        message: 'Your new cleanup has been successfully created!',
+        open: true,
+      });
       this.setState({ dialogCloseTriggered: true });
     } else {
       this.setState({ activeStep: activeStep + 1 });

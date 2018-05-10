@@ -10,13 +10,12 @@ import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import Metadata from 'components/cleanup/Metadata';
 import Typography from 'material-ui/Typography';
-import { CardContent } from 'material-ui/Card';
 
 import { redirectToLogin } from 'api/auth';
 import { patchCleanup } from 'actions/cleanups';
 import * as Immutable from 'immutable';
 
-import { setBackgroundMapLocation } from 'actions/app';
+import { setBackgroundMapLocation, setSnackbarProps } from 'actions/app';
 
 const styles = theme => ({
   dialogPaper: { height: '100%', padding: 0 },
@@ -47,7 +46,7 @@ const styles = theme => ({
       user: state.app.get('user'),
     };
   },
-  dispatch => bindActionCreators({ patchCleanup, setBackgroundMapLocation }, dispatch)
+  dispatch => bindActionCreators({ patchCleanup, setBackgroundMapLocation, setSnackbarProps }, dispatch)
 )
 @withStyles(styles)
 export default class CleanupView extends React.PureComponent {
@@ -56,6 +55,7 @@ export default class CleanupView extends React.PureComponent {
     cleanup: PropTypes.object,
     patchCleanup: PropTypes.func,
     setBackgroundMapLocation: PropTypes.func,
+    setSnackbarProps: PropTypes.func,
     user: PropTypes.object,
   };
 
@@ -80,6 +80,11 @@ export default class CleanupView extends React.PureComponent {
   componentWillUnmount() {
     if (!Immutable.is(this.props.cleanup, this.state.cleanup)) {
       this.props.patchCleanup(this.state.cleanup.toApiJSON());
+
+      this.props.setSnackbarProps({
+        message: 'Your updates have been applied!',
+        open: true,
+      });
     }
   }
 
@@ -93,6 +98,12 @@ export default class CleanupView extends React.PureComponent {
     }
 
     this.props.patchCleanup(cleanup.toggleParticipant(user).toApiJSON());
+
+    this.props.setSnackbarProps({
+      message: cleanup.hasParticipant(user) ?
+        'You have been removed from this cleanup' : 'You have been added as a participant',
+      open: true,
+    });
   }
 
   render() {
