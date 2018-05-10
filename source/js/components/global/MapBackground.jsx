@@ -72,6 +72,7 @@ export default class MapBackground extends Component {
           cleanups={ cleanups.toArray() }
           mapCenter={ mapCenter }
           handleMapInitialization={ this.props.setBackgroundMapReference }
+          zoom={ 14 }
         />
       </div>
     );
