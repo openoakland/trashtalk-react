@@ -7,8 +7,8 @@ import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
+import Metadata from 'components/cleanup/Metadata';
 import { CardContent, CardHeader } from 'material-ui';
-import DateRepresentation from 'components/cleanup/DateRepresentation';
 
 import { redirectToLogin } from 'api/auth';
 import { patchCleanup } from 'actions/cleanups';
@@ -123,21 +123,10 @@ export default class CleanupView extends React.PureComponent {
         actions={ actions }
       >
         <CardHeader
-          title={ cleanup == null ? 'Loading...' : (cleanup.title || cleanup.query) }
-          subheader={ subheader }
+          title={ cleanup == null ? 'Loading...' : subheader }
           classes={ { title: classes.title } }
         />
-        { cleanup && cleanup.description && cleanup.description !== '' && (
-          <CardContent>
-            { cleanup.description }
-          </CardContent>
-        )}
-        <CardContent>
-          <DateRepresentation
-            cleanup={ cleanup }
-            setCleanup={ setCleanup }
-          />
-        </CardContent>
+        <Metadata cleanup={ cleanup } setCleanup={ setCleanup } />
         <CleanupSummary
           cleanup={ cleanup }
           user={ user }

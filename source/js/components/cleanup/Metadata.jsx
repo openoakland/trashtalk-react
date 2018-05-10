@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import { FormControl } from 'material-ui/Form';
 import Input, { InputLabel } from 'material-ui/Input';
 import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
 import { CardContent } from 'material-ui/Card';
 import DateRepresentation from 'components/cleanup/DateRepresentation';
 
@@ -15,8 +16,8 @@ const styles = theme => ({
     width: '100%',
   },
   descriptionField: {
-    marginBottom: theme.spacing.unit * 8,
-    marginTop: theme.spacing.unit * 5,
+    marginBottom: theme.spacing.unit,
+    marginTop: theme.spacing.unit,
   },
   timeContainer: {
     marginTop: theme.spacing.unit * 5,
@@ -78,27 +79,35 @@ export default class Metadata extends Component {
 
   render() {
     const { classes, cleanup, setCleanup } = this.props;
+    if (cleanup == null) {
+      return null;
+    }
 
     return (
-      <CardContent classes={{root: classes.contentRoot }}>
-        <FormControl fullWidth>
-          <InputLabel>Title</InputLabel>
-          <Input
-            value={ cleanup.title }
-            onChange={ this.handleTitleChange }
-          />
-        </FormControl>
+      <CardContent classes={ { root: classes.contentRoot } }>
+        { setCleanup != null ? (
+          <FormControl fullWidth>
+            <InputLabel>Title</InputLabel>
+            <Input
+              disabled={ setCleanup == null }
+              value={ cleanup.title }
+              onChange={ this.handleTitleChange }
+            />
+          </FormControl>
+        ) : <Typography variant='subheading' > { cleanup.title } </Typography>
+        }
         <div className={ classes.descriptionField } >
-          <TextField
-            label='Description'
-            fullWidth={ true }
-            multiline
-            rows='4'
-            onChange={ this.handleDescriptionChange }
-            value={ cleanup.description }
-            margin='normal'
-            placeholder='Enter any additional details here'
-          />
+          {(setCleanup != null || (cleanup.description !== '' && cleanup.description != null)) && (
+            <TextField
+              label='Description'
+              fullWidth={ true }
+              disabled={ setCleanup == null }
+              onChange={ this.handleDescriptionChange }
+              value={ cleanup.description }
+              margin='normal'
+              placeholder='Enter any additional details here'
+            />
+          )}
         </div>
         <div className={ classes.timeContainer }>
           <DateRepresentation

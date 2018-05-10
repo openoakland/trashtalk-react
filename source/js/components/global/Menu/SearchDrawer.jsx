@@ -109,12 +109,12 @@ class SearchDrawer extends Component {
     if (user != null) {
       filteringOptions = filteringOptions.merge(Map({
         'filterByHosting': {
-          function: cleanup => cleanup.hasHost(user),
           label: "Cleanups I'm Hosting",
+          function: cleanup => cleanup.hasHost(user),
         },
         'filterByParticipation': {
-          function: cleanup => cleanup.hasParticipant(user),
           label: "Cleanups I'm Participating In",
+          function: cleanup => cleanup.hasParticipant(user),
         },
       }));
     }
@@ -125,8 +125,8 @@ class SearchDrawer extends Component {
   getSortingOptions = () => {
     let sortingOptions = Map({
       [DEFAULT_SORTING]: {
-        function: (a, b) => a.start - b.start,
         label: 'Next Cleanup Date',
+        function: (a, b) => a.start - b.start,
       },
     });
 
@@ -136,8 +136,8 @@ class SearchDrawer extends Component {
       sortingOptions = sortingOptions.merge(Map({
         'sortByDistanceFromUser':
           {
-            function: (a, b) => a.location.getDistanceFrom(userLocation) - b.location.getDistanceFrom(userLocation),
             label: 'Distance',
+            function: (a, b) => a.location.getDistanceFrom(userLocation) - b.location.getDistanceFrom(userLocation),
           },
       }));
     }

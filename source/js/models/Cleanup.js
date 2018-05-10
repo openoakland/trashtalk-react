@@ -4,9 +4,9 @@ import Location from 'models/Location';
 
 export default class Cleanup extends Record({
   id: undefined,
-  description: null,
+  description: '',
   location: null,
-  title: null,
+  title: '',
   host: null,
   participants: Set(),
   start: null,
