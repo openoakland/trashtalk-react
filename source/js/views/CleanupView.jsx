@@ -30,7 +30,7 @@ const styles = theme => ({
   subheading: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 3,
   },
 });
 
@@ -100,7 +100,7 @@ export default class CleanupView extends React.PureComponent {
     const { cleanup } = this.state;
 
     const actions = [];
-    let subheader;
+    let participantStatus;
     if (cleanup != null) {
       if (!cleanup.hasHost(user)) {
         actions.push(
@@ -115,9 +115,9 @@ export default class CleanupView extends React.PureComponent {
       }
 
       if (cleanup.hasHost(user)) {
-        subheader = 'You are the host of this cleanup';
+        participantStatus = 'You are the host of this cleanup';
       } else if (cleanup.hasParticipant(user)) {
-        subheader = 'You are a participant in this cleanup';
+        participantStatus = 'You are a participant in this cleanup';
       }
     }
 
@@ -129,15 +129,13 @@ export default class CleanupView extends React.PureComponent {
         dialogClasses={{ paper: classes.dialogPaper }}
         actions={ actions }
       >
-        <Metadata cleanup={ cleanup } setCleanup={ setCleanup } />
-        {subheader && (
-          <CardContent>
-            <Typography color='primary' variant='subheading' className={ classes.subheading }>
-              <Icon className={ classes.icon }>person</Icon>
-              { cleanup == null ? 'Loading...' : subheader }
-            </Typography>
-          </CardContent>
+        {participantStatus && (
+          <Typography color='primary' variant='subheading' className={ classes.subheading }>
+            <Icon className={ classes.icon }>person</Icon>
+            { participantStatus }
+          </Typography>
         )}
+        <Metadata cleanup={ cleanup } setCleanup={ setCleanup } />
         <br />
         <CleanupSummary
           cleanup={ cleanup }

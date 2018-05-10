@@ -63,7 +63,7 @@ export default class DateRepresentation extends Component {
     return (
       <MuiPickersUtilsProvider utils={ DateFnsUtils }>
         <span>
-          <span className={ classes.spacer }>It takes place on: </span>
+          <span className={ classes.spacer }>Date: </span>
           <span className={ classes.spacer }>
             <DatePicker
               autoOk={ true }
@@ -74,7 +74,7 @@ export default class DateRepresentation extends Component {
               onChange={ this.handleDateChange }
             />
           </span>
-          <span className={ classes.spacer }> at: </span>
+          <span className={ classes.spacer }>Start time: </span>
           <span className={ classes.spacer }>
             <TimePicker
               autoOk={ true }
@@ -84,7 +84,7 @@ export default class DateRepresentation extends Component {
               onChange={ this.handleStartChange }
             />
           </span>
-          <span className={ classes.spacer }> and ends at: </span>
+          <span className={ classes.spacer }>End time: </span>
           <span className={ classes.spacer }>
             <TimePicker
               autoOk={ true }
