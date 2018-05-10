@@ -14,6 +14,7 @@ import Icon from 'material-ui/Icon';
 import List, { ListItem } from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
+import { API_URL } from 'constants/app';
 
 import Cleanup from 'models/Cleanup';
 
@@ -103,7 +104,7 @@ class ToolsRepresentation extends PureComponent {
               alt={ currentTool.name }
               src={
                 // TODO: Dynamically get root from API
-                `http://localhost:8000/assets/${ currentTool.image_static_location }`
+                `${ API_URL }/assets/${ currentTool.image_static_location }`
               }
               className={ classNames(classes.avatar, classes.toolAvatar) }
             />
