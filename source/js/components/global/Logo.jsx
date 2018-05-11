@@ -23,15 +23,14 @@ const styles = theme => ({
 export default class ConnectedComponent extends Component {
   static propTypes = {
     classes: PropTypes.object,
-    dark: PropTypes.bool,
     scale: PropTypes.number,
   };
 
   render() {
-    const { classes, dark, scale } = this.props;
+    const { classes, scale } = this.props;
     return (
       <div
-        className={classes.root}
+        className={ classes.root }
         styles={ {
           transform: `scale(${ scale || 1 })`,
         } }

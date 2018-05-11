@@ -172,7 +172,7 @@ class GoogleMap extends Component {
             position: cleanup.location.getLatLngObj(),
           });
 
-          // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
+          // If the cleanup has been persisted in the DB (it would have an id). Make it clickable so that
           // users can click on it and view its details
           if (cleanup.get('id') != null) {
             marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));

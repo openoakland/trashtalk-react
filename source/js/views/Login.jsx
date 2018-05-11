@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import { routeCodes } from 'constants/routes';
 import { withStyles } from 'material-ui/styles';
 
 import Logo from 'components/global/Logo';

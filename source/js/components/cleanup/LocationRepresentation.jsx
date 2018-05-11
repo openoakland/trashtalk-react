@@ -76,7 +76,10 @@ class LocationRepresentation extends Component {
       query: suggestion.label,
     });
 
-    this.props.setCleanup(cleanup.set('title', suggestion.label).set('location', newLocation));
+    this.props.setCleanup(cleanup
+      .set('title', suggestion.label)
+      .set('location', newLocation)
+    );
 
     // Also set the background map to the same location
     backgroundMapReference.setCenter(newLocation.getLatLngObj());
@@ -117,7 +120,10 @@ class LocationRepresentation extends Component {
     if (newValue === '') {
       const { cleanup } = this.props;
 
-      this.props.setCleanup(cleanup.set('location', cleanup.location.set('query', null)));
+      this.props.setCleanup(cleanup.set(
+        'location',
+        cleanup.location.set('query', null)
+      ));
     }
   };
 
@@ -198,14 +204,16 @@ class LocationRepresentation extends Component {
   };
 
   render() {
-    const { classes, cleanup, animate, setCleanup } = this.props;
+    const {
+      classes, cleanup, animate, setCleanup,
+    } = this.props;
     if (cleanup == null) {
       return null;
     }
 
     return (
       <CardContent className={ classes.root }>
-        { setCleanup && (
+        {setCleanup && (
           <div style={ { height: '50px', zIndex: 1 } }>
             <Autosuggest
               theme={ {

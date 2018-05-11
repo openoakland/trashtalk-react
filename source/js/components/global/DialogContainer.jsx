@@ -80,7 +80,7 @@ class DialogContainer extends React.Component {
             key='undo'
             color='primary'
             size='small'
-            onClick={ this.closeSnackbar }
+            onClick={ this.handleCloseSnackbarClick }
           >
             Close Anyway
           </Button>,
@@ -91,7 +91,7 @@ class DialogContainer extends React.Component {
     }
   };
 
-  closeSnackbar = () => {
+  handleCloseSnackbarClick = () => {
     this.closeDialog();
     this.props.setSnackbarProps(null);
   }
@@ -100,7 +100,7 @@ class DialogContainer extends React.Component {
     this.setState(
       { open: false },
 
-      // We add a delay before changing the route to allow UI transitions to flush out
+      // We add a delay before changing the route to allow UI transitions to finish animating
       () => setTimeout(
         () => this.props.history.push(routeCodes.HOME),
         200

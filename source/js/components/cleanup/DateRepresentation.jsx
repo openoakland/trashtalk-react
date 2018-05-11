@@ -20,8 +20,8 @@ const styles = theme => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
-    width: '100%'
-  }
+    width: '100%',
+  },
 });
 
 const ONE_HOUR = 3600000;
