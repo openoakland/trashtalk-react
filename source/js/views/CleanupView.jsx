@@ -48,7 +48,7 @@ const styles = theme => ({
     };
   },
   dispatch => bindActionCreators({
-    getCleanups, patchCleanup, setBackgroundMapLocation,
+    getCleanups, patchCleanup, setSnackbarProps, setBackgroundMapLocation,
   }, dispatch)
 )
 @withStyles(styles)
