@@ -104,7 +104,7 @@ class SearchDrawer extends Component {
       },
     });
 
-    // If we know who the user is, allow filtering by the user's cleanups
+    // If user is known, allow filtering by the user's cleanups
     const { user } = this.props;
     if (user != null) {
       filteringOptions = filteringOptions.merge(Map({
@@ -130,7 +130,7 @@ class SearchDrawer extends Component {
       },
     });
 
-    // If we know the user's location, allow sorting by distance from user
+    // If the user's location is known, allow sorting by distance from user
     const { userLocation } = this.props;
     if (userLocation != null) {
       sortingOptions = sortingOptions.merge(Map({

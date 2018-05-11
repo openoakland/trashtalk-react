@@ -98,7 +98,13 @@ class DialogContainer extends React.Component {
       { open: false },
 
       // We add a delay before changing the route to allow UI transitions to flush out
-      () => setTimeout(() => this.props.history.push(routeCodes.HOME), 225)
+      () => setTimeout(
+        () => {
+          this.props.history.push(routeCodes.HOME);
+          this.props.setSnackbarProps(null);
+        },
+        200
+      )
     );
   };
 
