@@ -12,7 +12,7 @@ import Metadata from 'components/cleanup/Metadata';
 import Typography from 'material-ui/Typography';
 
 import { redirectToLogin } from 'api/auth';
-import { patchCleanup } from 'actions/cleanups';
+import { getCleanups, patchCleanup } from 'actions/cleanups';
 import * as Immutable from 'immutable';
 
 import { setBackgroundMapLocation, setSnackbarProps } from 'actions/app';
@@ -43,16 +43,21 @@ const styles = theme => ({
         'cleanups',
         Number(props.match.params.cleanupId),
       ]),
+      loading: state.cleanups.get('loading'),
       user: state.app.get('user'),
     };
   },
-  dispatch => bindActionCreators({ patchCleanup, setBackgroundMapLocation, setSnackbarProps }, dispatch)
+  dispatch => bindActionCreators({
+    getCleanups, patchCleanup, setBackgroundMapLocation,
+  }, dispatch)
 )
 @withStyles(styles)
 export default class CleanupView extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     cleanup: PropTypes.object,
+    getCleanups: PropTypes.func,
+    loading: PropTypes.bool,
     patchCleanup: PropTypes.func,
     setBackgroundMapLocation: PropTypes.func,
     setSnackbarProps: PropTypes.func,
@@ -68,6 +73,9 @@ export default class CleanupView extends React.PureComponent {
     }
 
     this.state = { cleanup };
+
+    // When we open up a cleanup, do another cleanup query to make sure we're in sync
+    this.props.getCleanups();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -107,7 +115,7 @@ export default class CleanupView extends React.PureComponent {
   }
 
   render() {
-    const { classes, user } = this.props;
+    const { classes, loading, user } = this.props;
     const { cleanup } = this.state;
 
     const actions = [];
@@ -116,6 +124,7 @@ export default class CleanupView extends React.PureComponent {
       if (!cleanup.hasHost(user)) {
         actions.push((
           <Button
+            disabled={ loading }
             variant='raised'
             color='primary'
             onClick={ this.toggleUserAsParticipant }

@@ -64,7 +64,9 @@ const actionsMap = {
     }));
   },
   [POST_CLEANUPS_SUCCESS]: (state, action) => {
-    return state.setIn(['cleanups', action.data.id], new Cleanup(action.data));
+    return state
+      .set('loading', false)
+      .setIn(['cleanups', action.data.id], new Cleanup(action.data));
   },
 };
 
