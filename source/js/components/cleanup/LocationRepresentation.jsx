@@ -46,6 +46,7 @@ const MAX_PHOTO_DIMENSIONS = {
 }))
 class LocationRepresentation extends Component {
   static propTypes = {
+    animate: PropTypes.bool,
     classes: PropTypes.object,
     cleanup: PropTypes.instanceOf(Cleanup),
     backgroundMapReference: PropTypes.object,
@@ -197,7 +198,7 @@ class LocationRepresentation extends Component {
   };
 
   render() {
-    const { classes, cleanup, setCleanup } = this.props;
+    const { classes, cleanup, animate, setCleanup } = this.props;
     if (cleanup == null) {
       return null;
     }
@@ -229,6 +230,7 @@ class LocationRepresentation extends Component {
         )}
         <div className={ classes.mapContainer }>
           <GoogleMap
+            animate={ animate }
             cleanups={ [cleanup] }
             mapCenter={ cleanup.location }
           />

@@ -31,6 +31,7 @@ const DEFAULT_ZOOM = 17;
 )
 class GoogleMap extends Component {
   static propTypes = {
+    animate: PropTypes.bool,
     cleanups: PropTypes.array,
     history: PropTypes.object,
     mapCenter: PropTypes.object,
@@ -130,13 +131,15 @@ class GoogleMap extends Component {
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  syncCleanupMarkers = (cleanups, animate = true) => {
+  syncCleanupMarkers = (cleanups, animateParam = true) => {
     const { mapReference } = this.state;
     const { user } = this.props;
     // If the map hasn't been initialized yet, just bail out
     if (mapReference == null) {
       return;
     }
+
+    const animate = this.props.animate != null ? this.props.animate : animateParam;
 
     let { cleanupMarkers } = this.state;
     // First remove any existing cleanup markers that aren't in the cleanups param
