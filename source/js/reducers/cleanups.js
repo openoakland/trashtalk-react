@@ -34,14 +34,16 @@ const actionsMap = {
     }));
   },
   [GET_CLEANUPS_SUCCESS]: (state, action) => {
-    const parsedCleanups = action.data.reduce(
-      (prev, rawCleanupObject) =>
-        prev.set(
-          rawCleanupObject.id,
-          new Cleanup(rawCleanupObject)
-        ),
-      Map()
-    );
+    const parsedCleanups = action.data
+      .filter(data => new Date(data.start) >= Date.now())
+      .reduce(
+        (prev, rawCleanupObject) =>
+          prev.set(
+            rawCleanupObject.id,
+            new Cleanup(rawCleanupObject)
+          ),
+        Map()
+      );
 
     return state.merge(Map({
       loading: false,
