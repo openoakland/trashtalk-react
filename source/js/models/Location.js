@@ -47,6 +47,7 @@ export default class Location extends Record({
     };
   }
 
+  // Gives distance from this location and another location. Possible options: https://www.npmjs.com/package/geodist
   getDistanceFrom(otherLocation, options) {
     const { latitude, longitude } = otherLocation;
     return geodist(
@@ -57,7 +58,7 @@ export default class Location extends Record({
   }
 
   /**
-   * Set the center of a map referred to by mapReference to this location
+   * Sets the center at mapReference to this location
    * @param {Google Map Reference} mapReference
    */
   setMapCenter(mapReference) {

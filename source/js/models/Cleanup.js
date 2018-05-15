@@ -13,7 +13,8 @@ export default class Cleanup extends Record({
   end: null,
   requiredTools: Map(),
 }) {
-  constructor(args) {
+  constructor(rawArgs) {
+    const args = rawArgs || {};
     super(Object.assign(
       {},
       {
@@ -23,7 +24,7 @@ export default class Cleanup extends Record({
       },
       args,
       {
-        location: new Location((args || {}).location),
+        location: new Location((args).location),
       },
       {
         end: args.end ? new Date(args.end) : null,

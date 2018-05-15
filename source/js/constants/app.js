@@ -6,5 +6,12 @@ the limitations are:
 - When developing the frontend, we assume there's a running Django instance at localhost:8000
 */
 
-const IS_DEV = window.location.host.indexOf('localhost') === 0;
+let IS_DEV;
+
+try {
+  IS_DEV = window != null && window.location.host.indexOf('localhost') === 0;
+} catch (err) {
+  IS_DEV = false;
+}
+
 export const API_URL = IS_DEV ? 'http://localhost:8000' : 'http://trashtalk.divethree.com';

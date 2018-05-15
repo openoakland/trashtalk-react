@@ -33,7 +33,7 @@ const DEFAULT_ZOOM = 17;
 class GoogleMap extends Component {
   static propTypes = {
     animate: PropTypes.bool,
-    cleanups: PropTypes.object,
+    cleanups: PropTypes.oneOfType(PropTypes.object, PropTypes.array),
     history: PropTypes.object,
     mapCenter: PropTypes.object,
     handleMapInitialization: PropTypes.func,

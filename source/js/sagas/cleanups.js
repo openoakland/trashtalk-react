@@ -16,7 +16,7 @@ import api from 'api';
 
 function* getCleanupsStart() {
   try {
-    const data = yield call(() => api.getCleanups());
+    const data = yield call(api.getCleanups);
     yield put({ type: GET_CLEANUPS_SUCCESS, data });
   } catch (error) {
     yield put({ type: GET_CLEANUPS_ERROR, error });
@@ -25,9 +25,7 @@ function* getCleanupsStart() {
 
 function* postCleanupStart(action) {
   try {
-    const data = yield call(() => api.postCleanup({
-      body: action.cleanup,
-    }));
+    const data = yield call(api.postCleanup, { body: action.cleanup });
     yield put({ type: POST_CLEANUPS_SUCCESS, data });
   } catch (error) {
     yield put({ type: POST_CLEANUPS_ERROR, error });
@@ -36,9 +34,7 @@ function* postCleanupStart(action) {
 
 function* patchCleanupStart(action) {
   try {
-    const data = yield call(() => api.patchCleanup({
-      body: action.cleanup,
-    }));
+    const data = yield call(api.patchCleanup, { body: action.cleanup });
     yield put({ type: PATCH_CLEANUPS_SUCCESS, data });
   } catch (error) {
     yield put({ type: PATCH_CLEANUPS_ERROR, error });

@@ -1,3 +1,4 @@
+import 'babel-polyfill'; // Included here to make unit tests happy. See https://github.com/babel/babel/issues/5085
 import { API_URL } from 'constants/app';
 import { getJWTasync, redirectToLogin } from 'api/auth';
 

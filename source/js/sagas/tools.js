@@ -13,7 +13,7 @@ import api from 'api';
 
 function* getToolsStart() {
   try {
-    const data = yield call(() => api.getTools());
+    const data = yield call(api.getTools);
     yield put({ type: GET_TOOLS_SUCCESS, data });
   } catch (error) {
     yield put({ type: GET_TOOLS_ERROR, error });
@@ -22,7 +22,7 @@ function* getToolsStart() {
 
 function* getToolCategoriesStart() {
   try {
-    const data = yield call(() => api.getToolCategories());
+    const data = yield call(api.getToolCategories);
     yield put({ type: GET_TOOL_CATEGORIES_SUCCESS, data });
   } catch (error) {
     yield put({ type: GET_TOOL_CATEGORIES_ERROR, error });

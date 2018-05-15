@@ -10,11 +10,12 @@ import {
   LOGIN_SUCCESS,
 } from 'actions/app';
 
+
 import api from 'api';
 
 import Location from 'models/Location';
 
-function* getUserLocationStart() {
+export function* getUserLocationStart() {
   const getPosition = (options) => {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -22,10 +23,7 @@ function* getUserLocationStart() {
   };
 
   try {
-    const position = yield call(() =>
-      getPosition({
-        enableHighAccuracy: true,
-      }));
+    const position = yield call(getPosition, { enableHighAccuracy: true });
     const { latitude, longitude } = position.coords;
     yield put({
       type: GET_USER_LOCATION_SUCCESS,
@@ -36,10 +34,10 @@ function* getUserLocationStart() {
   }
 }
 
-function* loginStart(action) {
+export function* loginStart(action) {
   try {
     const { username, password } = action;
-    const data = yield call(() => api.login(username, password));
+    const data = yield call(api.login, username, password);
     setJWT(data.token);
     yield put({
       type: LOGIN_SUCCESS,
