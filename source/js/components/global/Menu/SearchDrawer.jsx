@@ -24,19 +24,12 @@ const styles = theme => ({
   closeButton: {
     marginBottom: theme.spacing.unit,
   },
-  formControl: {
-
-  },
   listHeader: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: theme.spacing.unit * 2,
     outlineColor: 'white',
-  },
-  drawerPaper: {},
-  listItemHeaderText: {
-    fontSize: '2rem',
   },
   listItemText: {
     maxWidth: '100%',
@@ -166,16 +159,12 @@ class SearchDrawer extends Component {
     return (
       <Drawer
         anchor='left'
-        classes={ { paper: classes.drawerPaper } }
         open={ open }
         onClose={ handleToggle }
       >
         <MenuList>
           <div className={ classes.listHeader }>
-            <FormControl
-              className={ classes.formControl }
-              disabled={ filteringOptions.size === 1 }
-            >
+            <FormControl disabled={ filteringOptions.size === 1 } >
               <InputLabel htmlFor='filter-type'> Showing </InputLabel>
               <Select
                 value={ filterType }
@@ -193,10 +182,7 @@ class SearchDrawer extends Component {
                 ))}
               </Select>
             </FormControl>
-            <FormControl
-              className={ classes.formControl }
-              disabled={ sortingOptions.size === 1 }
-            >
+            <FormControl disabled={ sortingOptions.size === 1 } >
               <InputLabel htmlFor='sorting-type'> Sorted By </InputLabel>
               <Select
                 value={ sortType }

@@ -69,7 +69,7 @@ export default class MapBackground extends Component {
         style={ styles.container }
       >
         <GoogleMap
-          cleanups={ cleanups.toArray() }
+          cleanups={ cleanups }
           mapCenter={ mapCenter }
           handleMapInitialization={ this.props.setBackgroundMapReference }
           zoom={ 14 }

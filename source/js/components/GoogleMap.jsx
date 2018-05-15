@@ -21,6 +21,7 @@ const styles = {
 };
 
 const DEFAULT_ZOOM = 17;
+
 @connect(
   (state) => {
     return {
@@ -32,7 +33,7 @@ const DEFAULT_ZOOM = 17;
 class GoogleMap extends Component {
   static propTypes = {
     animate: PropTypes.bool,
-    cleanups: PropTypes.array,
+    cleanups: PropTypes.object,
     history: PropTypes.object,
     mapCenter: PropTypes.object,
     handleMapInitialization: PropTypes.func,
@@ -98,7 +99,7 @@ class GoogleMap extends Component {
       this.syncCleanupMarkers(nextProps.cleanups);
     }
 
-    // If the user has changed, clear the markers. They will be recreated in componentDidUpdate with user info
+    // If the user has changed, clear the markers. They will be recreated in componentDidUpdate with user specific info
     if (!Immutable.is(nextProps.user, this.props.user)) {
       this.clearMarkers();
     }
@@ -172,7 +173,7 @@ class GoogleMap extends Component {
             position: cleanup.location.getLatLngObj(),
           });
 
-          // If the cleanup has been persisted in the DB (it would have an id). Make it clickable so that
+          // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
           // users can click on it and view its details
           if (cleanup.get('id') != null) {
             marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));

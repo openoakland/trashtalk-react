@@ -11,7 +11,7 @@ import { setSnackbarProps } from 'actions/app';
  */
 @connect(
   state => ({
-    'snackbarProps': state.app.get('snackbarProps'),
+    snackbarProps: state.app.get('snackbarProps'),
   }),
   dispatch => bindActionCreators({ setSnackbarProps }, dispatch)
 )
