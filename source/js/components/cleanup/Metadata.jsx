@@ -32,10 +32,8 @@ const styles = theme => ({
   },
 });
 
-const ONE_HOUR = 3600000;
-
 /**
- * Component for showing/selecting dates for a cleanup
+ * Component for modifying extra Cleanup metadata
  */
 @withStyles(styles)
 export default class Metadata extends Component {
@@ -43,26 +41,6 @@ export default class Metadata extends Component {
     classes: PropTypes.object,
     cleanup: PropTypes.instanceOf(Cleanup),
     setCleanup: PropTypes.func,
-  }
-
-  handleDateChange = (date) => {
-    const eightAm = new Date(date.getTime() + (8 * ONE_HOUR));
-    this.handleStartChange(eightAm);
-  }
-
-  handleStartChange = (start) => {
-    const { cleanup, setCleanup } = this.props;
-    const end = new Date(start.getTime() + ONE_HOUR + 1);
-
-    setCleanup(cleanup
-      .set('start', start)
-      .set('end', end)
-    );
-  }
-
-  handleEndChange = (date) => {
-    const { cleanup, setCleanup } = this.props;
-    setCleanup(cleanup.set('end', date));
   }
 
   handleDescriptionChange = event => {
