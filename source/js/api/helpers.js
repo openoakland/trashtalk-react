@@ -1,5 +1,5 @@
 import { API_URL } from 'constants/app';
-import { getJWTasync } from 'api/auth';
+import { getJWTasync, redirectToLogin } from 'api/auth';
 
 // Simple API wrapper
 
@@ -71,7 +71,9 @@ export const fetchResource = async (path, userOptions = {}, addAuthHeader = true
   let response;
   try {
     response = await fetch(url, options);
-    if (response.status < 200 || response.status >= 400) {
+    if (response.status === 401) {
+      redirectToLogin();
+    } else if (response.status < 200 || response.status >= 400) {
       throw response;
     }
     response = await response.json();

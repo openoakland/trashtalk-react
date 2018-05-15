@@ -59,7 +59,10 @@ class CleanupSummary extends Component {
 
     const stepMapping = {
       [LOCATION_SELECTION]: (
-        <LocationRepresentation { ...props } animate={ false } />
+        <LocationRepresentation
+          { ...props }
+          animate={ false }
+        />
       ),
       [TOOL_SELECTION]: (
         <ToolsRepresentation { ...props } />

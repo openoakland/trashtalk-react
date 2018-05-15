@@ -6,8 +6,10 @@ import User from 'models/User';
 const JWT_KEY = 'jwtPayload';
 
 export const redirectToLogin = () => {
-  window.location = `${ routeCodes.LOGIN }?redirectTo=${ window.location.pathname }`;
-  throw new Error('User not logged in');
+  if (window.location.pathname !== routeCodes.LOGIN) {
+    window.location = `${ routeCodes.LOGIN }?redirectTo=${ window.location.pathname }`;
+    throw new Error('User not logged in');
+  }
 };
 
 export const setJWT = token => {
