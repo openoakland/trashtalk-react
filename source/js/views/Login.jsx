@@ -53,6 +53,11 @@ class Login extends React.Component {
 
   componentWillReceiveProps(nextProps) { // eslint-disable-line react/sort-comp
     if (nextProps.loginState === LOGIN_SUCCESS) {
+      this.props.setSnackbarProps({
+        message: 'You have been logged in',
+        open: true,
+      });
+
       const queryParams = queryString.parse(window.location.search);
       this.props.history.replace(queryParams.redirectTo || '/');
     }
@@ -76,14 +81,13 @@ class Login extends React.Component {
     const { loginState, user } = this.props;
     const queryParams = queryString.parse(window.location.search);
     let header = 'Enter your username and password.';
-    if (queryParams.redirectTo != null) {
+    if (loginState === LOGIN_ERROR) {
+      header = 'The username password combination could not be found.';
+    } else if (queryParams.redirectTo != null) {
       header = 'Please login to continue.';
     } else if (user != null) {
       header = `You are logged in as "${ user.username }". Did you want to log in as someone else?`;
-    } else if (loginState === LOGIN_ERROR) {
-      header = 'The username password combination could not be found.';
     }
-
     return header;
   }
 
@@ -95,10 +99,6 @@ class Login extends React.Component {
 
   handleLoginRequest = () => {
     const { username, password } = this.state;
-    this.props.setSnackbarProps({
-      message: 'You have been logged in',
-      open: true,
-    });
     this.props.login(username, password);
   }
 
