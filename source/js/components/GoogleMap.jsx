@@ -21,6 +21,7 @@ const styles = {
 };
 
 const DEFAULT_ZOOM = 17;
+const PIN_DROP_DURATION = 500; // The time it takes for all pins to drop when animating
 
 @connect(
   (state) => {
@@ -33,7 +34,7 @@ const DEFAULT_ZOOM = 17;
 class GoogleMap extends Component {
   static propTypes = {
     animate: PropTypes.bool,
-    cleanups: PropTypes.oneOfType(PropTypes.object, PropTypes.array),
+    cleanups: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
     history: PropTypes.object,
     mapCenter: PropTypes.object,
     handleMapInitialization: PropTypes.func,
@@ -119,12 +120,8 @@ class GoogleMap extends Component {
 
   clearMarkers = () => {
     const { cleanupMarkers } = this.state;
-    cleanupMarkers.forEach(marker => {
-      marker.setMap(null);
-    });
-    this.setState({
-      cleanupMarkers: Map(),
-    });
+    cleanupMarkers.forEach(marker => marker.setMap(null));
+    this.setState({ cleanupMarkers: Map() });
   }
 
   /**
@@ -132,72 +129,60 @@ class GoogleMap extends Component {
    * https://developers.google.com/maps/documentation/javascript/examples/marker-simple
    * https://developers.google.com/maps/documentation/javascript/markers
    */
-  syncCleanupMarkers = (cleanups, animateParam = true) => {
+  syncCleanupMarkers = (cleanups, defaultAnimateParam = true) => {
     const { mapReference } = this.state;
-    const { user } = this.props;
-    // If the map hasn't been initialized yet, just bail out
-    if (mapReference == null) {
-      return;
-    }
+    if (mapReference == null) { return; }
 
-    const animate = this.props.animate != null ? this.props.animate : animateParam;
-
+    const animate = this.props.animate != null ? this.props.animate : defaultAnimateParam;
     let { cleanupMarkers } = this.state;
+    const { user } = this.props;
+
     // First remove any existing cleanup markers that aren't in the cleanups param
-    const cleanupsSet = Set(cleanups);
+    const currentCleanups = Set(cleanups);
     cleanupMarkers.forEach((marker, cleanup) => {
-      if (!cleanupsSet.has(cleanup)) {
+      if (!currentCleanups.has(cleanup)) {
         marker.setMap(null);
         cleanupMarkers = cleanupMarkers.delete(cleanup);
       }
     });
 
-    // Now loop through the cleanups and add markers to each
-    let markersToAdd = Immutable.List(); // We'll use this to separately animate the dropping of new markers
-    if (cleanups != null) {
-      cleanups
-        .filter(cleanup => !cleanupMarkers.has(cleanup)) // Filter out cleanups that have already been added
-        .forEach(cleanup => {
-          let label;
-          if (user != null) {
-            if (cleanup.hasHost(user)) {
-              label = 'H';
-            } else if (cleanup.hasParticipant(user)) {
-              label = 'P';
-            }
-          }
+    // Now loop through the cleanups that haven't been added and add markers to each
+    const cleanupsToAdd = cleanups.filter(cleanup => !cleanupMarkers.has(cleanup));
+    cleanupsToAdd.forEach(cleanup => {
+      let label;
+      if (user != null) {
+        if (cleanup.hasHost(user)) {
+          label = 'H';
+        } else if (cleanup.hasParticipant(user)) {
+          label = 'P';
+        }
+      }
 
-          const marker = new window.google.maps.Marker({
-            animation: animate ? window.google.maps.Animation.DROP : null,
-            label,
-            position: cleanup.location.getLatLngObj(),
-          });
-
-          // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
-          // users can click on it and view its details
-          if (cleanup.get('id') != null) {
-            marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
-          }
-
-          // Persist a reference to the cleanup marker so that we can manipulate it later
-          // e.g.: in this.clearMarkers()
-          cleanupMarkers = cleanupMarkers.set(cleanup, marker);
-          markersToAdd = markersToAdd.push(marker);
-        });
-
-      this.setState({ cleanupMarkers });
-
-      // Add pins to map after setting state so that we can control the time between pin drops
-      // without running into timing issues with setting the component state
-      const MAX_DROP_TIME = 500; // The time it takes for all pins to drop
-      markersToAdd.forEach(marker => {
-        setTimeout(
-          () => marker.setMap(mapReference),
-          // If there's no animation, just render all the pin drops at the same time
-          animate ? MAX_DROP_TIME * Math.random() : 0
-        );
+      const marker = new window.google.maps.Marker({
+        animation: animate ? window.google.maps.Animation.DROP : null,
+        label,
+        position: cleanup.location.getLatLngObj(),
       });
-    }
+
+      // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
+      // users can click on it and view its details
+      if (cleanup.get('id') != null) {
+        marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
+      }
+
+      // Persist a reference to the cleanup marker so that we can manipulate it later, e.g.: in this.clearMarkers()
+      cleanupMarkers = cleanupMarkers.set(cleanup, marker);
+    });
+
+    this.setState({ cleanupMarkers });
+
+    // Add pins to map after setting state. This is done here so as not to run into timing issues when setting state
+    cleanupsToAdd.forEach(cleanup => {
+      setTimeout(
+        () => cleanupMarkers.get(cleanup).setMap(mapReference),
+        animate ? PIN_DROP_DURATION * Math.random() : 0
+      );
+    });
   };
 
   render() {
