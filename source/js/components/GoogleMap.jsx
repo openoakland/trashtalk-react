@@ -118,6 +118,32 @@ class GoogleMap extends Component {
     this.clearMarkers();
   }
 
+  getNewMarker = (cleanup, animate) => {
+    const { user } = this.props;
+    let label;
+    if (user != null) {
+      if (cleanup.hasHost(user)) {
+        label = 'H';
+      } else if (cleanup.hasParticipant(user)) {
+        label = 'P';
+      }
+    }
+
+    const marker = new window.google.maps.Marker({
+      animation: animate ? window.google.maps.Animation.DROP : null,
+      label,
+      position: cleanup.location.getLatLngObj(),
+    });
+
+    // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
+    // users can click on it and view its details
+    if (cleanup.get('id') != null) {
+      marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
+    }
+
+    return marker;
+  }
+
   clearMarkers = () => {
     const { cleanupMarkers } = this.state;
     cleanupMarkers.forEach(marker => marker.setMap(null));
@@ -135,9 +161,8 @@ class GoogleMap extends Component {
 
     const animate = this.props.animate != null ? this.props.animate : defaultAnimateParam;
     let { cleanupMarkers } = this.state;
-    const { user } = this.props;
 
-    // First remove any existing cleanup markers that aren't in the cleanups param
+    // First remove any stale cleanup markers that are missing from the cleanups param
     const currentCleanups = Set(cleanups);
     cleanupMarkers.forEach((marker, cleanup) => {
       if (!currentCleanups.has(cleanup)) {
@@ -147,42 +172,21 @@ class GoogleMap extends Component {
     });
 
     // Now loop through the cleanups that haven't been added and add markers to each
-    const cleanupsToAdd = cleanups.filter(cleanup => !cleanupMarkers.has(cleanup));
-    cleanupsToAdd.forEach(cleanup => {
-      let label;
-      if (user != null) {
-        if (cleanup.hasHost(user)) {
-          label = 'H';
-        } else if (cleanup.hasParticipant(user)) {
-          label = 'P';
-        }
+    cleanups.forEach(cleanup => {
+      if (!cleanupMarkers.has(cleanup)) {
+        // Create a cleanup marker and persist it so it can be manipulated later, e.g.: in this.clearMarkers()
+        const newMarker = this.getNewMarker(cleanup, animate);
+        cleanupMarkers = cleanupMarkers.set(cleanup, newMarker);
+
+        // Add the marker to the map
+        setTimeout(
+          () => newMarker.setMap(mapReference),
+          animate ? PIN_DROP_DURATION * Math.random() : 0
+        );
       }
-
-      const marker = new window.google.maps.Marker({
-        animation: animate ? window.google.maps.Animation.DROP : null,
-        label,
-        position: cleanup.location.getLatLngObj(),
-      });
-
-      // If the cleanup has been persisted in the DB (it would have an id), make it clickable so that
-      // users can click on it and view its details
-      if (cleanup.get('id') != null) {
-        marker.addListener('click', () => this.props.history.push(cleanup.getCleanupPath()));
-      }
-
-      // Persist a reference to the cleanup marker so that we can manipulate it later, e.g.: in this.clearMarkers()
-      cleanupMarkers = cleanupMarkers.set(cleanup, marker);
     });
 
     this.setState({ cleanupMarkers });
-
-    // Add pins to map after setting state. This is done here so as not to run into timing issues when setting state
-    cleanupsToAdd.forEach(cleanup => {
-      setTimeout(
-        () => cleanupMarkers.get(cleanup).setMap(mapReference),
-        animate ? PIN_DROP_DURATION * Math.random() : 0
-      );
-    });
   };
 
   render() {
