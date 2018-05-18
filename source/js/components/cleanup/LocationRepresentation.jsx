@@ -88,14 +88,13 @@ class LocationRepresentation extends Component {
   handleSuggestionsFetchRequested = ({ value }) => {
     const { cleanup, backgroundMapReference } = this.props;
 
-    const service = new window.google.maps.places.PlacesService(backgroundMapReference);
     // https://developers.google.com/maps/documentation/javascript/places#place_searches
+    const service = new window.google.maps.places.PlacesService(backgroundMapReference);
     const request = {
       location: cleanup.location.getLatLngObj(),
       radius: 20000,
       keyword: value,
     };
-
     service.nearbySearch(request, (results, status) => {
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
         const suggestions = results
@@ -119,7 +118,6 @@ class LocationRepresentation extends Component {
     // If the text has been cleared, clear out any previous location value
     if (newValue === '') {
       const { cleanup } = this.props;
-
       this.props.setCleanup(cleanup.set(
         'location',
         cleanup.location.set('query', null)
@@ -131,10 +129,7 @@ class LocationRepresentation extends Component {
     // If the enter key is pressed, default to first suggestion if one exists
     const firstSuggestion = this.state.suggestions[0];
     if (event.key === 'Enter' && firstSuggestion != null) {
-      this.setState({
-        value: firstSuggestion.label,
-      });
-
+      this.setState({ value: firstSuggestion.label });
       this.setCleanupToSuggestion(firstSuggestion);
     }
   };
@@ -207,9 +202,8 @@ class LocationRepresentation extends Component {
     const {
       classes, cleanup, animate, setCleanup,
     } = this.props;
-    if (cleanup == null) {
-      return null;
-    }
+
+    if (cleanup == null) { return null; }
 
     return (
       <CardContent className={ classes.root }>

@@ -58,9 +58,8 @@ export default class Metadata extends Component {
 
   render() {
     const { classes, cleanup, setCleanup } = this.props;
-    if (cleanup == null) {
-      return null;
-    }
+
+    if (cleanup == null) { return null; }
 
     return (
       <CardContent classes={ { root: classes.contentRoot } }>

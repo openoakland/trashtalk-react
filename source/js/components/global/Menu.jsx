@@ -91,8 +91,7 @@ class MenuComponent extends PureComponent {
   handleMenuClose = () => this.setState({ anchorEl: null })
 
   initUserLocation = () => {
-    const { userLocation } = this.props;
-    if (userLocation == null) {
+    if (this.props.userLocation == null) {
       this.props.getUserLocation();
     }
   }

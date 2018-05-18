@@ -58,9 +58,7 @@ export default class DateRepresentation extends Component {
 
   render() {
     const { classes, cleanup, setCleanup } = this.props;
-    if (cleanup == null) {
-      return null;
-    }
+    if (cleanup == null) { return null; }
 
     const { end, start } = cleanup;
     const minEndDate = start == null ? null : new Date(start.getTime() + ONE_HOUR);
