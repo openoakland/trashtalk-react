@@ -2,18 +2,21 @@ import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import { getTools, getToolCategories } from 'actions/tools';
 
-import Avatar from 'material-ui/Avatar';
-import Button from 'material-ui/Button';
-import ExpansionPanel, { ExpansionPanelSummary, ExpansionPanelDetails } from 'material-ui/ExpansionPanel';
-import Icon from 'material-ui/Icon';
-import List, { ListItem } from 'material-ui/List';
-import TextField from 'material-ui/TextField';
-import Typography from 'material-ui/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Icon from '@material-ui/core/Icon';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import { API_URL } from 'constants/app';
 
 import Cleanup from 'models/Cleanup';

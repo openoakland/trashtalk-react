@@ -1,6 +1,6 @@
 import Notice from 'models/Notice';
 import React from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 
 export const WELCOME = new Notice({
   description: (

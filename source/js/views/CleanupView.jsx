@@ -2,14 +2,14 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 
-import Button from 'material-ui/Button';
-import Icon from 'material-ui/Icon';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import DialogContainer from 'components/global/DialogContainer';
 import CleanupSummary from 'components/cleanup/CleanupSummary';
 import Metadata from 'components/cleanup/Metadata';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 
 import { redirectToLogin } from 'api/auth';
 import { getCleanups, patchCleanup } from 'actions/cleanups';

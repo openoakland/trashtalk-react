@@ -1,21 +1,22 @@
 import React, { PureComponent } from 'react';
 
-import AppBar from 'material-ui/AppBar';
-import Button from 'material-ui/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import { routeCodes } from 'constants/routes';
 
-import Avatar from 'material-ui/Avatar';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Icon from 'material-ui/Icon';
-import IconButton from 'material-ui/IconButton';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
+import Avatar from '@material-ui/core/Avatar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import { getUserLocation, logout, setSnackbarProps } from 'actions/app';
 import SearchDrawer from './Menu/SearchDrawer';
 

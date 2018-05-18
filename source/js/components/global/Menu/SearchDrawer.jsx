@@ -1,22 +1,24 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Map } from 'immutable';
 
-import Avatar from 'material-ui/Avatar';
-import Divider from 'material-ui/Divider';
-import Drawer from 'material-ui/Drawer';
-import Input, { InputLabel } from 'material-ui/Input';
-import { FormControl } from 'material-ui/Form';
-import { ListItemText } from 'material-ui/List';
-import { MenuItem, MenuList } from 'material-ui/Menu';
-import { Button } from 'material-ui';
-import Icon from 'material-ui/Icon';
-import Select from 'material-ui/Select';
+import Avatar from '@material-ui/core/Avatar';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuList from '@material-ui/core/MenuList';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import Select from '@material-ui/core/Select';
 
 import Location from 'models/Location';
 

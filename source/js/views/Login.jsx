@@ -3,13 +3,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
 import Logo from 'components/global/Logo';
 import DialogContainer from 'components/global/DialogContainer';
-import { DialogContentText, DialogContent } from 'material-ui/Dialog';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogContent from '@material-ui/core/DialogContent';
 import { login, loginReset, setSnackbarProps } from 'actions/app';
 import queryString from 'query-string';
 import { API_URL } from 'constants/app';

@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { WELCOME } from 'constants/notices';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
-import Avatar from 'material-ui/Avatar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
 import { getUserLocation } from 'actions/app';
-import Card, { CardActions, CardContent, CardHeader } from 'material-ui/Card';
-import Dialog from 'material-ui/Dialog';
+import Card, { CardActions, CardContent, CardHeader } from '@material-ui/core/Card';
+import Dialog from '@material-ui/core/Dialog';
 
 import Notice from 'models/Notice';
 
@@ -119,7 +119,7 @@ export default class Notifications extends React.Component {
             title={ notice.title }
           />
           <CardContent>
-            <Typography component='p'>{notice.description}</Typography>
+            <Typography component='div'>{notice.description}</Typography>
           </CardContent>
           <CardActions
             className={ classes.actions }

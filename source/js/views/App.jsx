@@ -10,11 +10,11 @@ import Create from 'views/Create';
 import CleanupView from 'views/CleanupView';
 import Login from 'views/Login';
 import NotFound from 'views/NotFound';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import Register from 'views/Register';
 import GlobalSnackbar from 'components/global/GlobalSnackbar';
 
-import { createMuiTheme } from 'material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import MapBackground from '../components/global/MapBackground';
 
 class App extends Component {
