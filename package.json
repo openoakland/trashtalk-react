@@ -22,8 +22,8 @@
     "lint": "npm run lint-hook --silent || true",
     "hook-add": "prepush install",
     "hook-remove": "prepush remove",
-    "test": "NODE_PATH=source/js node_modules/.bin/mocha --require babel-core/register",
-    "test-watch": "NODE_PATH=source/js node_modules/.bin/mocha --require babel-core/register -w"
+    "test": "NODE_PATH=source/js node_modules/.bin/mocha --require babel-core/register --require test/setup.js",
+    "test-watch": "NODE_PATH=source/js node_modules/.bin/mocha --require babel-core/register -w --require test/setup.js"
   },
   "devDependencies": {
     "babel-core": "6.26.3",
@@ -43,6 +43,8 @@
     "concurrently": "^3.5.1",
     "cross-env": "5.1.5",
     "css-loader": "^0.28.7",
+    "enzyme": "3.3.0",
+    "enzyme-adapter-react-16": "1.1.1",
     "eslint": "^4.14.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.11.0",
@@ -51,6 +53,8 @@
     "extract-text-webpack-plugin": "4.0.0-beta.0",
     "file-loader": "^1.1.6",
     "html-webpack-plugin": "^3.2.0",
+    "jsdom": "11.10.0",
+    "jsdom-global": "3.0.2",
     "mocha": "5.1.1",
     "nodemon": "1.17.4",
     "postcss": "6.0.22",
@@ -61,6 +65,8 @@
     "prettier-eslint": "8.8.1",
     "react-svg-loader": "^2.1.0",
     "redux-logger": "^3.0.6",
+    "redux-mock-store": "1.5.1",
+    "sinon": "5.0.7",
     "style-loader": "0.21.0",
     "svgo": "^1.0.3",
     "svgo-loader": "^2.1.0",
@@ -113,5 +119,26 @@
   "homepage": "https://github.com/workco/marvin#readme",
   "prepush": [
     "npm run lint-hook --silent"
-  ]
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "source/**/*.{js,jsx}",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/path/to/dir/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "coverageReporters": [
+      "text"
+    ],
+    "snapshotSerializers": [
+      "my-serializer-module"
+    ]
+  }
 }

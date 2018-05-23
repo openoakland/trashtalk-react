@@ -31,7 +31,7 @@ const PIN_DROP_DURATION = 500; // The time it takes for all pins to drop when an
   },
   dispatch => bindActionCreators({}, dispatch)
 )
-class GoogleMap extends Component {
+export class GoogleMap extends Component {
   static propTypes = {
     animate: PropTypes.bool,
     cleanups: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
