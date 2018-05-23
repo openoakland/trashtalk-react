@@ -44,7 +44,7 @@ const MAX_PHOTO_DIMENSIONS = {
 @connect(state => ({
   backgroundMapReference: state.app.get('backgroundMapReference'),
 }))
-class LocationRepresentation extends Component {
+export class LocationRepresentation extends Component {
   static propTypes = {
     animate: PropTypes.bool,
     classes: PropTypes.object,

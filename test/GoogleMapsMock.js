@@ -49,7 +49,9 @@ const GoogleMapMock = {
       TERRAIN: '',
     },
     MapTypeRegistry: () => {},
-    Marker: () => {},
+    Marker: () => ({
+      setMap: () => {},
+    }),
     MarkerImage: () => {},
     MaxZoomService: () => {
       return {

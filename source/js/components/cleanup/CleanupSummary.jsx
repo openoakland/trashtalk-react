@@ -35,7 +35,7 @@ const {
  * Shows summary for a cleanup
  */
 @withStyles(styles)
-class CleanupSummary extends Component {
+export class CleanupSummary extends Component {
   static propTypes = {
     classes: PropTypes.object,
     cleanup: PropTypes.object,
